@@ -23,6 +23,7 @@ function App() {
       <CustomAppBar/>
       <Dendogram/>
       <TreeMap/>
+      <iframe width="600" height="450" src="https://lookerstudio.google.com/embed/reporting/16a3d95e-a2ad-4e39-bdf5-74eac4593ec4/page/twIoD" sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"></iframe>
     </main>
   );
 }
