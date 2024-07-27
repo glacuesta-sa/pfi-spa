@@ -5,8 +5,8 @@ export const data = [
   [
     "Location",
     "Parent",
-    "Market trade volume (size)",
-    "Market increase/decrease (color)",
+    "size",
+    "color",
   ],
   ["Epilepsia", null, 0, 0],
   ["Generalizada", "Epilepsia", 0, 0],
