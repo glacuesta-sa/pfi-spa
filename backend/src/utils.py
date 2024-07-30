@@ -1,6 +1,5 @@
 from bson import ObjectId
 from db import diseases_collection
-from models import data_model
 
 def convert_objectid_to_str(disease):
     if isinstance(disease, dict):

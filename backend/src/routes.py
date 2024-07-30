@@ -1,7 +1,7 @@
 from flask import jsonify, request, abort
 from bson import ObjectId
 from db import diseases_collection
-from models import data_model
+from models import get_data_model
 import utils
 
 def init_routes(app):
@@ -44,7 +44,7 @@ def init_routes(app):
         full_phenotype_ids = [f"http://purl.obolibrary.org/obo/{pid}" for pid in phenotype_ids]
         print(f"Transformed phenotype IDs: {full_phenotype_ids}")
 
-        diseases = utils.get_diseases_by_phenotypes(full_phenotype_ids, data_model)
+        diseases = utils.get_diseases_by_phenotypes(full_phenotype_ids, get_data_model())
         diseases = utils.convert_objectid_to_str(diseases)
         print(f"Found diseases: {diseases}")
         return jsonify(diseases)
@@ -60,7 +60,7 @@ def init_routes(app):
         full_age_onset_ids = [f"http://purl.obolibrary.org/obo/{aid}" for aid in age_onset_ids]
         print(f"Transformed age onset IDs: {full_age_onset_ids}")
 
-        diseases = utils.get_diseases_by_age_onsets(full_age_onset_ids, data_model)
+        diseases = utils.get_diseases_by_age_onsets(full_age_onset_ids, get_data_model())
         diseases = utils.convert_objectid_to_str(diseases)
         print(f"Found diseases: {diseases}")
         return jsonify(diseases)
@@ -76,7 +76,7 @@ def init_routes(app):
         full_anatomical_ids = [f"http://purl.obolibrary.org/obo/{aid}" for aid in anatomical_ids]
         print(f"Transformed anatomical structure IDs: {full_anatomical_ids}")
 
-        diseases = utils.get_diseases_by_anatomical_structures(full_anatomical_ids, data_model)
+        diseases = utils.get_diseases_by_anatomical_structures(full_anatomical_ids, get_data_model())
         diseases = utils.convert_objectid_to_str(diseases)
         print(f"Found diseases: {diseases}")
         return jsonify(diseases)
@@ -93,18 +93,18 @@ def init_routes(app):
         full_anatomical_ids = [f"http://purl.obolibrary.org/obo/{aid}" for aid in anatomical_ids]
         full_age_onset_ids = [f"http://purl.obolibrary.org/obo/{aid}" for aid in age_onset_ids]
 
-        diseases = utils.get_diseases_by_filters(full_phenotype_ids, full_anatomical_ids, full_age_onset_ids, data_model)
+        diseases = utils.get_diseases_by_filters(full_phenotype_ids, full_anatomical_ids, full_age_onset_ids, get_data_model())
         diseases = utils.convert_objectid_to_str(diseases)
         return jsonify(diseases)
 
     @app.route("/phenotypes", methods=["GET"])
     def get_phenotypes():
         phenotypes = []
-        for disease in data_model['diseases']:
+        for disease in get_data_model()['diseases']:
             for phenotype in disease.get('phenotypes', []):
                 phenotypes.append({
                     "label": phenotype.get('label', 'Unknown Phenotype'),
-                    "value": phenotype['target']
+                    "value": phenotype['target'].replace("http://purl.obolibrary.org/obo/", "")
                 })
         
         # Remove duplicates
@@ -114,11 +114,11 @@ def init_routes(app):
     @app.route("/anatomical_structures", methods=["GET"])
     def get_anatomical_structures():
         anatomical_structures = []
-        for disease in data_model['diseases']:
+        for disease in get_data_model()['diseases']:
             for anatomical_structure in disease.get('anatomical_structures', []):
                 anatomical_structures.append({
                     "label": anatomical_structure.get('label', 'Unknown anatomical structure'),
-                    "value": anatomical_structure['target']
+                    "value": anatomical_structure['target'].replace("http://purl.obolibrary.org/obo/", "")
                 })
         
         # Remove duplicates
@@ -128,11 +128,11 @@ def init_routes(app):
     @app.route("/age_onsets", methods=["GET"])
     def get_age_onsets():
         age_onsets = []
-        for disease in data_model['diseases']:
+        for disease in get_data_model()['diseases']:
             for age_onset in disease.get('age_onsets', []):
                 age_onsets.append({
                     "label": age_onset.get('label', 'Unknown age onset'),
-                    "value": age_onset['target']
+                    "value": age_onset['target'].replace("http://purl.obolibrary.org/obo/", "")
                 })
         
         # Remove duplicates

@@ -10,6 +10,8 @@ services:
       - init-db
     volumes:
       - .:/app
+    environment:
+      - MONGO_URI=mongodb://mongo:27018/
 
   mongo:
     image: mongo:latest
@@ -22,7 +24,7 @@ services:
 
   init-db:
     build: .
-    command: python generate_data_model.py
+    command: python ./src/generate_data_model.py
     depends_on:
       - mongo
     volumes:
