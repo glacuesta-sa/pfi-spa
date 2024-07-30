@@ -6,3 +6,4 @@ Repositorio que contiene
 # Requirements
 - MongoDB
 - Flask
+- Docker / Docker Compose
