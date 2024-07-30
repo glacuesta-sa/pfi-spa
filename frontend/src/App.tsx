@@ -1,16 +1,12 @@
-
-import { Box, Container, Paper } from "@mui/material";
-import CustomAppBar from "./components/Appbar";
-import Dendogram from "./components/Dendogram";
-import TreeMap from "./components/TreeMap";
-import Sidebar from "./components/Sidebar";
-import InfoCard from "./components/InfoCard";
+import { Box, } from "@mui/material";
+import CustomAppBar from "./components/Layout/Appbar";
+import Dendogram from "./components/Charts/Dendogram";
+import TreeMap from "./components/Charts/TreeMap";
+import Sidebar from "./components/Layout/Sidebar";
+import InfoCard from "./components/IsolatedComponents/InfoCard";
 
 
 function App() {
-
-
-
   return (
     <main>
       <CustomAppBar/>

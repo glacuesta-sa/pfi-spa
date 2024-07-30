@@ -4,13 +4,13 @@ import Drawer from '@mui/material/Drawer';
 
 import List from '@mui/material/List';
 
-import SymptomsFilter from './SymptomsFilter';
-import CustomChip from './CustomChip';
+import SymptomsFilter from '../Filters/SymptomsFilter';
+import CustomChip from '../IsolatedComponents/CustomChip';
 import { Divider, Typography } from '@mui/material';
 import FilterListIcon from '@mui/icons-material/FilterList';
-import SexFilter from './SexFilter';
-import AnatomyFilter from './AnatomyFilter';
-import AgeFilter from './AgeFilter';
+import SexFilter from '../Filters/SexFilter';
+import AnatomyFilter from '../Filters/AnatomyFilter';
+import AgeFilter from '../Filters/AgeFilter';
 
 const drawerWidth = 350;
 
