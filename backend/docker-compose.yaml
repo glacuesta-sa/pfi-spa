@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mongo
+      - init-db
+    volumes:
+      - .:/app
+
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27018:27018"
+    volumes:
+      - mongo-data:/data/db
+      - ./mongo_config/mongod.conf:/etc/mongo/mongod.conf:ro
+    command: ["mongod", "--config", "/etc/mongo/mongod.conf"]
+
+  init-db:
+    build: .
+    command: python generate_data_model.py
+    depends_on:
+      - mongo
+    volumes:
+      - .:/app
+
+volumes:
+  mongo-data:

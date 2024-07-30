@@ -168,7 +168,7 @@ def finalize_data_model(disease_dict, data_model):
                 del disease['age_onsets']
             data_model['diseases'].append(disease)
 
-def save_to_mongodb(data_model, disease_dict, mongo_uri='mongodb://localhost:27017/', db_name='mondo_db'):
+def save_to_mongodb(data_model, disease_dict, mongo_uri='mongodb://mongo:27018/', db_name='mondo_db'):
     client = MongoClient(mongo_uri)
     db = client[db_name]
     diseases_collection = db['diseases']
