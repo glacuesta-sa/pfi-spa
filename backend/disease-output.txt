@@ -1,0 +1,1 @@
+{"Title": "Crohn's disease", "Description": "Inflammation of any part of the gastrointestinal tract from mouth to anus which can cause a variety of symptoms depending on what and how much of the GI tract is affected.", "Causes": ["Uncertain. May be related to genetics."]}

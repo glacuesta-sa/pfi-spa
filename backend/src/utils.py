@@ -1,6 +1,8 @@
 from bson import ObjectId
 from db import diseases_collection
 
+from flask import jsonify, make_response
+
 def convert_objectid_to_str(disease):
     if isinstance(disease, dict):
         for key, value in disease.items():
@@ -15,6 +17,11 @@ def convert_objectid_to_str(disease):
         for item in disease:
             convert_objectid_to_str(item)
     return disease
+
+def create_json_response(data, status_code=200):
+    response = make_response(data, status_code)
+    response.headers['Content-Type'] = 'application/json'
+    return response
 
 # Functions to build hierarchy from MongoDB data
 def build_parent_child_hierarchy():
