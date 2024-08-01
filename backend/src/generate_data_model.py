@@ -1,5 +1,6 @@
 import json
 from pymongo import MongoClient
+import config
 
 def load_mondo_data(file_path):
     with open(file_path, 'r', encoding='utf-8') as file:
@@ -168,7 +169,7 @@ def finalize_data_model(disease_dict, data_model):
                 del disease['age_onsets']
             data_model['diseases'].append(disease)
 
-def save_to_mongodb(data_model, disease_dict, mongo_uri='mongodb://localhost:27017/', db_name='mondo_db'):
+def save_to_mongodb(data_model, disease_dict, mongo_uri=config.MONGO_URI, db_name='mondo_db'):
     client = MongoClient(mongo_uri)
     db = client[db_name]
     diseases_collection = db['diseases']
