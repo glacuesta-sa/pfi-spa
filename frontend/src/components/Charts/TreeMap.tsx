@@ -5,7 +5,7 @@ import { PulseLoader } from "react-spinners";
 
 export const data = [
   [
-    "Location",
+    "Disease",
     "Parent",
     "size",
     "color",
@@ -49,12 +49,15 @@ export const options = {
   showScale: false,
 };
 
-export default function TreeMap() {
-    useEffect(()=>{
-      setTimeout(
-          ()=>setLoading(false),
-          2000
-      )
+export default function TreeMap(props) {
+  console.log(`DAta: ${props.data}`)
+
+  
+  useEffect(()=>{
+    setTimeout(
+        ()=>setLoading(false),
+        2000
+    )
   },[])
 
   const [loading, setLoading] = useState(true)
@@ -77,7 +80,7 @@ export default function TreeMap() {
                 chartType="TreeMap"
                 width="100%"
                 height="400px"
-                data={data}
+                data={props.data}
                 options={options}
               />
         }

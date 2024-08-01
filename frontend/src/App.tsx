@@ -1,7 +1,6 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import MainDiseasePage from "./pages/MainDiseasePage";
 import HomePage from "./pages/HomePage";
-import TreatmentPage from "./pages/TreatmentPage";
 
 
 function App() {
@@ -9,8 +8,9 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/main" element={<MainDiseasePage />} />
-        <Route path="/treatment" element={<TreatmentPage />} />
+        <Route path="/main">
+          <Route path=":diseaseId" element={<MainDiseasePage />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   );

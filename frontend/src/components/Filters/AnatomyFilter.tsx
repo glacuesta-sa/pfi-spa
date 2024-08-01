@@ -1,12 +1,22 @@
 import * as React from 'react';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
+import { getAnatomicalStructures } from '../../services/webService';
 
-const options = ['Cerebro','Corazon','Pulmones','Riñones','Lobulo Frontal','Dermis','Laringe'];
 
 export default function AnatomyFilter({updateSelection}:{updateSelection:(value: string)=>void}) {
   const [value, setValue] = React.useState<string | null>();
   const [inputValue, setInputValue] = React.useState('');
+  const [options, setOptions] = React.useState([])
+
+  React.useEffect(()=>{
+    async function setAnatomy(){
+      const filters = await getAnatomicalStructures()
+      const aux = filters.map((item)=> item.label)
+      setOptions(aux)
+    }
+    setAnatomy()
+  },[])
 
   return (
       <Autocomplete

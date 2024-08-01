@@ -3,117 +3,118 @@ import { Box, Paper, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Chart } from "react-google-charts";
 import { PulseLoader } from "react-spinners";
+import { data } from "./TreeMap";
 
 
-export const data = [
-    [
-        "id",
-        "childLabel",
-        "parent",
-        "size",
-        {
-            "role": "style"
-        }
-    ],
-    [
-        0,
-        "frontal lobe epilepsy",
-        -1,
-        1,
-        "#1d8bf8"
-    ],
-    [
-        1,
-        "sleep-related hypermotor epilepsy",
-        0,
-        1,
-        "#1d8bf8"
-    ],
-    [
-        2,
-        "autosomal dominant nocturnal frontal lobe epilepsy 1",
-        1,
-        1,
-        "#1d8bf8"
-    ],
-    [
-        3,
-        "autosomal dominant nocturnal frontal lobe epilepsy 2",
-        1,
-        1,
-        "#1d8bf8"
-    ],
-    [
-        4,
-        "autosomal dominant nocturnal frontal lobe epilepsy 3",
-        1,
-        1,
-        "#1d8bf8"
-    ],
-    [
-        5,
-        "autosomal dominant nocturnal frontal lobe epilepsy 4",
-        1,
-        1,
-        "#1d8bf8"
-    ],
-    [
-        6,
-        "autosomal dominant nocturnal frontal lobe epilepsy 5",
-        1,
-        1,
-        "#1d8bf8"
-    ],
-    [
-        7,
-        "autosomal dominant nocturnal frontal lobe epilepsy",
-        0,
-        1,
-        "#1d8bf8"
-    ],
-    [
-        8,
-        "autosomal dominant nocturnal frontal lobe epilepsy 1",
-        7,
-        1,
-        "#1d8bf8"
-    ],
-    [
-        9,
-        "autosomal dominant nocturnal frontal lobe epilepsy 2",
-        7,
-        1,
-        "#1d8bf8"
-    ],
-    [
-        10,
-        "autosomal dominant nocturnal frontal lobe epilepsy 3",
-        7,
-        1,
-        "#1d8bf8"
-    ],
-    [
-        11,
-        "autosomal dominant nocturnal frontal lobe epilepsy 4",
-        7,
-        1,
-        "#1d8bf8"
-    ],
-    [
-        12,
-        "autosomal dominant nocturnal frontal lobe epilepsy 5",
-        7,
-        1,
-        "#1d8bf8"
-    ],
-    [
-        13,
-        "primary motor cortex epilepsy",
-        0,
-        1,
-        "#1d8bf8"
-    ]
-]
+// export const data = [
+//     [
+//         "id",
+//         "childLabel",
+//         "parent",
+//         "size",
+//         {
+//             "role": "style"
+//         }
+//     ],
+//     [
+//         0,
+//         "frontal lobe epilepsy",
+//         -1,
+//         1,
+//         "#1d8bf8"
+//     ],
+//     [
+//         1,
+//         "sleep-related hypermotor epilepsy",
+//         0,
+//         1,
+//         "#1d8bf8"
+//     ],
+//     [
+//         2,
+//         "autosomal dominant nocturnal frontal lobe epilepsy 1",
+//         1,
+//         1,
+//         "#1d8bf8"
+//     ],
+//     [
+//         3,
+//         "autosomal dominant nocturnal frontal lobe epilepsy 2",
+//         1,
+//         1,
+//         "#1d8bf8"
+//     ],
+//     [
+//         4,
+//         "autosomal dominant nocturnal frontal lobe epilepsy 3",
+//         1,
+//         1,
+//         "#1d8bf8"
+//     ],
+//     [
+//         5,
+//         "autosomal dominant nocturnal frontal lobe epilepsy 4",
+//         1,
+//         1,
+//         "#1d8bf8"
+//     ],
+//     [
+//         6,
+//         "autosomal dominant nocturnal frontal lobe epilepsy 5",
+//         1,
+//         1,
+//         "#1d8bf8"
+//     ],
+//     [
+//         7,
+//         "autosomal dominant nocturnal frontal lobe epilepsy",
+//         0,
+//         1,
+//         "#1d8bf8"
+//     ],
+//     [
+//         8,
+//         "autosomal dominant nocturnal frontal lobe epilepsy 1",
+//         7,
+//         1,
+//         "#1d8bf8"
+//     ],
+//     [
+//         9,
+//         "autosomal dominant nocturnal frontal lobe epilepsy 2",
+//         7,
+//         1,
+//         "#1d8bf8"
+//     ],
+//     [
+//         10,
+//         "autosomal dominant nocturnal frontal lobe epilepsy 3",
+//         7,
+//         1,
+//         "#1d8bf8"
+//     ],
+//     [
+//         11,
+//         "autosomal dominant nocturnal frontal lobe epilepsy 4",
+//         7,
+//         1,
+//         "#1d8bf8"
+//     ],
+//     [
+//         12,
+//         "autosomal dominant nocturnal frontal lobe epilepsy 5",
+//         7,
+//         1,
+//         "#1d8bf8"
+//     ],
+//     [
+//         13,
+//         "primary motor cortex epilepsy",
+//         0,
+//         1,
+//         "#1d8bf8"
+//     ]
+// ]
 
 export const options = {
   colors: ["#1d8bf8", "#1d8bf8", "#1d8bf8"],
@@ -125,7 +126,7 @@ export const options = {
 
 
 
-export default function Dendogram() {
+export default function Dendogram(props) {
 
     useEffect(()=>{
         setTimeout(
@@ -154,7 +155,7 @@ export default function Dendogram() {
                 chartType="WordTree"
                 width="100%"
                 height="400px"
-                data={data}
+                data={props.data}
                 options={options}
             />
         }

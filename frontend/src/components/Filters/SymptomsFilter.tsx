@@ -1,12 +1,24 @@
 import * as React from 'react';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
+import { getPhenotypes } from '../../services/webService';
 
-const options = ['Dolor abdominal', 'Nivel bajo de sodio','Tos', 'Entumecimiento', 'Lengua amarilla', 'Vomitos', 'Dolor de cabeza', 'Fiebre','Insomnio','Convulsiones'];
+
+
 
 export default function SymptomsFilter({updateSymptom}:{updateSymptom:(value: string)=>void}) {
   const [value, setValue] = React.useState<string | null>();
   const [inputValue, setInputValue] = React.useState('');
+  const [options, setOptions] = React.useState([])
+
+  React.useEffect(()=>{
+    async function setPhenotypes(){
+      const filters = await getPhenotypes()
+      const aux = filters.map((item)=> item.label)
+      setOptions(aux)
+    }
+    setPhenotypes()
+  },[])
 
   return (
       <Autocomplete
