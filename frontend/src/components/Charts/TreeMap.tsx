@@ -1,5 +1,7 @@
 import { Box, Paper, Typography } from "@mui/material";
+import { useEffect, useState } from "react";
 import { Chart } from "react-google-charts";
+import { PulseLoader } from "react-spinners";
 
 export const data = [
   [
@@ -48,6 +50,15 @@ export const options = {
 };
 
 export default function TreeMap() {
+    useEffect(()=>{
+      setTimeout(
+          ()=>setLoading(false),
+          2000
+      )
+  },[])
+
+  const [loading, setLoading] = useState(true)
+
   return (
     <Paper sx={{margin: 2, padding:2, borderRadius: 2, width: '50%'}}>
       <Box sx={{display: 'flex', justifyContent: 'center'}}>
@@ -56,13 +67,20 @@ export default function TreeMap() {
         </Typography>
       </Box>
       <Box sx={{margin: 2, padding:2, borderRadius: 2, border:1, borderColor:'#1d8bf8'}}>
-        <Chart
-        chartType="TreeMap"
-        width="100%"
-        height="400px"
-        data={data}
-        options={options}
-        />
+        {
+              loading
+              ? <Box sx={{height:"400px", display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+                  <PulseLoader size={20} color="#1d8bf8" />
+              </Box>
+              :
+              <Chart
+                chartType="TreeMap"
+                width="100%"
+                height="400px"
+                data={data}
+                options={options}
+              />
+        }
       </Box>
     </Paper>
   );

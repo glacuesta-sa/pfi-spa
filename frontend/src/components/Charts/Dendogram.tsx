@@ -1,6 +1,8 @@
 
 import { Box, Paper, Typography } from "@mui/material";
+import { useEffect, useState } from "react";
 import { Chart } from "react-google-charts";
+import { PulseLoader } from "react-spinners";
 
 
 export const data = [
@@ -121,7 +123,19 @@ export const options = {
   },
 };
 
+
+
 export default function Dendogram() {
+
+    useEffect(()=>{
+        setTimeout(
+            ()=>setLoading(false),
+            2000
+        )
+    },[])
+
+    const [loading, setLoading] = useState(true)
+
   return (
     <Paper sx={{margin: 2, padding:2, borderRadius: 2,}}>
       <Box sx={{display: 'flex', justifyContent: 'center'}}>
@@ -130,14 +144,21 @@ export default function Dendogram() {
         </Typography>
       </Box>
       <Box sx={{border:1, borderColor: '#1d8bf8', borderRadius:2, padding:2}}>
-    <Chart
-      chartType="WordTree"
-      width="100%"
-      height="400px"
-      data={data}
-      options={options}
-    />
-    </Box>
+        {
+            loading
+            ? <Box sx={{height:"400px", display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+                <PulseLoader size={20} color="#1d8bf8" />
+            </Box>
+            :
+            <Chart
+                chartType="WordTree"
+                width="100%"
+                height="400px"
+                data={data}
+                options={options}
+            />
+        }
+        </Box>
     </Paper>
   );
 }

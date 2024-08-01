@@ -66,7 +66,7 @@ export default function Sidebar({children}: {children: React.ReactNode}) {
         <Box sx={{display: 'flex', justifyContent: 'flex-start', marginLeft: 2}}>
         <List>
           {symptoms.map((text, index) => (
-            <CustomChip text={text}/>
+            <CustomChip text={text} key={index}/>
           ))}
         </List>
         </Box>
@@ -80,7 +80,7 @@ export default function Sidebar({children}: {children: React.ReactNode}) {
         <Box sx={{display: 'flex', justifyContent: 'flex-start', marginLeft: 2}}>
         <List>
           {anatomySelection.map((text, index) => (
-            <CustomChip text={text}/>
+            <CustomChip text={text} key={index}/>
           ))}
         </List>
         </Box>

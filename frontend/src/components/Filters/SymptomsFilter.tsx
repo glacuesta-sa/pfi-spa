@@ -11,19 +11,18 @@ export default function SymptomsFilter({updateSymptom}:{updateSymptom:(value: st
   return (
       <Autocomplete
         value={value}
+        // @ts-ignore
         onChange={(event: any, newValue: string | null) => {
           setValue(newValue);
           if(newValue){
             updateSymptom(newValue)
           }
         }}
+        // @ts-ignore
         onInputChange={(event, newInputValue) => {
           setInputValue(newInputValue);
         }}
         inputValue={inputValue}
-        // onInputChange={(event, newInputValue) => {
-        //   updateSymptom(newInputValue);
-        // }}
         id="controllable-states-demo"
         options={options}
         sx={{ width: 300 }}

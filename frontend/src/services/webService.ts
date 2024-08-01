@@ -7,5 +7,5 @@ export async function getDendogramData(){
 }
 
 export async function getTreatment(diseaseId: string) {
-    return 
+    return diseaseId
 }

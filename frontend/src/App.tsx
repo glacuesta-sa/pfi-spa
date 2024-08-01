@@ -1,23 +1,18 @@
-import { Box, } from "@mui/material";
-import CustomAppBar from "./components/Layout/Appbar";
-import Dendogram from "./components/Charts/Dendogram";
-import TreeMap from "./components/Charts/TreeMap";
-import Sidebar from "./components/Layout/Sidebar";
-import InfoCard from "./components/IsolatedComponents/InfoCard";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import MainDiseasePage from "./pages/MainDiseasePage";
+import HomePage from "./pages/HomePage";
+import TreatmentPage from "./pages/TreatmentPage";
 
 
 function App() {
   return (
-    <main>
-      <CustomAppBar/>
-      <Sidebar>
-        <Dendogram />
-        <Box sx={{display: 'flex'}}>
-          <TreeMap />
-          <InfoCard />
-        </Box>
-      </Sidebar>
-    </main>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/main" element={<MainDiseasePage />} />
+        <Route path="/treatment" element={<TreatmentPage />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 

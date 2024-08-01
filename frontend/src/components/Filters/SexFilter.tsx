@@ -5,8 +5,7 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Checkbox from '@mui/material/Checkbox';
-import IconButton from '@mui/material/IconButton';
-import CommentIcon from '@mui/icons-material/Comment';
+
 
 export default function SexFilter() {
   const [checked, setChecked] = React.useState([0]);
@@ -34,10 +33,11 @@ export default function SexFilter() {
             key={value}
             disablePadding
           >
-            <ListItemButton role={undefined} onClick={handleToggle(value)} dense>
+            <ListItemButton role={undefined} onClick={handleToggle(parseInt(value))} dense>
               <ListItemIcon>
                 <Checkbox
                   edge="start"
+                  // @ts-ignore
                   checked={checked.indexOf(value) !== -1}
                   tabIndex={-1}
                   disableRipple

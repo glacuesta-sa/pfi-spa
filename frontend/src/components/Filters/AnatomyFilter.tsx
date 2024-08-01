@@ -11,19 +11,18 @@ export default function AnatomyFilter({updateSelection}:{updateSelection:(value:
   return (
       <Autocomplete
         value={value}
+        // @ts-ignore
         onChange={(event: any, newValue: string | null) => {
           setValue(newValue);
           if(newValue){
             updateSelection(newValue)
           }
         }}
+        // @ts-ignore
         onInputChange={(event, newInputValue) => {
           setInputValue(newInputValue);
         }}
         inputValue={inputValue}
-        // onInputChange={(event, newInputValue) => {
-        //   updateSelection(newInputValue);
-        // }}
         id="controllable-states-demo"
         options={options}
         sx={{ width: 300 }}
