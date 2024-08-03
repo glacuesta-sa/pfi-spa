@@ -1,6 +1,19 @@
 import json
+import tempfile
+import gridfs
 from pymongo import MongoClient
 import config
+
+import db
+import numpy as np
+import pandas as pd
+from sklearn.model_selection import train_test_split, RandomizedSearchCV
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.preprocessing import LabelEncoder
+from sklearn.metrics import accuracy_score, classification_report
+from imblearn.over_sampling import RandomOverSampler
+from scipy.stats import randint
+import joblib
 
 def load_mondo_data(file_path):
     with open(file_path, 'r', encoding='utf-8') as file:
@@ -185,6 +198,149 @@ def save_to_mongodb(data_model, disease_dict, mongo_uri=config.MONGO_URI, db_nam
     diseases_collection.insert_many(disease_dict.values())
     data_model_collection.insert_one(data_model)
 
+def train_model():
+    # diseases collection desde MongoDB
+    def get_diseases_collection():
+        diseases = db.diseases_collection.find({})
+        return diseases
+    
+    fs = gridfs.GridFS(db.db)
+
+    # Extraer datos de la colección de enfermedades
+    diseases = list(get_diseases_collection())
+
+    # Preparar los datos para el entrenamiento
+    records = []
+
+    # Convertir la estructura de datos en un formato adecuado
+    for disease in diseases:
+        disease_id = disease['id']
+        disease_name = disease['name']
+
+        for treatment in disease.get('treatments', []):
+            records.append({
+                'disease_id': disease_id,
+                'disease_name': disease_name,
+                'relationship_type': treatment['type'],
+                'relationship_property': treatment['property'],
+                'target_id': treatment['target']
+            })
+        for anatomical in disease.get('anatomical_structures', []):
+            records.append({
+                'disease_id': disease_id,
+                'disease_name': disease_name,
+                'relationship_type': anatomical['type'],
+                'relationship_property': anatomical['property'],
+                'target_id': anatomical['target']
+            })
+        for phenotype in disease.get('phenotypes', []):
+            records.append({
+                'disease_id': disease_id,
+                'disease_name': disease_name,
+                'relationship_type': phenotype['type'],
+                'relationship_property': phenotype['property'],
+                'target_id': phenotype['target']
+            })
+        for age_onset in disease.get('age_onsets', []):
+            records.append({
+                'disease_id': disease_id,
+                'disease_name': disease_name,
+                'relationship_type': age_onset['type'],
+                'relationship_property': age_onset['property'],
+                'target_id': age_onset['target']
+            })
+
+    # Convertir los registros en un DataFrame
+    df = pd.DataFrame(records)
+
+    # Codificar datos categóricos
+    le_disease = LabelEncoder()
+    le_relationship_type = LabelEncoder()
+    le_relationship_property = LabelEncoder()
+    le_target_id = LabelEncoder()
+
+    df['disease_id'] = le_disease.fit_transform(df['disease_id'])
+    df['relationship_type'] = le_relationship_type.fit_transform(df['relationship_type'])
+    df['relationship_property'] = le_relationship_property.fit_transform(df['relationship_property'])
+    df['target_id'] = le_target_id.fit_transform(df['target_id'])
+
+    # Ingeniería de características: crear características de interacción
+    df['disease_rel_prop'] = df['disease_id'].astype(str) + '_' + df['relationship_property'].astype(str)
+    le_disease_rel_prop = LabelEncoder()
+    df['disease_rel_prop'] = le_disease_rel_prop.fit_transform(df['disease_rel_prop'])
+
+    X = df[['disease_id', 'relationship_type', 'relationship_property', 'disease_rel_prop']]
+    y = df['target_id']
+
+    # Reducir el tamaño de los datos para el entrenamiento
+    X_sample, _, y_sample, _ = train_test_split(X, y, train_size=0.1, random_state=42)
+
+    # Dividir los datos reducidos en conjuntos de entrenamiento y prueba
+    X_train, X_test, y_train, y_test = train_test_split(X_sample, y_sample, test_size=0.2, random_state=42)
+
+    # Manejar el desequilibrio de clases con RandomOverSampler
+    ros = RandomOverSampler(random_state=42)
+    X_train_res, y_train_res = ros.fit_resample(X_train, y_train)
+
+    # Definir el modelo
+    rf = RandomForestClassifier()
+
+    # Definir una rejilla de hiperparámetros reducida
+    param_dist = {
+        'n_estimators': randint(10, 30),
+        'max_depth': [10, 20, None],
+        'min_samples_split': randint(2, 5),
+        'min_samples_leaf': randint(1, 3),
+        'bootstrap': [True]
+    }
+
+    # Usar RandomizedSearchCV con menos iteraciones y un solo trabajo
+    random_search = RandomizedSearchCV(estimator=rf, param_distributions=param_dist, n_iter=10, cv=3, n_jobs=1, verbose=2, random_state=42)
+    random_search.fit(X_train_res, y_train_res)
+
+    # Obtener el mejor estimador
+    best_rf = random_search.best_estimator_
+
+    # Predecir en el conjunto de prueba
+    y_pred = best_rf.predict(X_test)
+
+    # Etiquetas únicas en y_test
+    unique_labels = np.unique(y_test)
+
+    # Evaluar el modelo
+    accuracy = accuracy_score(y_test, y_pred)
+    print(f'Accuracy: {accuracy}')
+    print('Classification Report:')
+    print(classification_report(y_test, y_pred, labels=unique_labels, target_names=le_target_id.inverse_transform(unique_labels)))
+
+    # Guardar el modelo y los codificadores en MongoDB
+    model_files = {
+        'best_rf.pkl': best_rf,
+        'le_disease.pkl': le_disease,
+        'le_relationship_type.pkl': le_relationship_type,
+        'le_relationship_property.pkl': le_relationship_property,
+        'le_target_id.pkl': le_target_id,
+        'le_disease_rel_prop.pkl': le_disease_rel_prop
+    }
+
+    # Guardar etiquetas vistas en un archivo JSON
+    seen_labels = {
+        'le_disease': le_disease.classes_.tolist(),
+        'le_relationship_type': le_relationship_type.classes_.tolist(),
+        'le_relationship_property': le_relationship_property.classes_.tolist(),
+        'le_target_id': le_target_id.classes_.tolist(),
+        'le_disease_rel_prop': le_disease_rel_prop.classes_.tolist()
+    }
+
+    for filename, model in model_files.items():
+        with tempfile.NamedTemporaryFile() as temp_file:
+            joblib.dump(model, temp_file.name)
+            with open(temp_file.name, 'rb') as file_data:
+                fs.put(file_data, filename=filename)
+    
+    # Guardar etiquetas vistas en MongoDB
+    fs.put(json.dumps(seen_labels).encode('utf-8'), filename='seen_labels.json')
+
 def main():
     mondo_data = load_mondo_data('datasets/mondo/mondo.json')
 
@@ -221,6 +377,9 @@ def main():
 
     # Save to MongoDB
     save_to_mongodb(data_model, disease_dict)
+
+    # train model
+    train_model()
 
 if __name__ == "__main__":
     main()

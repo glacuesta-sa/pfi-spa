@@ -1,19 +1,6 @@
 version: '3.8'
 
 services:
-  web:
-    build: .
-    ports:
-      - "5000:5000"
-    depends_on:
-      - mongo
-      - init-db
-    volumes:
-      - .:/app
-    environment:
-      - MONGO_URI=mongodb://mongo:27018/
-      - OPENAI_API_KEY=
-
   mongo:
     image: mongo:latest
     ports:
@@ -30,6 +17,18 @@ services:
       - mongo
     volumes:
       - .:/app
+
+  web:
+    build: .
+    ports:
+      - "5000:5000"
+    depends_on:
+      - init-db
+    volumes:
+      - .:/app
+    environment:
+      - MONGO_URI=mongodb://mongo:27018/
+      - OPENAI_API_KEY=
 
 volumes:
   mongo-data:

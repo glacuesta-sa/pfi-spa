@@ -1,10 +1,7 @@
-import os
-from flask import json, jsonify, request, abort
-from bson import ObjectId
+from flask import jsonify, request
 from db import diseases_collection
 from models import get_data_model
 import utils
-from openai import OpenAI
 
 def init_routes(app):
 
@@ -145,3 +142,29 @@ def init_routes(app):
         # Remove duplicates
         unique_age_onsets = {v['value']: v for v in age_onsets}.values()
         return utils.create_json_response(jsonify(list(unique_age_onsets)), 200)
+    
+    @app.route("/diseases/predict_relationship", methods=["POST"])
+    def predict_relationship():
+
+        # new_disease_id = "MONDO_0006781"
+        # new_relationship_type = "has_relationship"
+        # new_relationship_property = "RO_0004027"
+        body = request.json
+        disease_id = body.get('disease_id', '')
+        new_relationship_type = body.get('new_relationship_type', 'has_relationship')
+        new_relationship_property = body.get('new_relationship_property', [])
+
+        # Transform the IDs to include the full URI
+        full_disease_id = f"http://purl.obolibrary.org/obo/{disease_id}"
+        full_new_relationship_property = f"http://purl.obolibrary.org/obo/{new_relationship_property}"
+
+
+        predicted_target = utils.predict_relationship(full_disease_id, new_relationship_type, full_new_relationship_property)
+        print(f'Predicted target: {predicted_target}')
+        
+        return utils.create_json_response(jsonify(predicted_target), 200)
+
+    @app.route('/diseases/seen_labels', methods=['GET'])
+    def get_seen_labels():
+        seen_labels = utils.load_json_from_mongo('seen_labels.json')
+        return jsonify(seen_labels)

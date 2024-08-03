@@ -1,7 +1,11 @@
 import os
+import tempfile
+import time
 from bson import ObjectId
-from db import diseases_collection
+import gridfs
+import db
 import openai
+import joblib
 
 from flask import json, jsonify, make_response
 
@@ -27,7 +31,7 @@ def create_json_response(data, status_code=200):
 
 # Functions to build hierarchy from MongoDB data
 def build_parent_child_hierarchy():
-    diseases = list(diseases_collection.find({}, {'_id': 0}))
+    diseases = list(db.diseases_collection.find({}, {'_id': 0}))
     disease_dict = {d['id']: d for d in diseases}
     hierarchy = [["id", "childLabel", "parent", "size", {"role": "style"}, "link"]]
     id_map = {}
@@ -54,7 +58,7 @@ def build_parent_child_hierarchy():
     return hierarchy
 
 def filter_hierarchy_by_mondo_id(mondo_id):
-    diseases = list(diseases_collection.find({}, {'_id': 0}))
+    diseases = list(db.diseases_collection.find({}, {'_id': 0}))
     disease_dict = {d['id']: d for d in diseases}
     hierarchy = [["id", "childLabel", "parent", "size", {"role": "style"}, "link"]]
     id_map = {}
@@ -241,3 +245,73 @@ def set_llm_fields(disease):
         disease['description'] = result_json['description']
         disease['title'] = result_json['title']
         disease['causes'] = result_json['causes']
+
+
+fs = gridfs.GridFS(db.db)
+
+def load_json_from_mongo(filename):
+    with fs.get_last_version(filename) as file_data:
+        return json.loads(file_data.read().decode('utf-8'))
+
+# Función para predecir relaciones
+def predict_relationship(disease_id, relationship_type, relationship_property):
+
+    # Función para esperar hasta que un archivo esté disponible en MongoDB
+    def wait_for_file_in_mongo(filename, timeout=30):
+        start_time = time.time()
+        while not fs.exists({"filename": filename}):
+            if time.time() - start_time > timeout:
+                raise TimeoutError(f"Timeout: {filename} no está disponible en MongoDB después de {timeout} segundos.")
+            print(f"Esperando a que {filename} esté disponible en MongoDB...")
+            time.sleep(5)
+        print(f"{filename} está disponible en MongoDB.")
+
+    # Archivos de modelo
+    model_files = [
+        'best_rf.pkl',
+        'le_disease.pkl',
+        'le_relationship_type.pkl',
+        'le_relationship_property.pkl',
+        'le_target_id.pkl',
+        'le_disease_rel_prop.pkl'
+    ]
+
+    # Esperar a que todos los archivos de modelo estén disponibles en MongoDB
+    for filename in model_files:
+        wait_for_file_in_mongo(filename)
+
+    # Cargar los archivos de modelo desde MongoDB
+    def load_model_from_mongo(filename):
+        with tempfile.NamedTemporaryFile() as temp_file:
+            with fs.get_last_version(filename) as file_data:
+                temp_file.write(file_data.read())
+                temp_file.flush()
+                return joblib.load(temp_file.name)
+
+    best_rf = load_model_from_mongo('best_rf.pkl')
+    le_disease = load_model_from_mongo('le_disease.pkl')
+    le_relationship_type = load_model_from_mongo('le_relationship_type.pkl')
+    le_relationship_property = load_model_from_mongo('le_relationship_property.pkl')
+    le_target_id = load_model_from_mongo('le_target_id.pkl')
+    le_disease_rel_prop = load_model_from_mongo('le_disease_rel_prop.pkl')
+
+
+    # Codificar las entradas
+    disease_id_encoded = le_disease.transform([disease_id])[0]
+    relationship_type_encoded = le_relationship_type.transform([relationship_type])[0]
+    relationship_property_encoded = le_relationship_property.transform([relationship_property])[0]
+
+    # Crear la característica de interacción
+    disease_rel_prop = f"{disease_id_encoded}_{relationship_property_encoded}"
+
+    # Manejar etiquetas no vistas
+    if disease_rel_prop not in le_disease_rel_prop.classes_:
+        disease_rel_prop_encoded = -1
+    else:
+        disease_rel_prop_encoded = le_disease_rel_prop.transform([disease_rel_prop])[0]
+
+    # Predecir el objetivo
+    target_encoded = best_rf.predict([[disease_id_encoded, relationship_type_encoded, relationship_property_encoded, disease_rel_prop_encoded]])
+    target = le_target_id.inverse_transform(target_encoded)
+
+    return target[0]
