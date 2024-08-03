@@ -1,8 +1,10 @@
-from flask import jsonify, request, abort
+import os
+from flask import json, jsonify, request, abort
 from bson import ObjectId
 from db import diseases_collection
 from models import get_data_model
 import utils
+from openai import OpenAI
 
 def init_routes(app):
 
@@ -16,6 +18,11 @@ def init_routes(app):
         full_id = f"http://purl.obolibrary.org/obo/{mondo_id}"
         disease = diseases_collection.find_one({"id": full_id}, {'_id': 0})
         if disease:
+            try:
+               utils.set_llm_fields(disease)
+            except Exception as e:
+                return utils.create_json_response(jsonify({"error": str(e)}), 500)
+
             return utils.create_json_response(jsonify(disease), 200)
         else:
             return utils.create_json_response(jsonify("Disease not found"), 404)

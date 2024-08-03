@@ -12,6 +12,7 @@ services:
       - .:/app
     environment:
       - MONGO_URI=mongodb://mongo:27018/
+      - OPENAI_API_KEY=
 
   mongo:
     image: mongo:latest

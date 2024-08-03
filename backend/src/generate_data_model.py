@@ -11,6 +11,8 @@ def create_entry(id, name="Unknown", description="No description available", tra
         "id": id,
         "name": name,
         "description": description,
+        "title": "Titulo de la enfermedad",
+        "causes": ["Causa de la enfermedad #1", "Causa de la enfermedad #2", "Causa de la enfermedad #3"],
         "treatments": [],
         "anatomical_structures": [],
         "phenotypes": [],

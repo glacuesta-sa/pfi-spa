@@ -1,7 +1,9 @@
+import os
 from bson import ObjectId
 from db import diseases_collection
+import openai
 
-from flask import jsonify, make_response
+from flask import json, jsonify, make_response
 
 def convert_objectid_to_str(disease):
     if isinstance(disease, dict):
@@ -213,3 +215,29 @@ def get_diseases_by_filters(phenotype_ids, anatomical_ids, age_onset_ids, data_m
             disease['age_onsets'] = [age_onset for age_onset in disease['age_onsets'] if age_onset['target'] not in age_onset_ids]
 
     return diseases
+
+def set_llm_fields(disease):
+
+    text = "This is the name of a disease in MONDO disease ontology: " + disease['name']
+    text = text + ". Please traverse the ontology and get a title, description and causes of the disease. Do not include any additional text as the output, it has to have the following format, in JSON. Exclude json decorations, only keep json structure: title: title of the disease, description: brief description of the disease, causes: List of brief causes."
+           
+     # Initialize the OpenAI client with your API key
+    client = None
+    apiKey = os.getenv('OPENAI_API_KEY', '')
+    if len(apiKey) > 0: 
+        client = openai.OpenAI(api_key=apiKey)
+        completion = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "system", "content": "Mondo Ontology traverse assistant."},
+            {"role": "user", "content": text}
+        ])
+
+        result_content = completion.choices[0].message.content
+
+        # Convertir result_content de cadena JSON a diccionario de Python
+        result_json = json.loads(result_content)
+
+        disease['description'] = result_json['description']
+        disease['title'] = result_json['title']
+        disease['causes'] = result_json['causes']
