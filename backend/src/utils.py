@@ -3,7 +3,7 @@ import random
 import tempfile
 import time
 from bson import ObjectId
-import gridfs
+import constants
 import db
 import openai
 import joblib
@@ -32,7 +32,7 @@ def create_json_response(data, status_code=200):
 
 # Functions to build hierarchy from MongoDB data
 def build_parent_child_hierarchy():
-    diseases = list(db.diseases_collection.find({}, {'_id': 0}))
+    diseases = list(db.DISEASES_COLLECTION.find({}, {'_id': 0}))
     disease_dict = {d['id']: d for d in diseases}
     hierarchy = [["id", "childLabel", "parent", "size", {"role": "style"}, "link"]]
     id_map = {}
@@ -59,7 +59,7 @@ def build_parent_child_hierarchy():
     return hierarchy
 
 def filter_hierarchy_by_mondo_id(mondo_id):
-    diseases = list(db.diseases_collection.find({}, {'_id': 0}))
+    diseases = list(db.DISEASES_COLLECTION.find({}, {'_id': 0}))
     disease_dict = {d['id']: d for d in diseases}
     hierarchy = [["id", "childLabel", "parent", "size", {"role": "style"}, "link"]]
     id_map = {}
@@ -222,7 +222,23 @@ def get_diseases_by_filters(phenotype_ids, anatomical_ids, age_onset_ids, data_m
     return diseases
 
 def set_llm_fields(disease):
+    """
+    Set on-the-fly generated fields by querying an LLM (Language Model). 
+    Title, description, and causes fields for a given disease dictionary.
 
+    Parameters:
+    disease (dict): A dictionary containing information about the disease. The 'name' key must be present.
+
+    This function constructs a prompt to query the OpenAI API to traverse the MONDO disease ontology and 
+    retrieve the title, description, and causes of the disease. The retrieved information is then added 
+    to the input dictionary.
+
+    The format of the prompt ensures that the response is in JSON format, with specific fields: title, 
+    description, and causes.
+
+    Raises:
+    KeyError: If 'name' is not present in the disease dictionary.
+    """
     text = "This is the name of a disease in MONDO disease ontology: " + disease['name']
     text = text + ". Please traverse the ontology and get a title, description and causes of the disease. Do not include any additional text as the output, it has to have the following format, in JSON. Exclude json decorations, only keep json structure: title: title of the disease, description: brief description of the disease, causes: List of brief causes."
            
@@ -246,28 +262,42 @@ def set_llm_fields(disease):
         disease['description'] = result_json['description']
         disease['title'] = result_json['title']
         disease['causes'] = result_json['causes']
-
-
-fs = gridfs.GridFS(db.db)
-
-def load_json_from_mongo(filename):
-    with fs.get_last_version(filename) as file_data:
-        return json.loads(file_data.read().decode('utf-8'))
     
-# Función para predecir relaciones
 def predict_relationship(disease_id, relationship_type, relationship_property):
-    
-    # Función para esperar hasta que un archivo esté disponible en MongoDB
-    def wait_for_file_in_mongo(filename, timeout=30):
-        start_time = time.time()
-        while not fs.exists({"filename": filename}):
-            if time.time() - start_time > timeout:
-                raise TimeoutError(f"Timeout: {filename} no está disponible en MongoDB después de {timeout} segundos.")
-            print(f"Esperando a que {filename} esté disponible en MongoDB...")
-            time.sleep(5)
-        print(f"{filename} está disponible en MongoDB.")
+    """
+    Predict the target ID for a given disease ID, relationship type, and relationship property
+    using a pre-trained Random Forest model stored in MongoDB.
 
-    # Archivos de modelo
+    Parameters:
+    disease_id (str): The identifier for the disease.
+    relationship_type (str): The type of the relationship.
+    relationship_property (str): The property of the relationship.
+
+    Returns:
+    str: The predicted target ID for the given inputs.
+    """
+    
+    # function to wait for mongoDB to be ready first time
+    def wait_for_file_in_mongo(filename, timeout=30):
+        """
+        Wait until a specified file is available in MongoDB's GridFS.
+
+        Parameters:
+        filename (str): The name of the file to wait for.
+        timeout (int): The maximum time to wait for the file, in seconds.
+
+        Raises:
+        TimeoutError: If the file is not available within the timeout period.
+        """
+        start_time = time.time()
+        while not db.fs.exists({"filename": filename}):
+            if time.time() - start_time > timeout:
+                raise TimeoutError(f"Timeout: {filename} not available in mongoDB after {timeout} seconds.")
+            print(f"Waiting for {filename} to be available in MongoDB...")
+            time.sleep(5)
+        print(f"{filename} is available MongoDB.")
+
+    # random forest files stored in fileGrid
     model_files = [
         'best_rf.pkl',
         'le_disease.pkl',
@@ -277,14 +307,14 @@ def predict_relationship(disease_id, relationship_type, relationship_property):
         'le_disease_rel_prop.pkl'
     ]
 
-    # Esperar a que todos los archivos de modelo estén disponibles en MongoDB
+    # wait if necessary
     for filename in model_files:
         wait_for_file_in_mongo(filename)
 
-    # Cargar los archivos de modelo desde MongoDB
+    # load model files
     def load_model_from_mongo(filename):
         with tempfile.NamedTemporaryFile() as temp_file:
-            with fs.get_last_version(filename) as file_data:
+            with db.fs.get_last_version(filename) as file_data:
                 temp_file.write(file_data.read())
                 temp_file.flush()
                 return joblib.load(temp_file.name)
@@ -297,25 +327,25 @@ def predict_relationship(disease_id, relationship_type, relationship_property):
     le_disease_rel_prop = load_model_from_mongo('le_disease_rel_prop.pkl')
 
 
-    # Codificar las entradas
+    # encode inputs
     disease_id_encoded = le_disease.transform([disease_id])[0]
     relationship_type_encoded = le_relationship_type.transform([relationship_type])[0]
     relationship_property_encoded = le_relationship_property.transform([relationship_property])[0]
 
-    # Crear la característica de interacción
+    # feature engineering transcode of the filters
     disease_rel_prop = f"{disease_id_encoded}_{relationship_property_encoded}"
 
-    # Manejar etiquetas no vistas
+    # not seen labels handling
     if disease_rel_prop not in le_disease_rel_prop.classes_:
         disease_rel_prop_encoded = -1
     else:
         disease_rel_prop_encoded = le_disease_rel_prop.transform([disease_rel_prop])[0]
 
-    # Predecir el objetivo
+    # predict
     target_encoded = best_rf.predict([[disease_id_encoded, relationship_type_encoded, relationship_property_encoded, disease_rel_prop_encoded]])
     le_target_id.inverse_transform(target_encoded)
 
-    # posibles objetivos basados en la relación
+    # posible targets
     possible_targets = [t for t in le_target_id.classes_ if is_valid_relationship(relationship_property, t)]
 
     # randomize to not be deterministic
@@ -323,12 +353,23 @@ def predict_relationship(disease_id, relationship_type, relationship_property):
 
     return predicted_target
 
-# Función para verificar si una relación es válida
 def is_valid_relationship(property_id, target_id):
+    """
+    Check if the relationship between a given property ID and target ID is valid based on the 
+    predefined types of relationships.
+
+    Parameters:
+    property_id (str): The identifier for the property (relationship type).
+    target_id (str): The identifier for the target entity.
+
+    Returns:
+    bool: True if the relationship is valid, False otherwise.
+    """
+
     relationships_types = db.get_data_model()['relationships_types']
     if property_id in relationships_types:
-        if relationships_types[property_id] == "UBERON" and 'UBERON' not in target_id:
+        if relationships_types[property_id] == constants.UBERON_STR and constants.UBERON_STR not in target_id:
             return False
-        if relationships_types[property_id] == "HP" and 'HP' not in target_id:
+        if relationships_types[property_id] == constants.HP_STR and constants.HP_STR not in target_id:
             return False
     return True

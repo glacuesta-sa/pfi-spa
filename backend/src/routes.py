@@ -1,12 +1,14 @@
+import json
 from flask import jsonify, request
 import db
 import utils
 
+# TODO implement controller-services-repository pattern
 def init_routes(app):
 
     @app.route("/diseases", methods=["GET"])
     def get_diseases():
-        diseases = list(db.get_diseases_collection())
+        diseases = db.get_diseases()
         return utils.create_json_response(jsonify(diseases), 200)
 
     @app.route("/disease/<mondo_id>", methods=["GET"])
@@ -165,5 +167,6 @@ def init_routes(app):
 
     @app.route('/diseases/seen_labels', methods=['GET'])
     def get_seen_labels():
-        seen_labels = utils.load_json_from_mongo('seen_labels.json')
+        with db.fs.get_last_version('seen_labels.json') as file_data:
+            seen_labels = json.loads(file_data.read().decode('utf-8'))
         return jsonify(seen_labels)
