@@ -99,6 +99,8 @@ def process_nodes(mondo_data, omit_entities, disease_dict):
 
 def process_edges(mondo_data, omit_entities, age_onset_hierarchy, disease_dict, data_model):
     node_labels = {node['id']: node.get('lbl', 'Unknown') for node in mondo_data['graphs'][0]['nodes']}
+
+    relationships_types = {}
     
     for record in mondo_data['graphs'][0]['edges']:
         subject_id = record.get('sub')
@@ -143,6 +145,9 @@ def process_edges(mondo_data, omit_entities, age_onset_hierarchy, disease_dict, 
                         if object_id not in data_model["anatomical_to_diseases"]:
                             data_model["anatomical_to_diseases"][object_id] = []
                         data_model["anatomical_to_diseases"][object_id].append(subject_id)
+
+                    relationships_types[property_id] = "UBERON"
+
                 elif 'HP' in object_id and object_id in age_onset_hierarchy:
                     age_onset_entry = {
                         "type": relationship_type,
@@ -156,6 +161,9 @@ def process_edges(mondo_data, omit_entities, age_onset_hierarchy, disease_dict, 
                         if object_id not in data_model["age_onset_to_diseases"]:
                             data_model["age_onset_to_diseases"][object_id] = []
                         data_model["age_onset_to_diseases"][object_id].append(subject_id)
+                    
+                    relationships_types[property_id] = "HP"
+
                 elif 'HP' in object_id:
                     phenotype_entry = {
                         "type": relationship_type,
@@ -169,6 +177,10 @@ def process_edges(mondo_data, omit_entities, age_onset_hierarchy, disease_dict, 
                         if object_id not in data_model["phenotype_to_diseases"]:
                             data_model["phenotype_to_diseases"][object_id] = []
                         data_model["phenotype_to_diseases"][object_id].append(subject_id)
+                    
+                    relationships_types[property_id] = "HP"
+    
+    data_model["relationships_types"] = relationships_types
 
 
 def finalize_data_model(disease_dict, data_model):
@@ -199,18 +211,18 @@ def save_to_mongodb(data_model, disease_dict, mongo_uri=config.MONGO_URI, db_nam
     data_model_collection.insert_one(data_model)
 
 def train_model():
-    # diseases collection desde MongoDB
-    def get_diseases_collection():
-        diseases = db.diseases_collection.find({})
-        return diseases
     
     fs = gridfs.GridFS(db.db)
 
     # Extraer datos de la colección de enfermedades
-    diseases = list(get_diseases_collection())
+    diseases = list(db.get_diseases_collection())
+
+    data_model = db.get_data_model()
 
     # Preparar los datos para el entrenamiento
     records = []
+
+    relationships_types = data_model.get("relationships_types", {})
 
     # Convertir la estructura de datos en un formato adecuado
     for disease in diseases:
@@ -226,6 +238,16 @@ def train_model():
                 'target_id': treatment['target']
             })
         for anatomical in disease.get('anatomical_structures', []):
+
+            property_id = anatomical['property']
+            target_id = anatomical['target']
+
+            if property_id in relationships_types:
+                if relationships_types[property_id] == "UBERON" and 'UBERON' not in target_id:
+                    continue  # Saltar relaciones incorrectas
+                if relationships_types[property_id] == "HP" and 'HP' not in target_id:
+                    continue  # Saltar relaciones incorrectas
+
             records.append({
                 'disease_id': disease_id,
                 'disease_name': disease_name,
@@ -234,6 +256,17 @@ def train_model():
                 'target_id': anatomical['target']
             })
         for phenotype in disease.get('phenotypes', []):
+
+
+            property_id = phenotype['property']
+            target_id = phenotype['target']
+
+            if property_id in relationships_types:
+                if relationships_types[property_id] == "UBERON" and 'UBERON' not in target_id:
+                    continue  # Saltar relaciones incorrectas
+                if relationships_types[property_id] == "HP" and 'HP' not in target_id:
+                    continue  # Saltar relaciones incorrectas
+
             records.append({
                 'disease_id': disease_id,
                 'disease_name': disease_name,
@@ -242,6 +275,18 @@ def train_model():
                 'target_id': phenotype['target']
             })
         for age_onset in disease.get('age_onsets', []):
+
+
+
+            property_id = age_onset['property']
+            target_id = age_onset['target']
+
+            if property_id in relationships_types:
+                if relationships_types[property_id] == "UBERON" and 'UBERON' not in target_id:
+                    continue  # Saltar relaciones incorrectas
+                if relationships_types[property_id] == "HP" and 'HP' not in target_id:
+                    continue  # Saltar relaciones incorrectas
+
             records.append({
                 'disease_id': disease_id,
                 'disease_name': disease_name,
@@ -359,7 +404,8 @@ def main():
         "diseases": [],
         "phenotype_to_diseases": {},
         "age_onset_to_diseases": {},
-        "anatomical_to_diseases": {}
+        "anatomical_to_diseases": {},
+        "relationships_types": {}
     }
 
     disease_dict = {}

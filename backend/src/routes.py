@@ -1,19 +1,18 @@
 from flask import jsonify, request
-from db import diseases_collection
-from models import get_data_model
+import db
 import utils
 
 def init_routes(app):
 
     @app.route("/diseases", methods=["GET"])
     def get_diseases():
-        diseases = list(diseases_collection.find({}, {'_id': 0}))
+        diseases = list(db.get_diseases_collection())
         return utils.create_json_response(jsonify(diseases), 200)
 
     @app.route("/disease/<mondo_id>", methods=["GET"])
     def get_disease(mondo_id):
         full_id = f"http://purl.obolibrary.org/obo/{mondo_id}"
-        disease = diseases_collection.find_one({"id": full_id}, {'_id': 0})
+        disease = db.get_disease_by_id(full_id)
         if disease:
             try:
                utils.set_llm_fields(disease)
@@ -32,7 +31,7 @@ def init_routes(app):
     @app.route("/filter_hierarchy/<mondo_id>", methods=["GET"])
     def filter_hierarchy(mondo_id):
         full_id = f"http://purl.obolibrary.org/obo/{mondo_id}"
-        if not diseases_collection.find_one({"id": full_id}):
+        if not db.get_disease_by_id(full_id):
             return utils.create_json_response(jsonify("Disease not found"), 404)
         hierarchy = utils.filter_hierarchy_by_mondo_id(full_id)
         return utils.create_json_response(jsonify(hierarchy), 200)
@@ -48,7 +47,7 @@ def init_routes(app):
         full_phenotype_ids = [f"http://purl.obolibrary.org/obo/{pid}" for pid in phenotype_ids]
         print(f"Transformed phenotype IDs: {full_phenotype_ids}")
 
-        diseases = utils.get_diseases_by_phenotypes(full_phenotype_ids, get_data_model())
+        diseases = utils.get_diseases_by_phenotypes(full_phenotype_ids, db.get_data_model())
         diseases = utils.convert_objectid_to_str(diseases)
         print(f"Found diseases: {diseases}")
         return utils.create_json_response(jsonify(diseases), 200)
@@ -64,7 +63,7 @@ def init_routes(app):
         full_age_onset_ids = [f"http://purl.obolibrary.org/obo/{aid}" for aid in age_onset_ids]
         print(f"Transformed age onset IDs: {full_age_onset_ids}")
 
-        diseases = utils.get_diseases_by_age_onsets(full_age_onset_ids, get_data_model())
+        diseases = utils.get_diseases_by_age_onsets(full_age_onset_ids, db.get_data_model())
         diseases = utils.convert_objectid_to_str(diseases)
         print(f"Found diseases: {diseases}")
         return utils.create_json_response(jsonify(diseases), 200)
@@ -80,7 +79,7 @@ def init_routes(app):
         full_anatomical_ids = [f"http://purl.obolibrary.org/obo/{aid}" for aid in anatomical_ids]
         print(f"Transformed anatomical structure IDs: {full_anatomical_ids}")
 
-        diseases = utils.get_diseases_by_anatomical_structures(full_anatomical_ids, get_data_model())
+        diseases = utils.get_diseases_by_anatomical_structures(full_anatomical_ids, db.get_data_model())
         diseases = utils.convert_objectid_to_str(diseases)
         print(f"Found diseases: {diseases}")
         return utils.create_json_response(jsonify(diseases), 200)
@@ -97,14 +96,14 @@ def init_routes(app):
         full_anatomical_ids = [f"http://purl.obolibrary.org/obo/{aid}" for aid in anatomical_ids]
         full_age_onset_ids = [f"http://purl.obolibrary.org/obo/{aid}" for aid in age_onset_ids]
 
-        diseases = utils.get_diseases_by_filters(full_phenotype_ids, full_anatomical_ids, full_age_onset_ids, get_data_model())
+        diseases = utils.get_diseases_by_filters(full_phenotype_ids, full_anatomical_ids, full_age_onset_ids, db.get_data_model())
         diseases = utils.convert_objectid_to_str(diseases)
         return utils.create_json_response(jsonify(diseases), 200)
 
     @app.route("/phenotypes", methods=["GET"])
     def get_phenotypes():
         phenotypes = []
-        for disease in get_data_model()['diseases']:
+        for disease in db.get_data_model()['diseases']:
             for phenotype in disease.get('phenotypes', []):
                 phenotypes.append({
                     "label": phenotype.get('label', 'Unknown Phenotype'),
@@ -118,7 +117,7 @@ def init_routes(app):
     @app.route("/anatomical_structures", methods=["GET"])
     def get_anatomical_structures():
         anatomical_structures = []
-        for disease in get_data_model()['diseases']:
+        for disease in db.get_data_model()['diseases']:
             for anatomical_structure in disease.get('anatomical_structures', []):
                 anatomical_structures.append({
                     "label": anatomical_structure.get('label', 'Unknown anatomical structure'),
@@ -132,7 +131,7 @@ def init_routes(app):
     @app.route("/age_onsets", methods=["GET"])
     def get_age_onsets():
         age_onsets = []
-        for disease in get_data_model()['diseases']:
+        for disease in db.get_data_model()['diseases']:
             for age_onset in disease.get('age_onsets', []):
                 age_onsets.append({
                     "label": age_onset.get('label', 'Unknown age onset'),

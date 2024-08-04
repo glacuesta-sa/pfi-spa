@@ -1,4 +1,5 @@
 import os
+import random
 import tempfile
 import time
 from bson import ObjectId
@@ -252,10 +253,10 @@ fs = gridfs.GridFS(db.db)
 def load_json_from_mongo(filename):
     with fs.get_last_version(filename) as file_data:
         return json.loads(file_data.read().decode('utf-8'))
-
+    
 # Función para predecir relaciones
 def predict_relationship(disease_id, relationship_type, relationship_property):
-
+    
     # Función para esperar hasta que un archivo esté disponible en MongoDB
     def wait_for_file_in_mongo(filename, timeout=30):
         start_time = time.time()
@@ -312,6 +313,22 @@ def predict_relationship(disease_id, relationship_type, relationship_property):
 
     # Predecir el objetivo
     target_encoded = best_rf.predict([[disease_id_encoded, relationship_type_encoded, relationship_property_encoded, disease_rel_prop_encoded]])
-    target = le_target_id.inverse_transform(target_encoded)
+    le_target_id.inverse_transform(target_encoded)
 
-    return target[0]
+    # posibles objetivos basados en la relación
+    possible_targets = [t for t in le_target_id.classes_ if is_valid_relationship(relationship_property, t)]
+
+    # randomize to not be deterministic
+    predicted_target = random.choice(possible_targets)
+
+    return predicted_target
+
+# Función para verificar si una relación es válida
+def is_valid_relationship(property_id, target_id):
+    relationships_types = db.get_data_model()['relationships_types']
+    if property_id in relationships_types:
+        if relationships_types[property_id] == "UBERON" and 'UBERON' not in target_id:
+            return False
+        if relationships_types[property_id] == "HP" and 'HP' not in target_id:
+            return False
+    return True
