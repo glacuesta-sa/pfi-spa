@@ -5,6 +5,8 @@ MONDO_STR = 'MONDO'
 MAXO_STR = 'MAXO'
 HP_STR = 'HP'
 UBERON_STR = 'UBERON'
+HP_NAME = 'The Human Phenotype Ontology'
+UBERON_NAME = 'The Uber-anatomy ontology'
 
 # RELATIONSHIP CONSTANTS
 IS_A_RELATIONSHIP = 'is_a'
@@ -21,4 +23,14 @@ OMIT_ENTITIES = {
     "http://purl.obolibrary.org/obo/MAXO_0000001",
     "http://purl.obolibrary.org/obo/UBERON_0000001"
 }
+
+# random forest files stored in fileGrid
+RANDOM_FOREST_MODEL_FILES = [
+    'best_rf.pkl',
+    'le_disease.pkl',
+    'le_relationship_type.pkl',
+    'le_relationship_property.pkl',
+    'le_target_id.pkl',
+    'le_disease_rel_prop.pkl'
+]
 
