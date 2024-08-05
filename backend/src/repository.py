@@ -1,15 +1,21 @@
 import gridfs
 from pymongo import MongoClient
+from rdflib import Graph
 import config
+
+## TODO __init__ method
 
 ## MongoDB database conn
 client = MongoClient(config.MONGO_URI)
 db = client[config.MONDO_DB]
 DISEASES_COLLECTION = db['diseases']
 DATA_MODEL_COLLECTION = db['data_model']
+HP_ONTOLOGY_COLLETION = db['hpo']
 
 # FileGrid conn
 fs = gridfs.GridFS(db)
+
+HPO_KG = Graph()
 
 # TODO mongoDB adapter
 # TODO DynamoDB adapter

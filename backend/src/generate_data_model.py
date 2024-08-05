@@ -2,6 +2,8 @@ import utils
 import models.random_forest as random_forest
 import models.ontogpt as ontogpt
 import constants
+from rdflib import Graph, Namespace
+from rdflib.namespace import RDF, RDFS
 
 import repository
 
@@ -122,7 +124,10 @@ def process_edges(mondo_data, age_onset_hierarchy, disease_dict, data_model):
                 object_label = node_labels.get(object_id, 'Unknown')
                 #relationship_entry = create_relationship_entry(relationship_type, property_id, object_id, object_label)
 
-                # TODO ECTO relationships
+                # TODO axel ECTO relationships
+                # TODO axel include ECTO, CHEBI, GO relationships, discover new features to expand the model
+                # TODO axel, seggregate the collection in different documents. 
+                # TODO axel, RO ontology? 
                 '''or 'ECTO' in object_id'''
                 if constants.MAXO_STR in object_id:
                     treatment_entry = {
@@ -202,6 +207,30 @@ def finalize_data_model(disease_dict, data_model):
                 del disease['age_onsets']
             data_model['diseases'].append(disease)
 
+def load_hp_ontology():
+
+    # TODO: CI-CD generate .ttl 
+    owl_file_path = "datasets/hpo/hp-base.owl"
+    ttl_file_path = "datasets/hpo/hp-base.ttl"
+
+    print('loading hpo ontology')
+
+    # load owl, save ttl
+    #g = Graph()
+    #g.parse(owl_file_path, format='xml')
+    
+    # TODO en memoria por ahora
+    repository.HPO_KG.serialize(destination=ttl_file_path, format='turtle')
+ 
+    #with open(ttl_file_path, 'r') as file:
+    #    ttl_data = file.read()
+
+    #ttl_data_bytes = ttl_data.encode('utf-8')
+
+    #repository.HPO_KG.parse(data=ttl_data_bytes, format='turtle')
+
+    #repository.fs.put(ttl_data_bytes, filename="hpo.ttl")
+
 def main():
     mondo_data = utils.load_json('datasets/mondo/mondo.json')
 
@@ -234,9 +263,13 @@ def main():
     # Save to MongoDB
     repository.save(data_model, disease_dict)
 
+    # hpo ontology collection
+    load_hp_ontology()
+
     # train models
     random_forest.generate_model()
     ontogpt.generate_model()
+
 
 if __name__ == "__main__":
     main()

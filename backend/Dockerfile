@@ -1,20 +1,23 @@
-# Use the official Python image from the Docker Hub
+# Dependencies  stage
+FROM python:3.12 AS dependencies
+
+# copy and install dependencies
+COPY requirements.txt .
+RUN pip install --user -r requirements.txt
+
+# Build stage
 FROM python:3.12
 
-# Set the working directory
+# workdir is /app, copy all files
 WORKDIR /app
-
-# Copy the current directory contents into the container at /app
 COPY . /app
 
-# Install any needed packages specified in requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
+# copy dependencies and set pip paths
+COPY --from=dependencies /root/.local /root/.local
+ENV PATH=/root/.local/bin:$PATH
 
-# Make port 5000 available to the world outside this container
-EXPOSE 5000
-
-# Define environment variable
-ENV FLASK_APP=src/app.py
+# app and debug ports
+EXPOSE 5000 5001
 
 # Run app.py when the container launches
-CMD ["flask", "run", "--host=0.0.0.0"]
+CMD ["python", "-Xfrozen_modules=off", "-m", "flask", "run", "--host=0.0.0.0"]

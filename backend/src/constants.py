@@ -34,3 +34,10 @@ RANDOM_FOREST_MODEL_FILES = [
     'le_disease_rel_prop.pkl'
 ]
 
+LABEL_QUERY = '''PREFIX obo: <http://purl.obolibrary.org/obo/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?label
+WHERE {
+  obo:HP_0000000 rdfs:label ?label .
+}'''

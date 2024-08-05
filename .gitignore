@@ -31,3 +31,4 @@ amplify_outputs*
 amplifyconfiguration*
 backend/src/models/__pycache__/ontogpt.cpython-312.pyc
 backend/src/models/__pycache__/random_forest.cpython-312.pyc
+backend/datasets/hpo/hp-international.owl

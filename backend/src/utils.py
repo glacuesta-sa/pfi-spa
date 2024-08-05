@@ -20,3 +20,8 @@ def convert_objectid_to_str(disease):
 def load_json(file_path):
     with open(file_path, 'r', encoding='utf-8') as file:
         return json.load(file)
+
+# load sparql query from file
+def load_sparql_query(file_path):
+    with open(file_path, 'r') as file:
+        return file.read()

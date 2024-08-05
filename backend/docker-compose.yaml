@@ -22,6 +22,7 @@ services:
     build: .
     ports:
       - "5000:5000"
+      - "5001:5001"
     depends_on:
       - init-db
     volumes:
@@ -29,6 +30,9 @@ services:
     environment:
       - MONGO_URI=mongodb://mongo:27018/
       - OPENAI_API_KEY=
+      - FLASK_APP=src/app.py
+      - FLASK_ENV=development
+      - FLASK_DEBUG=1
 
 volumes:
   mongo-data:

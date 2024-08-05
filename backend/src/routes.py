@@ -4,6 +4,7 @@ import services
 import repository
 import utils
 
+# TODO axel version endpoints
 # TODO implement controller-services-repository pattern
 def init_routes(app):
 
@@ -88,6 +89,7 @@ def init_routes(app):
         phenotype_ids = body.get('phenotype_ids', [])
         anatomical_ids = body.get('anatomical_ids', [])
         age_onset_ids = body.get('age_onset_ids', [])
+        # include_predictions = body.get('include_predictions', "true")
         
         # Transform the IDs to include the full URI
         full_phenotype_ids = [f"http://purl.obolibrary.org/obo/{pid}" for pid in phenotype_ids]
@@ -130,11 +132,18 @@ def init_routes(app):
         
         return create_json_response(jsonify(predicted_target), 200)
 
+    ################## DEBUG
     @app.route('/diseases/seen_labels', methods=['GET'])
     def get_seen_labels():
         with repository.fs.get_last_version('seen_labels.json') as file_data:
             seen_labels = json.loads(file_data.read().decode('utf-8'))
         return create_json_response(jsonify(seen_labels), 200)
+    
+    @app.route('/phenotypes/details', methods=['GET'])
+    def get_phenotype_details():
+        # body param
+        hp_id = request.json.get('hp_id')
+        return create_json_response(jsonify(services.get_phenotype_details_by_id(hp_id)), 200)
 
 def create_json_response(data, status_code=200):
     response = make_response(data, status_code)

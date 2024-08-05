@@ -3,6 +3,9 @@ import os
 import random
 import tempfile
 import time
+
+from flask import jsonify, request
+from rdflib import Graph
 import utils
 import constants
 import repository
@@ -51,36 +54,6 @@ def set_llm_fields(disease):
         disease['title'] = result_json['title']
         disease['causes'] = result_json['causes']
 
-def set_llm_fields2(disease_name, relationship_name, rel_type):
-
-    rel_type_str = None
-    if rel_type == constants.HP_STR:
-        rel_type_str = constants.HP_NAME
-    elif rel_type == constants.UBERON_STR:
-        rel_type_str = constants.UBERON_NAME
- 
-    text = f"{relationship_name} is a predicted relationship of {rel_type_str} with a MONDO ontology disease: {disease_name} " 
-    text = text + f". Please traverse the {rel_type_str} and get a label for it. Do not include any additional text as the output, it has to have the following format, in JSON. Exclude json decorations, only keep json structure: label: title of the disease."
-           
-     # Initialize the OpenAI client with your API key
-    client = None
-    apiKey = os.getenv('OPENAI_API_KEY', '')
-    if len(apiKey) > 0: 
-        client = openai.OpenAI(api_key=apiKey)
-        completion = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[
-            {"role": "system", "content": f"{rel_type_str} traverse assistant."},
-            {"role": "user", "content": text}
-        ])
-
-        result_content = completion.choices[0].message.content
-
-        # Convertir result_content de cadena JSON a diccionario de Python
-        result_json = json.loads(result_content)
-
-        return result_json['label']
-    
 def predict_relationship(disease_id, relationship_type, relationship_property):
     """
     Predict the target ID for a given disease ID, relationship type, and relationship property
@@ -436,3 +409,12 @@ def get_age_onsets():
     # Remove duplicates
     unique_age_onsets = {v['value']: v for v in age_onsets}.values()
     return list(unique_age_onsets)
+
+def get_phenotype_details_by_id(hp_id):
+
+    sparql_query = constants.LABEL_QUERY.replace("HP_0000000", hp_id)
+    results = repository.HPO_KG.query(sparql_query)
+    result_list = []
+    for row in results:
+        result_list.append({str(var): str(row[var]) for var in row.labels})
+    return result_list
