@@ -69,9 +69,9 @@ def generate_model():
             target_id = anatomical['target']
 
             if property_id in relationships_types:
-                if relationships_types[property_id] == constants.UBERON_STR and constants.UBERON_STR not in target_id:
+                if relationships_types[property_id]["type"] == constants.UBERON_STR and constants.UBERON_STR not in target_id:
                     continue
-                if relationships_types[property_id] == constants.HP_STR and constants.HP_STR not in target_id:
+                if relationships_types[property_id]["type"] == constants.HP_STR and constants.HP_STR not in target_id:
                     continue
 
             records.append({
@@ -89,9 +89,9 @@ def generate_model():
             target_id = phenotype['target']
 
             if property_id in relationships_types:
-                if relationships_types[property_id] == constants.UBERON_STR and constants.UBERON_STR not in target_id:
+                if relationships_types[property_id]["type"] == constants.UBERON_STR and constants.UBERON_STR not in target_id:
                     continue
-                if relationships_types[property_id] == constants.HP_STR and constants.HP_STR not in target_id:
+                if relationships_types[property_id]["type"] == constants.HP_STR and constants.HP_STR not in target_id:
                     continue
 
             records.append({
@@ -109,9 +109,9 @@ def generate_model():
             target_id = age_onset['target']
 
             if property_id in relationships_types:
-                if relationships_types[property_id] == constants.UBERON_STR and constants.UBERON_STR not in target_id:
+                if relationships_types[property_id]["type"] == constants.UBERON_STR and constants.UBERON_STR not in target_id:
                     continue
-                if relationships_types[property_id] == constants.HP_STR and constants.HP_STR not in target_id:
+                if relationships_types[property_id]["type"] == constants.HP_STR and constants.HP_STR not in target_id:
                     continue
 
             records.append({

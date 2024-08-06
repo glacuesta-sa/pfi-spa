@@ -5,6 +5,7 @@ MONDO_STR = 'MONDO'
 MAXO_STR = 'MAXO'
 HP_STR = 'HP'
 UBERON_STR = 'UBERON'
+RO_STR = 'RO_'
 HP_NAME = 'The Human Phenotype Ontology'
 UBERON_NAME = 'The Uber-anatomy ontology'
 
@@ -18,15 +19,15 @@ SUB_OF_PROPERTIES = ['http://www.w3.org/2000/01/rdf-schema#subClassOf', 'subProp
 
 # OMITTED ENTITIES, i.e., ARE TOP HIERARCHY PARENT OR NON-HUMAN ANIMAL DISEASES 
 OMIT_ENTITIES = {
-    #"http://purl.obolibrary.org/obo/MONDO_0000001",
-    #"http://purl.obolibrary.org/obo/HP_0000001",
-    #"http://purl.obolibrary.org/obo/MAXO_0000001",
-    #"http://purl.obolibrary.org/obo/UBERON_0000001",
-    #"http://purl.obolibrary.org/obo/MONDO_0000000",
-    #"http://purl.obolibrary.org/obo/HP_0000000",
-    #"http://purl.obolibrary.org/obo/MAXO_0000000",
-    #"http://purl.obolibrary.org/obo/UBERON_0000000",
-    #"http://purl.obolibrary.org/obo/MONDO_0005583"
+    "http://purl.obolibrary.org/obo/MONDO_0000001",
+    "http://purl.obolibrary.org/obo/HP_0000001",
+    "http://purl.obolibrary.org/obo/MAXO_0000001",
+    "http://purl.obolibrary.org/obo/UBERON_0000001",
+    "http://purl.obolibrary.org/obo/MONDO_0000000",
+    "http://purl.obolibrary.org/obo/HP_0000000",
+    "http://purl.obolibrary.org/obo/MAXO_0000000",
+    "http://purl.obolibrary.org/obo/UBERON_0000000",
+    "http://purl.obolibrary.org/obo/MONDO_0005583"
 }
 
 # random forest files stored in fileGrid
@@ -44,5 +45,5 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
 SELECT ?label
 WHERE {
-  obo:HP_0000000 rdfs:label ?label .
+  obo:RO_0000000 rdfs:label ?label .
 }'''

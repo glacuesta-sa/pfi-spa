@@ -70,6 +70,9 @@ def init_routes(app):
         print(f"Found diseases: {diseases}")
         return create_json_response(jsonify(diseases), 200)
 
+
+
+
     @app.route("/diseases/by_anatomical_structures", methods=["POST"])
     def diseases_by_anatomical_structures():
         anatomical_ids = request.json.get('anatomical_ids')
@@ -86,6 +89,7 @@ def init_routes(app):
         print(f"Found diseases: {diseases}")
         return create_json_response(jsonify(diseases), 200)
     
+    # TODO don't exclude the filters from the structures.
     @app.route("/diseases/by_filters", methods=["POST"])
     def diseases_by_filters():
         body = request.json
@@ -106,7 +110,7 @@ def init_routes(app):
     @app.route("/phenotypes", methods=["GET"])
     def get_phenotypes():
         return create_json_response(jsonify(services.get_phenotypes()), 200)
-
+    
     @app.route("/anatomical_structures", methods=["GET"])
     def get_anatomical_structures():
         return create_json_response(jsonify(services.get_anatomical_structures()), 200)
@@ -114,6 +118,10 @@ def init_routes(app):
     @app.route("/age_onsets", methods=["GET"])
     def get_age_onsets():
         return create_json_response(jsonify(services.get_age_onsets()), 200)
+    
+    @app.route("/relationship_types", methods=["GET"])
+    def get_relationship_types():
+        return create_json_response(jsonify(services.get_relationship_types()), 200)
     
     @app.route("/diseases/predict_relationship", methods=["POST"])
     def predict_relationship():

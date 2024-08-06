@@ -126,9 +126,9 @@ def is_valid_relationship(property_id, target_id):
 
     relationships_types = repository.get_data_model()['relationships_types']
     if property_id in relationships_types:
-        if relationships_types[property_id] == constants.UBERON_STR and constants.UBERON_STR not in target_id:
+        if relationships_types[property_id]["type"] == constants.UBERON_STR and constants.UBERON_STR not in target_id:
             return False
-        if relationships_types[property_id] == constants.HP_STR and constants.HP_STR not in target_id:
+        if relationships_types[property_id]["type"] == constants.HP_STR and constants.HP_STR not in target_id:
             return False
     return True
 
@@ -281,10 +281,6 @@ def get_diseases_by_phenotypes(phenotype_ids):
 
     print(f"Matching diseases: {diseases}")
 
-    # Exclude the specified HP relationships from the phenotypes list
-    for disease in diseases:
-        disease['phenotypes'] = [phenotype for phenotype in disease['phenotypes'] if phenotype['target'] not in phenotype_ids]
-
     return diseases
 
 def get_diseases_by_age_onsets(age_onset_ids):
@@ -311,10 +307,6 @@ def get_diseases_by_age_onsets(age_onset_ids):
 
     # Retrieve the diseases that match all age onsets
     diseases = [disease for disease in data_model['diseases'] if disease['id'] in initial_disease_ids]
-
-    # Exclude the specified age onsets from the age_onsets list
-    for disease in diseases:
-        disease['age_onsets'] = [age_onset for age_onset in disease['age_onsets'] if age_onset['target'] not in age_onset_ids]
 
     return diseases
 
@@ -343,13 +335,15 @@ def get_diseases_by_anatomical_structures(anatomical_ids):
     # Retrieve the diseases that match all anatomical structures
     diseases = [disease for disease in data_model['diseases'] if disease['id'] in initial_disease_ids]
 
-    # Exclude the specified anatomical structures from the anatomical_structures list
-    for disease in diseases:
-        disease['anatomical_structures'] = [anatomical for anatomical in disease['anatomical_structures'] if anatomical['target'] not in anatomical_ids]
-
     return diseases
 
 def get_diseases_by_filters(phenotype_ids, anatomical_ids, age_onset_ids):
+    """
+    Retrieve all diseases associated with all of the given filters
+
+    :return: A list of diseases associated with all the given filters.
+    """
+
     if not (phenotype_ids or anatomical_ids or age_onset_ids):
         return []
     
@@ -358,6 +352,7 @@ def get_diseases_by_filters(phenotype_ids, anatomical_ids, age_onset_ids):
     # Extract disease IDs from the data model
     disease_ids = set(disease['id'] for disease in data_model['diseases'])
 
+    # filtering logic
     if phenotype_ids:
         initial_phenotype_id = phenotype_ids[0]
         phenotype_disease_ids = set(data_model['phenotype_to_diseases'].get(initial_phenotype_id, []))
@@ -383,14 +378,6 @@ def get_diseases_by_filters(phenotype_ids, anatomical_ids, age_onset_ids):
         disease_ids.intersection_update(age_onset_disease_ids)
 
     diseases = [disease for disease in data_model['diseases'] if disease['id'] in disease_ids]
-
-    for disease in diseases:
-        if phenotype_ids:
-            disease['phenotypes'] = [phenotype for phenotype in disease['phenotypes'] if phenotype['target'] not in phenotype_ids]
-        if anatomical_ids:
-            disease['anatomical_structures'] = [anatomical for anatomical in disease['anatomical_structures'] if anatomical['target'] not in anatomical_ids]
-        if age_onset_ids:
-            disease['age_onsets'] = [age_onset for age_onset in disease['age_onsets'] if age_onset['target'] not in age_onset_ids]
 
     return diseases
 
@@ -468,7 +455,25 @@ def get_phenotype_by_id(full_id):
 # get anatomical by id
 def get_anatomical_by_id(full_id):
     return repository.get_anatomical_by_id(full_id)
+
+# get anatomical by id
+def get_relationship_by_id(full_id):
+    return repository.get_relationship_by_id(full_id)
   
+def get_relationship_types():
+    relationship_types = []
+    for key, _ in repository.get_data_model()['relationships_types'].items():
+
+        ro_term = get_relationship_by_id(key)
+        if ro_term is not None and "name" in ro_term:
+            relationship_types.append({
+                "label": ro_term["name"],
+                "value": key
+            })
+
+    # Remove duplicates
+    unique_relationship_types = {v['value']: v for v in relationship_types}.values()
+    return list(unique_relationship_types)
 
 def update_data_model(full_disease_id, full_new_relationship_property, predicted_target):
     
@@ -479,12 +484,12 @@ def update_data_model(full_disease_id, full_new_relationship_property, predicted
     relationship_type = data_model["relationships_types"].get(full_new_relationship_property)
 
     # Actualizar el diccionario correspondiente
-    if relationship_type == constants.HP_STR:
+    if relationship_type["type"] == constants.HP_STR:
         phenotype_to_diseases = data_model["phenotype_to_diseases"].get(predicted_target, [])
         if full_disease_id not in phenotype_to_diseases:
             phenotype_to_diseases.append(full_disease_id)
         data_model["phenotype_to_diseases"][predicted_target] = phenotype_to_diseases
-    elif relationship_type == constants.UBERON_STR:
+    elif relationship_type["type"] == constants.UBERON_STR:
         anatomical_to_diseases = data_model["anatomical_to_diseases"].get(predicted_target, [])
         if full_disease_id not in anatomical_to_diseases:
             anatomical_to_diseases.append(full_disease_id)
@@ -495,7 +500,7 @@ def update_data_model(full_disease_id, full_new_relationship_property, predicted
         if disease["id"] == full_disease_id:
 
             update_fields = {}
-            if relationship_type == constants.HP_STR and phenotype:
+            if relationship_type["type"] == constants.HP_STR and phenotype:
                 if "phenotypes" not in disease:
                     disease["phenotypes"] = []
                 disease["phenotypes"].append(utils.create_relationship_entry(
@@ -505,7 +510,7 @@ def update_data_model(full_disease_id, full_new_relationship_property, predicted
                     phenotype["name"], True))
                 update_fields["phenotypes"] = disease["phenotypes"]
                 
-            elif relationship_type == constants.UBERON_STR and anatomical_structure:
+            elif relationship_type["type"] == constants.UBERON_STR and anatomical_structure:
                 if "anatomical_structures" not in disease:
                     disease["anatomical_structures"] = []
                 disease["anatomical_structures"].append(utils.create_relationship_entry(
@@ -522,21 +527,19 @@ def update_data_model(full_disease_id, full_new_relationship_property, predicted
                         {"$set": update_fields}
                     )
                 )
-
-
-
+                
     if update_operations:
         repository.DISEASES_COLLECTION.bulk_write(update_operations)
 
 
     repository.save_data_model(data_model)
 
-def get_phenotype_details_by_id_sparql(hp_id):
+def get_relationship_by_id_sparql(ro_id):
 
-    sparql_query = constants.LABEL_QUERY.replace("HP_0000000", hp_id)
-    #graph = repository.get_hpo_kg()
-    #results = graph.query(sparql_query)
-    results = []
+    sparql_query = constants.LABEL_QUERY.replace("RO_0000000", ro_id)
+    graph = repository.get_hpo_kg()
+    results = graph.query(sparql_query)
+
     result_list = []
     for row in results:
         result_list.append({str(var): str(row[var]) for var in row.labels})

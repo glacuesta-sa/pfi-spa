@@ -14,15 +14,16 @@ DISEASES_COLLECTION = db['diseases']
 DATA_MODEL_COLLECTION = db['data_model']
 PHENOTYPES_COLLECTION = db['phenotypes']
 ANATOMICAL_COLLECTION = db['anatomical']
+RO_COLLECTION = db['relationships']
 
 # FileGrid conn
 fs = gridfs.GridFS(db)
 
 HPO_KG = Graph()
 def get_hpo_kg():
-    file = fs.find_one({"filename": "hpo.ttl"})
+    file = fs.find_one({"filename": "ro.ttl"})
     if file is None:
-        raise Exception(f"File hpo.ttl not found in MongoDB GridFS.")
+        raise Exception(f"File ro.ttl not found in MongoDB GridFS.")
     
     ttl_data = file.read().decode('utf-8')
 
@@ -59,6 +60,11 @@ def get_anatomical_by_id(full_id):
     anatomical = ANATOMICAL_COLLECTION.find_one({"id": full_id}, {'_id': 0})
     return anatomical
 
+# get relationship by id
+def get_relationship_by_id(full_id):
+    relationship = RO_COLLECTION.find_one({"id": full_id}, {'_id': 0})
+    return relationship
+
 def save_data_model(data_model):
     DATA_MODEL_COLLECTION.delete_many({})
     DATA_MODEL_COLLECTION.insert_one(data_model)
@@ -68,7 +74,6 @@ def save_disease_dict(disease_dict):
     DISEASES_COLLECTION.delete_many({})
     DISEASES_COLLECTION.insert_many(disease_dict.values())
     
-
 def save_phenotypes(phenotype_dict):
     PHENOTYPES_COLLECTION.delete_many({})
     PHENOTYPES_COLLECTION.insert_many(phenotype_dict.values())
@@ -77,7 +82,11 @@ def save_anatomical(anatomical_dict):
     ANATOMICAL_COLLECTION.delete_many({})
     ANATOMICAL_COLLECTION.insert_many(anatomical_dict.values())
 
-def save(data_model, disease_dict, phenotype_dict, anatomical_dict):
+def save_ro_dict(ro_dict):
+    RO_COLLECTION.delete_many({})
+    RO_COLLECTION.insert_many(ro_dict.values())
+
+def save(data_model, disease_dict, phenotype_dict, anatomical_dict, ro_dict):
     """
     Save the data model and disease dictionary into MongoDB.
 
@@ -94,6 +103,7 @@ def save(data_model, disease_dict, phenotype_dict, anatomical_dict):
     save_disease_dict(disease_dict)
     save_phenotypes(phenotype_dict)
     save_anatomical(anatomical_dict)
+    save_ro_dict(ro_dict)
     
 def set_hpo_graph():
     
@@ -112,14 +122,14 @@ def set_hpo_graph():
 
     ttl_data_bytes = ttl_data.encode('utf-8')
 
-    fs.put(ttl_data_bytes, filename="hpo.ttl")
+    fs.put(ttl_data_bytes, filename="ro.ttl")
 
     print('finished parsing hpo ontology')
 
     print('setting hpo graph')
 
-    #services.wait_for_file_in_mongo("hpo.ttl")
-    #file = fs.find_one({"filename": "hpo.ttl"})
+    #services.wait_for_file_in_mongo("ro.ttl")
+    #file = fs.find_one({"filename": "ro.ttl"})
     #ttl_data = file.read().decode('utf-8')
     # Copiar todos los triples del grafo original al nuevo grafo
     #for triple in graph:
