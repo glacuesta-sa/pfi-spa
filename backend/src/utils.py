@@ -25,3 +25,12 @@ def load_json(file_path):
 def load_sparql_query(file_path):
     with open(file_path, 'r') as file:
         return file.read()
+    
+def create_relationship_entry(rel_type, property_id, target_id, target_label, predicted=False):
+    return {
+        "type": rel_type,
+        "property": property_id,
+        "target": target_id,
+        "label": target_label,
+        "predicted": predicted
+    }

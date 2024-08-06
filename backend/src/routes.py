@@ -129,6 +129,8 @@ def init_routes(app):
 
         predicted_target = services.predict_relationship(full_disease_id, new_relationship_type, full_new_relationship_property)
         print(f'Predicted target: {predicted_target}')
+
+        services.update_data_model(full_disease_id, full_new_relationship_property, predicted_target)
         
         return create_json_response(jsonify(predicted_target), 200)
 
@@ -139,11 +141,6 @@ def init_routes(app):
             seen_labels = json.loads(file_data.read().decode('utf-8'))
         return create_json_response(jsonify(seen_labels), 200)
     
-    @app.route('/phenotypes/details', methods=['GET'])
-    def get_phenotype_details():
-        # body param
-        hp_id = request.json.get('hp_id')
-        return create_json_response(jsonify(services.get_phenotype_details_by_id(hp_id)), 200)
 
 def create_json_response(data, status_code=200):
     response = make_response(data, status_code)

@@ -12,6 +12,7 @@ import repository
 import openai
 import joblib
 
+
 def set_llm_fields(disease):
     """
     Set on-the-fly generated fields by querying an LLM (Language Model). 
@@ -70,14 +71,14 @@ def predict_relationship(disease_id, relationship_type, relationship_property):
 
     # wait if necessary
     for filename in constants.RANDOM_FOREST_MODEL_FILES:
-        wait_for_file_in_mongo(filename)
+        repository.wait_for_file_in_mongo(filename)
 
-    best_rf = load_model_from_mongo('best_rf.pkl')
-    le_disease = load_model_from_mongo('le_disease.pkl')
-    le_relationship_type = load_model_from_mongo('le_relationship_type.pkl')
-    le_relationship_property = load_model_from_mongo('le_relationship_property.pkl')
-    le_target_id = load_model_from_mongo('le_target_id.pkl')
-    le_disease_rel_prop = load_model_from_mongo('le_disease_rel_prop.pkl')
+    best_rf = load_json_from_mongo('best_rf.pkl')
+    le_disease = load_json_from_mongo('le_disease.pkl')
+    le_relationship_type = load_json_from_mongo('le_relationship_type.pkl')
+    le_relationship_property = load_json_from_mongo('le_relationship_property.pkl')
+    le_target_id = load_json_from_mongo('le_target_id.pkl')
+    le_disease_rel_prop = load_json_from_mongo('le_disease_rel_prop.pkl')
 
     # encode inputs
     disease_id_encoded = le_disease.transform([disease_id])[0]
@@ -128,27 +129,6 @@ def is_valid_relationship(property_id, target_id):
         if relationships_types[property_id] == constants.HP_STR and constants.HP_STR not in target_id:
             return False
     return True
-
-# function to wait for mongoDB to be ready first time
-def wait_for_file_in_mongo(filename, timeout=30):
-    """
-    Wait until a specified file is available in MongoDB's GridFS.
-    Is useful to avoid race condition with mongoDB
-
-    Parameters:
-    filename (str): The name of the file to wait for.
-    timeout (int): The maximum time to wait for the file, in seconds.
-
-    Raises:
-    TimeoutError: If the file is not available within the timeout period.
-    """
-    start_time = time.time()
-    while not repository.fs.exists({"filename": filename}):
-        if time.time() - start_time > timeout:
-            raise TimeoutError(f"Timeout: {filename} not available in mongoDB after {timeout} seconds.")
-        print(f"Waiting for {filename} to be available in MongoDB...")
-        time.sleep(5)
-    print(f"{filename} is available MongoDB.")
 
 def get_hierarchy_by_mondo_id(mondo_id):
 
@@ -344,7 +324,7 @@ def get_diseases_by_filters(phenotype_ids, anatomical_ids, age_onset_ids):
     return diseases
 
 # load model files
-def load_model_from_mongo(filename):
+def load_json_from_mongo(filename):
     with tempfile.NamedTemporaryFile() as temp_file:
         with repository.fs.get_last_version(filename) as file_data:
             temp_file.write(file_data.read())
@@ -410,10 +390,66 @@ def get_age_onsets():
     unique_age_onsets = {v['value']: v for v in age_onsets}.values()
     return list(unique_age_onsets)
 
-def get_phenotype_details_by_id(hp_id):
+# get phenotype by id
+def get_phenotype_by_id(full_id):
+    return repository.get_phenotype_by_id(full_id)
+
+# get anatomical by id
+def get_anatomical_by_id(full_id):
+    return repository.get_anatomical_by_id(full_id)
+  
+
+def update_data_model(full_disease_id, full_new_relationship_property, predicted_target):
+    
+    phenotype = get_phenotype_by_id(predicted_target) if constants.HP_STR in predicted_target else None
+    anatomical_structure = get_anatomical_by_id(predicted_target) if constants.UBERON_STR in predicted_target else None
+
+    data_model = repository.get_data_model()
+    relationship_type = data_model["relationships_types"].get(full_new_relationship_property)
+
+    # Actualizar el diccionario correspondiente
+    if relationship_type == constants.HP_STR:
+        phenotype_to_diseases = data_model["phenotype_to_diseases"].get(predicted_target, [])
+        if full_disease_id not in phenotype_to_diseases:
+            phenotype_to_diseases.append(full_disease_id)
+        data_model["phenotype_to_diseases"][predicted_target] = phenotype_to_diseases
+    elif relationship_type == constants.UBERON_STR:
+        anatomical_to_diseases = data_model["anatomical_to_diseases"].get(predicted_target, [])
+        if full_disease_id not in anatomical_to_diseases:
+            anatomical_to_diseases.append(full_disease_id)
+        data_model["anatomical_to_diseases"][predicted_target] = anatomical_to_diseases
+
+    for disease in data_model["diseases"]:
+        if disease["id"] == full_disease_id:
+            if relationship_type == constants.HP_STR and phenotype:
+                if "phenotypes" not in disease:
+                    disease["phenotypes"] = []
+                disease["phenotypes"].append(utils.create_relationship_entry(
+                    "has_relationship", 
+                    full_new_relationship_property, 
+                    predicted_target, 
+                    phenotype["name"], True))
+                
+            elif relationship_type == constants.UBERON_STR and anatomical_structure:
+                 if "anatomical_structures" not in disease:
+                     disease["anatomical_structures"] = []
+                 disease["anatomical_structures"].append(utils.create_relationship_entry(
+                    "has_relationship", 
+                    full_new_relationship_property, 
+                    predicted_target, 
+                    anatomical_structure["name"], True))
+            break
+
+    disease_dict = {disease["id"]: disease for disease in data_model["diseases"]}
+    repository.save_data_model(data_model)
+    repository.save_disease_dict(disease_dict)
+
+def get_phenotype_details_by_id_sparql(hp_id):
 
     sparql_query = constants.LABEL_QUERY.replace("HP_0000000", hp_id)
-    results = repository.HPO_KG.query(sparql_query)
+    #graph = repository.get_hpo_kg()
+    #results = graph.query(sparql_query)
+    results = []
     result_list = []
     for row in results:
         result_list.append({str(var): str(row[var]) for var in row.labels})

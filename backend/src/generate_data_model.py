@@ -7,7 +7,7 @@ from rdflib.namespace import RDF, RDFS
 
 import repository
 
-def create_entry(id, name="Unknown", description="No description available", tracker_item=None):
+def create_mondo_entry(id, name="Unknown", description="No description available", tracker_item=None):
     entry = {
         "id": id,
         "name": name,
@@ -25,13 +25,13 @@ def create_entry(id, name="Unknown", description="No description available", tra
         entry["tracker_item"] = tracker_item
     return entry
 
-def create_relationship_entry(rel_type, property_id, target_id, target_label):
-    return {
-        "type": rel_type,
-        "property": property_id,
-        "target": target_id,
-        "label": target_label
+def create_entry(id, name="Unknown", description="No description available"):
+    entry = {
+        "id": id,
+        "name": name,
+        "description": description,
     }
+    return entry
 
 def build_is_a_hierarchy(mondo_data):
     is_a_hierarchy = {}
@@ -53,7 +53,7 @@ def get_all_descendants(node, hierarchy):
             nodes_to_visit.extend(children)
     return descendants
 
-def process_nodes(mondo_data, disease_dict):
+def process_nodes(mondo_data, disease_dict, phenotype_dict, anatomical_dict):
 
     # iterate nodes, get diseases (MONDO ID terms)
     for node in mondo_data['graphs'][0]['nodes']:
@@ -66,13 +66,25 @@ def process_nodes(mondo_data, disease_dict):
         if 'meta' in node and 'definition' in node['meta']:
             description = node['meta']['definition'].get('val', description)
 
+        # excluded entities, for example, top hierarchy nodes (MONDO:00000001 is disease, parent of them all)
+        if node_id in constants.OMIT_ENTITIES:
+            continue
+
+        # phenotypes
+        if "HP_" in node_id:
+            phenotype_entry = create_entry(node_id, name, description)
+            phenotype_dict[node_id] = phenotype_entry
+            continue
+
+        # anatomical
+        if "UBERON_" in node_id:
+            anatomical_entry = create_entry(node_id, name, description)
+            anatomical_dict[node_id] = anatomical_entry
+            continue
+
         # excluded triples
         # TODO: use regex
         if not node_id or constants.MONDO_STR not in node_id:
-            continue
-
-        # excluded entities, for example, top hierarchy nodes (MONDO:00000001 is disease, parent of them all)
-        if node_id in constants.OMIT_ENTITIES:
             continue
 
         # tracker item is the pull request where the disease has been added
@@ -84,7 +96,7 @@ def process_nodes(mondo_data, disease_dict):
                     break
 
         if node_id not in disease_dict:
-            disease_entry = create_entry(node_id, name, description, tracker_item)
+            disease_entry = create_mondo_entry(node_id, name, description, tracker_item)
             disease_dict[node_id] = disease_entry
         else:
             disease_entry = disease_dict[node_id]
@@ -114,6 +126,7 @@ def process_edges(mondo_data, age_onset_hierarchy, disease_dict, data_model):
                 disease_dict[object_id]['children'] = []
             disease_dict[object_id]['children'].append(subject_id)
 
+        # TODO check this limitation
         if property_id in constants.SUB_OF_PROPERTIES or object_id in constants.OMIT_ENTITIES:
             continue
 
@@ -122,7 +135,8 @@ def process_edges(mondo_data, age_onset_hierarchy, disease_dict, data_model):
                 disease_entry = disease_dict[subject_id]
                 relationship_type = "has_relationship"
                 object_label = node_labels.get(object_id, 'Unknown')
-                #relationship_entry = create_relationship_entry(relationship_type, property_id, object_id, object_label)
+
+                relationship_entry = utils.create_relationship_entry(relationship_type, property_id, object_id, object_label)
 
                 # TODO axel ECTO relationships
                 # TODO axel include ECTO, CHEBI, GO relationships, discover new features to expand the model
@@ -130,60 +144,28 @@ def process_edges(mondo_data, age_onset_hierarchy, disease_dict, data_model):
                 # TODO axel, RO ontology? 
                 '''or 'ECTO' in object_id'''
                 if constants.MAXO_STR in object_id:
-                    treatment_entry = {
-                        "type": relationship_type,
-                        "property": property_id,
-                        "target": object_id,
-                        "label": object_label
-                    }
-                    if treatment_entry not in disease_entry["treatments"]:
-                        disease_entry["treatments"].append(treatment_entry)
+                    if relationship_entry not in disease_entry["treatments"]:
+                        disease_entry["treatments"].append(relationship_entry)
                 elif constants.UBERON_STR in object_id:
-                    anatomical_entry = {
-                        "type": relationship_type,
-                        "property": property_id,
-                        "target": object_id,
-                        "label": object_label
-                    }
-                    if anatomical_entry not in disease_entry["anatomical_structures"]:
-                        disease_entry["anatomical_structures"].append(anatomical_entry)
-
+                    if relationship_entry not in disease_entry["anatomical_structures"]:
+                        disease_entry["anatomical_structures"].append(relationship_entry)
                         if object_id not in data_model["anatomical_to_diseases"]:
                             data_model["anatomical_to_diseases"][object_id] = []
                         data_model["anatomical_to_diseases"][object_id].append(subject_id)
-
                     relationships_types[property_id] = constants.UBERON_STR
-
                 elif constants.HP_STR in object_id and object_id in age_onset_hierarchy:
-                    age_onset_entry = {
-                        "type": relationship_type,
-                        "property": property_id,
-                        "target": object_id,
-                        "label": object_label
-                    }
-                    if age_onset_entry not in disease_entry["age_onsets"]:
-                        disease_entry["age_onsets"].append(age_onset_entry)
-
+                    if relationship_entry not in disease_entry["age_onsets"]:
+                        disease_entry["age_onsets"].append(relationship_entry)
                         if object_id not in data_model["age_onset_to_diseases"]:
                             data_model["age_onset_to_diseases"][object_id] = []
                         data_model["age_onset_to_diseases"][object_id].append(subject_id)
-                    
                     relationships_types[property_id] = constants.HP_STR
-
                 elif constants.HP_STR in object_id:
-                    phenotype_entry = {
-                        "type": relationship_type,
-                        "property": property_id,
-                        "target": object_id,
-                        "label": object_label
-                    }
-                    if phenotype_entry not in disease_entry["phenotypes"]:
-                        disease_entry["phenotypes"].append(phenotype_entry)
-
+                    if relationship_entry not in disease_entry["phenotypes"]:
+                        disease_entry["phenotypes"].append(relationship_entry)
                         if object_id not in data_model["phenotype_to_diseases"]:
                             data_model["phenotype_to_diseases"][object_id] = []
                         data_model["phenotype_to_diseases"][object_id].append(subject_id)
-                    
                     relationships_types[property_id] = constants.HP_STR
                 # TODO rest of relationships, CHEBI, GO
                 #else:
@@ -207,30 +189,6 @@ def finalize_data_model(disease_dict, data_model):
                 del disease['age_onsets']
             data_model['diseases'].append(disease)
 
-def load_hp_ontology():
-
-    # TODO: CI-CD generate .ttl 
-    owl_file_path = "datasets/hpo/hp-base.owl"
-    ttl_file_path = "datasets/hpo/hp-base.ttl"
-
-    print('loading hpo ontology')
-
-    # load owl, save ttl
-    #g = Graph()
-    #g.parse(owl_file_path, format='xml')
-    
-    # TODO en memoria por ahora
-    repository.HPO_KG.serialize(destination=ttl_file_path, format='turtle')
- 
-    #with open(ttl_file_path, 'r') as file:
-    #    ttl_data = file.read()
-
-    #ttl_data_bytes = ttl_data.encode('utf-8')
-
-    #repository.HPO_KG.parse(data=ttl_data_bytes, format='turtle')
-
-    #repository.fs.put(ttl_data_bytes, filename="hpo.ttl")
-
 def main():
     mondo_data = utils.load_json('datasets/mondo/mondo.json')
 
@@ -247,6 +205,8 @@ def main():
     }
 
     disease_dict = {}
+    phenotypes_dict = {}
+    anatomical_dict = {}
 
     # TODO refactor hierarchy generated data
     # Build hierarchies
@@ -256,17 +216,18 @@ def main():
         age_onset_hierarchy[desc] = "Onset"
 
     # Process data
-    process_nodes(mondo_data, disease_dict) # TODO exclude obsolete terms from disease_dict
+    process_nodes(mondo_data, disease_dict, phenotypes_dict, anatomical_dict) # TODO exclude obsolete terms from disease_dict
     process_edges(mondo_data, age_onset_hierarchy, disease_dict, data_model)
     finalize_data_model(disease_dict, data_model)
 
     # Save to MongoDB
-    repository.save(data_model, disease_dict)
+    repository.save(data_model, disease_dict, phenotypes_dict, anatomical_dict)
 
     # hpo ontology collection
-    load_hp_ontology()
+    #repository.set_hpo_graph()
 
     # train models
+
     random_forest.generate_model()
     ontogpt.generate_model()
 

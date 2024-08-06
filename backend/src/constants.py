@@ -21,7 +21,12 @@ OMIT_ENTITIES = {
     "http://purl.obolibrary.org/obo/MONDO_0000001",
     "http://purl.obolibrary.org/obo/HP_0000001",
     "http://purl.obolibrary.org/obo/MAXO_0000001",
-    "http://purl.obolibrary.org/obo/UBERON_0000001"
+    "http://purl.obolibrary.org/obo/UBERON_0000001",
+    #"http://purl.obolibrary.org/obo/MONDO_0000000",
+    #"http://purl.obolibrary.org/obo/HP_0000000",
+    #"http://purl.obolibrary.org/obo/MAXO_0000000",
+    #"http://purl.obolibrary.org/obo/UBERON_0000000",
+    #"http://purl.obolibrary.org/obo/MONDO_0005583"
 }
 
 # random forest files stored in fileGrid
