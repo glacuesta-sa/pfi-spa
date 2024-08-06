@@ -5,7 +5,7 @@ DEBUG_MODE = bool(int(os.getenv('FLASK_DEBUG', 0)))
 print ("Debug Mode is enabled? " + str(DEBUG_MODE))
 
 def init():
-    if True:
+    if DEBUG_MODE:
         import multiprocessing
 
         if multiprocessing.current_process().pid > 1:

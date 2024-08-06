@@ -33,7 +33,10 @@ def init_routes(app):
         if not repository.get_disease_by_id(full_id):
             return create_json_response(jsonify("Disease not found"), 404)
         hierarchy = services.get_hierarchy_by_mondo_id(full_id)
-        return create_json_response(jsonify(hierarchy), 200)
+
+        extended_hierarchy = services.get_extended_hierarchy_by_mondo_id(full_id)
+
+        return create_json_response(jsonify({"hierarchy": hierarchy, "extended_hierarchy": extended_hierarchy}), 200)
     
     @app.route("/diseases/by_phenotypes", methods=["POST"])
     def diseases_by_phenotypes():

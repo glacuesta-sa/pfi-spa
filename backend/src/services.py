@@ -12,6 +12,8 @@ import repository
 import openai
 import joblib
 
+from pymongo import UpdateOne
+
 
 def set_llm_fields(disease):
     """
@@ -155,18 +157,24 @@ def get_hierarchy_by_mondo_id(mondo_id):
 
     diseases = list(repository.DISEASES_COLLECTION.find({}, {'_id': 0}))
     disease_dict = {d['id']: d for d in diseases}
-    hierarchy = [["id", "childLabel", "parent", "size", {"role": "style"}, "link"]]
+    #hierarchy = [["id", "childLabel", "parent", "size", {"role": "style"}, "link"]]
+    hierarchy = [["id", "childLabel", "parent", "size", {"role": "style"}]]
     id_map = {}
     current_id = 0
 
     def add_to_hierarchy(disease_id, parent_id, label, size, color):
         nonlocal current_id
         id_map[disease_id] = current_id
-        hierarchy.append([current_id, label, parent_id, size, color, disease_id])
+        #hierarchy.append([current_id, label, parent_id, size, color, disease_id])
+        hierarchy.append([current_id, label, parent_id, size, color])
         current_id += 1
 
     def process_hierarchy(disease_id, parent_id):
-        disease = disease_dict[disease_id]
+        try:
+            disease = disease_dict[disease_id]
+        except KeyError:
+            return
+        
         add_to_hierarchy(disease_id, parent_id, disease['name'], 1, "#1d8bf8")
         for child_id in disease.get('children', []):
             process_hierarchy(child_id, id_map[disease_id])
@@ -177,6 +185,69 @@ def get_hierarchy_by_mondo_id(mondo_id):
             process_hierarchy(child_id, id_map[mondo_id])
 
     return hierarchy
+
+def get_extended_hierarchy_by_mondo_id(mondo_id):
+    """
+    Generate a hierarchical representation of diseases, phenotypes, and anatomical structures starting from a given MONDO ID.
+    This function retrieves the hierarchy starting from a specified MONDO ID and includes branches for phenotypes and anatomical structures.
+    
+    Parameters:
+    mondo_id (str): The MONDO ID of the root disease to start the hierarchy from.
+
+    Returns:
+    tuple: A tuple containing the hierarchy list and a legend dict.
+    """
+
+    # TODO fix twice
+    diseases = list(repository.DISEASES_COLLECTION.find({}, {'_id': 0}))
+    disease_dict = {d['id']: d for d in diseases}
+    #hierarchy = [["id", "childLabel", "parent", "size", {"role": "style"}, "link"]]
+    hierarchy = [["id", "childLabel", "parent", "size", {"role": "style"}]]
+    id_map = {}
+    current_id = 0
+
+    legend = {
+        "Disease": "#0a0a0a",
+        "Phenotype": "#1d522a",
+        "Anatomical Structure": "#1d3952",
+        "Predicted": "#e5ff00"
+    }
+
+    def add_to_hierarchy(node_id, parent_id, label, size, color):
+        nonlocal current_id
+        id_map[node_id] = current_id
+        #hierarchy.append([current_id, label, parent_id, size, color, node_id])
+        hierarchy.append([current_id, label, parent_id, size, color])
+        current_id += 1
+
+    def process_hierarchy(disease_id, parent_id):
+        try:
+            disease = disease_dict[disease_id]
+        except KeyError:
+            return
+        add_to_hierarchy(disease_id, parent_id, disease['name'], 1, legend["Disease"])
+        
+        # Process children diseases
+        for child_id in disease.get('children', []):
+            process_hierarchy(child_id, id_map[disease_id])
+        
+        # Process phenotypes
+        for phenotype in disease.get('phenotypes', []):
+            phenotype_id = phenotype['target']
+            color = legend["Predicted"] if phenotype.get('predicted', False) else legend["Phenotype"]
+            add_to_hierarchy(phenotype_id, id_map[disease_id], phenotype['label'], 1, color)
+        
+        # Process anatomical structures
+        for anatomical in disease.get('anatomical_structures', []):
+            anatomical_id = anatomical['target']
+            color = legend["Predicted"] if anatomical.get('predicted', False) else legend["Anatomical Structure"]
+            add_to_hierarchy(anatomical_id, id_map[disease_id], anatomical['label'], 1, color)
+
+    if mondo_id in disease_dict:
+        add_to_hierarchy(mondo_id, -1, disease_dict[mondo_id]['name'], 1, legend["Disease"])
+        process_hierarchy(mondo_id, id_map[mondo_id])
+
+    return hierarchy, legend
 
 def get_diseases_by_phenotypes(phenotype_ids):
     """
@@ -419,8 +490,11 @@ def update_data_model(full_disease_id, full_new_relationship_property, predicted
             anatomical_to_diseases.append(full_disease_id)
         data_model["anatomical_to_diseases"][predicted_target] = anatomical_to_diseases
 
+    update_operations = []
     for disease in data_model["diseases"]:
         if disease["id"] == full_disease_id:
+
+            update_fields = {}
             if relationship_type == constants.HP_STR and phenotype:
                 if "phenotypes" not in disease:
                     disease["phenotypes"] = []
@@ -429,20 +503,33 @@ def update_data_model(full_disease_id, full_new_relationship_property, predicted
                     full_new_relationship_property, 
                     predicted_target, 
                     phenotype["name"], True))
+                update_fields["phenotypes"] = disease["phenotypes"]
                 
             elif relationship_type == constants.UBERON_STR and anatomical_structure:
-                 if "anatomical_structures" not in disease:
-                     disease["anatomical_structures"] = []
-                 disease["anatomical_structures"].append(utils.create_relationship_entry(
-                    "has_relationship", 
-                    full_new_relationship_property, 
-                    predicted_target, 
-                    anatomical_structure["name"], True))
-            break
+                if "anatomical_structures" not in disease:
+                    disease["anatomical_structures"] = []
+                disease["anatomical_structures"].append(utils.create_relationship_entry(
+                "has_relationship", 
+                full_new_relationship_property, 
+                predicted_target, 
+                anatomical_structure["name"], True))
+                update_fields["anatomical_structures"] = disease["anatomical_structures"]
+            
+            if update_fields:
+                update_operations.append(
+                    UpdateOne(
+                        {"id": full_disease_id},
+                        {"$set": update_fields}
+                    )
+                )
 
-    disease_dict = {disease["id"]: disease for disease in data_model["diseases"]}
+
+
+    if update_operations:
+        repository.DISEASES_COLLECTION.bulk_write(update_operations)
+
+
     repository.save_data_model(data_model)
-    repository.save_disease_dict(disease_dict)
 
 def get_phenotype_details_by_id_sparql(hp_id):
 
