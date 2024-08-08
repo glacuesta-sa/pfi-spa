@@ -198,7 +198,6 @@ def finalize_data_model(disease_dict, data_model):
                 del disease['phenotypes']
             if not disease['age_onsets']:
                 del disease['age_onsets']
-            data_model['diseases'].append(disease)
 
 def main():
     mondo_data = utils.load_json('datasets/mondo/mondo.json')
@@ -208,7 +207,6 @@ def main():
     }
 
     data_model = {
-        "diseases": [],
         "phenotype_to_diseases": {},
         "age_onset_to_diseases": {},
         "anatomical_to_diseases": {},

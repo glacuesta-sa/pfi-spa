@@ -16,10 +16,6 @@ COPY . /app
 COPY --from=dependencies /root/.local /root/.local
 ENV PATH=/root/.local/bin:$PATH
 
-ENV FLASK_APP=src/app.py
-ENV FLASK_ENV=development
-ENV FLASK_DEBUG=0
-
 # Keeps Python from generating .pyc files in the container
 ENV PYTHONDONTWRITEBYTECODE 1
 

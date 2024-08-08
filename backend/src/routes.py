@@ -8,11 +8,6 @@ import utils
 # TODO implement controller-services-repository pattern
 def init_routes(app):
 
-    @app.route("/diseases", methods=["GET"])
-    def get_diseases():
-        diseases = repository.get_diseases()
-        return create_json_response(jsonify(diseases), 200)
-
     @app.route("/disease/<mondo_id>", methods=["GET"])
     def get_disease(mondo_id):
         full_id = f"http://purl.obolibrary.org/obo/{mondo_id}"
@@ -69,9 +64,6 @@ def init_routes(app):
         diseases = utils.convert_objectid_to_str(diseases)
         print(f"Found diseases: {diseases}")
         return create_json_response(jsonify(diseases), 200)
-
-
-
 
     @app.route("/diseases/by_anatomical_structures", methods=["POST"])
     def diseases_by_anatomical_structures():

@@ -155,8 +155,11 @@ def get_hierarchy_by_mondo_id(mondo_id):
     4. Builds the hierarchy starting from the given MONDO ID.
     """
 
+    # TODO improve
     diseases = list(repository.DISEASES_COLLECTION.find({}, {'_id': 0}))
     disease_dict = {d['id']: d for d in diseases}
+
+    # TODO include link
     #hierarchy = [["id", "childLabel", "parent", "size", {"role": "style"}, "link"]]
     hierarchy = [["id", "childLabel", "parent", "size", {"role": "style"}]]
     id_map = {}
@@ -198,9 +201,11 @@ def get_extended_hierarchy_by_mondo_id(mondo_id):
     tuple: A tuple containing the hierarchy list and a legend dict.
     """
 
-    # TODO fix twice
+    # TODO improve
     diseases = list(repository.DISEASES_COLLECTION.find({}, {'_id': 0}))
     disease_dict = {d['id']: d for d in diseases}
+
+    # TODO link
     #hierarchy = [["id", "childLabel", "parent", "size", {"role": "style"}, "link"]]
     hierarchy = [["id", "childLabel", "parent", "size", {"role": "style"}]]
     id_map = {}
@@ -259,25 +264,27 @@ def get_diseases_by_phenotypes(phenotype_ids):
     """
     if not phenotype_ids:
         return []
+    
+    # retrieve all disease IDs from the DISEASES collection
+    all_disease_ids = set(repository.get_diseases_ids())
 
-    print(f"Filtering diseases by phenotypes: {phenotype_ids}")
-
+    if not all_disease_ids:
+        return []
+    
+    filtered_disease_ids = all_disease_ids
     data_model = repository.get_data_model()
 
-    # Get the initial set of disease IDs that contain the first phenotype
+    print(f"Filtering diseases by phenotypes: {phenotype_ids}")    
+
     initial_phenotype_id = phenotype_ids[0]
-    initial_disease_ids = set(data_model['phenotype_to_diseases'].get(initial_phenotype_id, []))
-
-    print(f"Initial disease IDs: {initial_disease_ids}")
-
-    # Intersect with disease IDs that contain each of the other phenotypes
+    phenotype_disease_ids = set(data_model['phenotype_to_diseases'].get(initial_phenotype_id, []))
     for phenotype_id in phenotype_ids[1:]:
         current_disease_ids = set(data_model['phenotype_to_diseases'].get(phenotype_id, []))
-        initial_disease_ids.intersection_update(current_disease_ids)
-        print(f"Disease IDs after intersecting with {phenotype_id}: {initial_disease_ids}")
+        phenotype_disease_ids.intersection_update(current_disease_ids)
+    filtered_disease_ids.intersection_update(phenotype_disease_ids)
 
-    # Retrieve the diseases that match all phenotypes
-    diseases = [disease for disease in data_model['diseases'] if disease['id'] in initial_disease_ids]
+    # diseases that match all filtered disease ids
+    diseases = repository.get_diseases_by_ids(filtered_disease_ids)
 
     print(f"Matching diseases: {diseases}")
 
@@ -294,19 +301,22 @@ def get_diseases_by_age_onsets(age_onset_ids):
     if not age_onset_ids:
         return []
 
+    all_disease_ids = set(repository.get_diseases_ids())
+
+    if not all_disease_ids:
+        return []
+
+    filtered_disease_ids = all_disease_ids
     data_model = repository.get_data_model()
 
-    # Get the initial set of disease IDs that contain the first age onset
     initial_age_onset_id = age_onset_ids[0]
-    initial_disease_ids = set(data_model['age_onset_to_diseases'].get(initial_age_onset_id, []))
-
-    # Intersect with disease IDs that contain each of the other age onsets
+    age_onset_disease_ids = set(data_model['age_onset_to_diseases'].get(initial_age_onset_id, []))
     for age_onset_id in age_onset_ids[1:]:
         current_disease_ids = set(data_model['age_onset_to_diseases'].get(age_onset_id, []))
-        initial_disease_ids.intersection_update(current_disease_ids)
+        age_onset_disease_ids.intersection_update(current_disease_ids)
+    filtered_disease_ids.intersection_update(age_onset_disease_ids)
 
-    # Retrieve the diseases that match all age onsets
-    diseases = [disease for disease in data_model['diseases'] if disease['id'] in initial_disease_ids]
+    diseases = repository.get_diseases_by_ids(filtered_disease_ids)
 
     return diseases
 
@@ -320,20 +330,23 @@ def get_diseases_by_anatomical_structures(anatomical_ids):
     """
     if not anatomical_ids:
         return []
-    
+
+    all_disease_ids = set(repository.get_diseases_ids())
+
+    if not all_disease_ids:
+        return []
+
+    filtered_disease_ids = all_disease_ids
     data_model = repository.get_data_model()
 
-    # Get the initial set of disease IDs that contain the first anatomical structure
     initial_anatomical_id = anatomical_ids[0]
-    initial_disease_ids = set(data_model['anatomical_to_diseases'].get(initial_anatomical_id, []))
-
-    # Intersect with disease IDs that contain each of the other anatomical structures
+    anatomical_disease_ids = set(data_model['anatomical_to_diseases'].get(initial_anatomical_id, []))
     for anatomical_id in anatomical_ids[1:]:
         current_disease_ids = set(data_model['anatomical_to_diseases'].get(anatomical_id, []))
-        initial_disease_ids.intersection_update(current_disease_ids)
+        anatomical_disease_ids.intersection_update(current_disease_ids)
+    filtered_disease_ids.intersection_update(anatomical_disease_ids)
 
-    # Retrieve the diseases that match all anatomical structures
-    diseases = [disease for disease in data_model['diseases'] if disease['id'] in initial_disease_ids]
+    diseases = repository.get_diseases_by_ids(filtered_disease_ids)
 
     return diseases
 
@@ -349,8 +362,12 @@ def get_diseases_by_filters(phenotype_ids, anatomical_ids, age_onset_ids):
     
     data_model = repository.get_data_model()
 
-    # Extract disease IDs from the data model
-    disease_ids = set(disease['id'] for disease in data_model['diseases'])
+    all_disease_ids = set(repository.get_diseases_ids())
+    if not all_disease_ids:
+        return []
+    
+    # filter disease IDs based on the provided filters
+    filtered_disease_ids = all_disease_ids
 
     # filtering logic
     if phenotype_ids:
@@ -359,7 +376,7 @@ def get_diseases_by_filters(phenotype_ids, anatomical_ids, age_onset_ids):
         for phenotype_id in phenotype_ids[1:]:
             current_disease_ids = set(data_model['phenotype_to_diseases'].get(phenotype_id, []))
             phenotype_disease_ids.intersection_update(current_disease_ids)
-        disease_ids.intersection_update(phenotype_disease_ids)
+        filtered_disease_ids.intersection_update(phenotype_disease_ids)
 
     if anatomical_ids:
         initial_anatomical_id = anatomical_ids[0]
@@ -367,7 +384,7 @@ def get_diseases_by_filters(phenotype_ids, anatomical_ids, age_onset_ids):
         for anatomical_id in anatomical_ids[1:]:
             current_disease_ids = set(data_model['anatomical_to_diseases'].get(anatomical_id, []))
             anatomical_disease_ids.intersection_update(current_disease_ids)
-        disease_ids.intersection_update(anatomical_disease_ids)
+        filtered_disease_ids.intersection_update(anatomical_disease_ids)
 
     if age_onset_ids:
         initial_age_onset_id = age_onset_ids[0]
@@ -375,11 +392,10 @@ def get_diseases_by_filters(phenotype_ids, anatomical_ids, age_onset_ids):
         for age_onset_id in age_onset_ids[1:]:
             current_disease_ids = set(data_model['age_onset_to_diseases'].get(age_onset_id, []))
             age_onset_disease_ids.intersection_update(current_disease_ids)
-        disease_ids.intersection_update(age_onset_disease_ids)
+        filtered_disease_ids.intersection_update(age_onset_disease_ids)
 
-    diseases = [disease for disease in data_model['diseases'] if disease['id'] in disease_ids]
-
-    return diseases
+    # retrieve the diseases that match all filtered disease ids
+    return repository.get_diseases_by_ids(filtered_disease_ids)
 
 # load model files
 def load_json_from_mongo(filename):
@@ -398,7 +414,8 @@ def get_phenotypes():
     """
 
     phenotypes = []
-    for disease in repository.get_data_model()['diseases']:
+    # TODO, read from data_model phenotypes to diseases, then match to its collection to get label
+    for disease in repository.get_diseases():
         for phenotype in disease.get('phenotypes', []):
             phenotypes.append({
                 "label": phenotype.get('label', 'Unknown Phenotype'),
@@ -418,7 +435,8 @@ def get_anatomical_structures():
     """
 
     anatomical_structures = []
-    for disease in repository.get_data_model()['diseases']:
+    # TODO, read from data_model anatomical_structure to diseases, then match to its collection to get label
+    for disease in repository.get_diseases():
         for anatomical_structure in disease.get('anatomical_structures', []):
             anatomical_structures.append({
                 "label": anatomical_structure.get('label', 'Unknown anatomical structure'),
@@ -437,7 +455,8 @@ def get_age_onsets():
           - The identifier of the age_onsets, with the URL prefix removed.
     """
     age_onsets = []
-    for disease in repository.get_data_model()['diseases']:
+    # TODO, read from data_model ageonset to diseases, then match to its collection to get label
+    for disease in repository.get_diseases():
         for age_onset in disease.get('age_onsets', []):
             age_onsets.append({
                 "label": age_onset.get('label', 'Unknown age onset'),
@@ -496,7 +515,7 @@ def update_data_model(full_disease_id, full_new_relationship_property, predicted
         data_model["anatomical_to_diseases"][predicted_target] = anatomical_to_diseases
 
     update_operations = []
-    for disease in data_model["diseases"]:
+    for disease in repository.get_diseases():
         if disease["id"] == full_disease_id:
 
             update_fields = {}

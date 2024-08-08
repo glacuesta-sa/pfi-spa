@@ -40,6 +40,25 @@ def get_diseases():
     diseases = DISEASES_COLLECTION.find({})
     return list(diseases)
 
+def get_diseases_ids():
+    """
+    Fetch all disease IDs from the DISEASES collection.
+    
+    Returns:
+    list: A list of all disease IDs.
+    """
+    return DISEASES_COLLECTION.distinct("id")
+
+def get_diseases_by_ids(filtered_disease_ids):
+    """
+    Fetch all disease from the DISEASES collection for the given list of ids
+    
+    Returns:
+    list: A list of all disease IDs.
+    """
+    return list(DISEASES_COLLECTION.find({"id": {"$in": list(filtered_disease_ids)}}, {'_id': 0}))
+
+
 # diseases collection desde MongoDB
 def get_data_model():
     data_model = DATA_MODEL_COLLECTION.find_one({}, {'_id': 0})
