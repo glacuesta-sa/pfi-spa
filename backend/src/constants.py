@@ -4,8 +4,10 @@
 MONDO_STR = 'MONDO'
 MAXO_STR = 'MAXO'
 HP_STR = 'HP'
+ECTO_STR = 'ECTO'
 UBERON_STR = 'UBERON'
 RO_STR = 'RO_'
+ECTO_NAME = 'The Environmental Conditions, Treatments, and Exposures Ontology'
 HP_NAME = 'The Human Phenotype Ontology'
 UBERON_NAME = 'The Uber-anatomy ontology'
 

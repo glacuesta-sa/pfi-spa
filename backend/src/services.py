@@ -106,9 +106,6 @@ def predict_relationship(disease_id, relationship_type, relationship_property):
     # randomize to not be deterministic
     predicted_target = random.choice(possible_targets)
 
-    # TODO add relationship to data_model
-    #set_llm_fields2
-
     return predicted_target
 
 def is_valid_relationship(property_id, target_id):
@@ -129,6 +126,8 @@ def is_valid_relationship(property_id, target_id):
         if relationships_types[property_id]["type"] == constants.UBERON_STR and constants.UBERON_STR not in target_id:
             return False
         if relationships_types[property_id]["type"] == constants.HP_STR and constants.HP_STR not in target_id:
+            return False
+        if relationships_types[property_id]["type"] == constants.ECTO_STR and constants.ECTO_STR not in target_id:
             return False
     return True
 
@@ -215,6 +214,7 @@ def get_extended_hierarchy_by_mondo_id(mondo_id):
         "Disease": "#0a0a0a",
         "Phenotype": "#1d522a",
         "Anatomical Structure": "#1d3952",
+        "Exposure": "#1d4022",
         "Predicted": "#e5ff00"
     }
 
@@ -247,6 +247,12 @@ def get_extended_hierarchy_by_mondo_id(mondo_id):
             anatomical_id = anatomical['target']
             color = legend["Predicted"] if anatomical.get('predicted', False) else legend["Anatomical Structure"]
             add_to_hierarchy(anatomical_id, id_map[disease_id], anatomical['label'], 1, color)
+
+        # Process Exposures
+        for exposure in disease.get('exposures', []):
+            exposure_id = exposure['target']
+            color = legend["Predicted"] if exposure.get('predicted', False) else legend["Exposure"]
+            add_to_hierarchy(exposure_id, id_map[disease_id], exposure['label'], 1, color)
 
     if mondo_id in disease_dict:
         add_to_hierarchy(mondo_id, -1, disease_dict[mondo_id]['name'], 1, legend["Disease"])
@@ -350,17 +356,53 @@ def get_diseases_by_anatomical_structures(anatomical_ids):
 
     return diseases
 
-def get_diseases_by_filters(phenotype_ids, anatomical_ids, age_onset_ids):
+def get_diseases_by_exposures(exposure_ids):
+    """
+    Retrieve all diseases associated with all of the given exposures, excluding the specified exposures from the exposures list.
+
+    :param exposure_ids: A list of exposure IDs (ECTO IDs).
+
+    :return: A list of diseases associated with all the given exposures.
+    """
+    if not exposure_ids:
+        return []
+    
+    # retrieve all disease IDs from the DISEASES collection
+    all_disease_ids = set(repository.get_diseases_ids())
+
+    if not all_disease_ids:
+        return []
+    
+    filtered_disease_ids = all_disease_ids
+    data_model = repository.get_data_model()
+
+    print(f"Filtering diseases by exposures: {exposure_ids}")    
+
+    initial_exposure_id = exposure_ids[0]
+    exposure_disease_ids = set(data_model['exposure_to_diseases'].get(initial_exposure_id, []))
+    for exposure_id in exposure_ids[1:]:
+        current_disease_ids = set(data_model['exposure_to_diseases'].get(exposure_id, []))
+        exposure_disease_ids.intersection_update(current_disease_ids)
+    filtered_disease_ids.intersection_update(exposure_disease_ids)
+
+    # diseases that match all filtered disease ids
+    diseases = repository.get_diseases_by_ids(filtered_disease_ids)
+
+    print(f"Matching diseases: {diseases}")
+
+    return diseases
+
+def get_diseases_by_filters(phenotype_ids, anatomical_ids, age_onset_ids, exposure_ids):
     """
     Retrieve all diseases associated with all of the given filters
 
     :return: A list of diseases associated with all the given filters.
     """
-
-    if not (phenotype_ids or anatomical_ids or age_onset_ids):
-        return []
     
     data_model = repository.get_data_model()
+
+    if not (phenotype_ids or anatomical_ids or age_onset_ids or exposure_ids):
+      return []
 
     all_disease_ids = set(repository.get_diseases_ids())
     if not all_disease_ids:
@@ -393,6 +435,14 @@ def get_diseases_by_filters(phenotype_ids, anatomical_ids, age_onset_ids):
             current_disease_ids = set(data_model['age_onset_to_diseases'].get(age_onset_id, []))
             age_onset_disease_ids.intersection_update(current_disease_ids)
         filtered_disease_ids.intersection_update(age_onset_disease_ids)
+
+    if exposure_ids:
+        initial_exposure_id = exposure_ids[0]
+        exposure_disease_ids = set(data_model['exposure_to_diseases'].get(initial_exposure_id, []))
+        for exposure_id in exposure_ids[1:]:
+            current_disease_ids = set(data_model['exposure_to_diseases'].get(exposure_id, []))
+            exposure_disease_ids.intersection_update(current_disease_ids)
+        filtered_disease_ids.intersection_update(exposure_disease_ids)
 
     # retrieve the diseases that match all filtered disease ids
     return repository.get_diseases_by_ids(filtered_disease_ids)
@@ -467,6 +517,28 @@ def get_age_onsets():
     unique_age_onsets = {v['value']: v for v in age_onsets}.values()
     return list(unique_age_onsets)
 
+
+def get_exposures():
+    """
+    Retrieve a list of unique exposure from the data model.
+    Returns: a list of dictionaries representing unique exposures. Each dictionary contains:
+          - The label of the exposure.
+          - The identifier of the exposure, with the URL prefix removed.
+    """
+
+    exposures = []
+    # TODO, read from data_model exposure to diseases, then match to its collection to get label
+    for disease in repository.get_diseases():
+        for exposure in disease.get('exposures', []):
+            exposures.append({
+                "label": exposure.get('label', 'Unknown anatomical structure'),
+                "value": exposure['target'].replace("http://purl.obolibrary.org/obo/", "")
+            })
+    
+    # Remove duplicates
+    unique_exposures = {v['value']: v for v in exposures}.values()
+    return list(unique_exposures)
+
 # get phenotype by id
 def get_phenotype_by_id(full_id):
     return repository.get_phenotype_by_id(full_id)
@@ -478,6 +550,11 @@ def get_anatomical_by_id(full_id):
 # get anatomical by id
 def get_relationship_by_id(full_id):
     return repository.get_relationship_by_id(full_id)
+
+# get exposure by id
+def get_exposure_by_id(full_id):
+    return repository.get_exposure_by_id(full_id)
+
   
 def get_relationship_types():
     relationship_types = []
@@ -498,6 +575,7 @@ def update_data_model(full_disease_id, full_new_relationship_property, predicted
     
     phenotype = get_phenotype_by_id(predicted_target) if constants.HP_STR in predicted_target else None
     anatomical_structure = get_anatomical_by_id(predicted_target) if constants.UBERON_STR in predicted_target else None
+    exposure = get_exposure_by_id(predicted_target) if constants.ECTO_STR in predicted_target else None
 
     data_model = repository.get_data_model()
     relationship_type = data_model["relationships_types"].get(full_new_relationship_property)
@@ -513,6 +591,11 @@ def update_data_model(full_disease_id, full_new_relationship_property, predicted
         if full_disease_id not in anatomical_to_diseases:
             anatomical_to_diseases.append(full_disease_id)
         data_model["anatomical_to_diseases"][predicted_target] = anatomical_to_diseases
+    elif relationship_type["type"] == constants.ECTO_STR:
+        exposure_to_diseases = data_model["exposure_to_diseases"].get(predicted_target, [])
+        if full_disease_id not in exposure_to_diseases:
+            exposure_to_diseases.append(full_disease_id)
+        data_model["exposure_to_diseases"][predicted_target] = exposure_to_diseases
 
     update_operations = []
     for disease in repository.get_diseases():
@@ -538,6 +621,16 @@ def update_data_model(full_disease_id, full_new_relationship_property, predicted
                 predicted_target, 
                 anatomical_structure["name"], True))
                 update_fields["anatomical_structures"] = disease["anatomical_structures"]
+
+            elif relationship_type["type"] == constants.ECTO_STR and exposure:
+                if "exposures" not in disease:
+                    disease["exposures"] = []
+                disease["exposures"].append(utils.create_relationship_entry(
+                "has_relationship", 
+                full_new_relationship_property, 
+                predicted_target, 
+                exposure["name"], True))
+                update_fields["exposures"] = disease["exposures"]
             
             if update_fields:
                 update_operations.append(
@@ -546,11 +639,9 @@ def update_data_model(full_disease_id, full_new_relationship_property, predicted
                         {"$set": update_fields}
                     )
                 )
-                
+
     if update_operations:
         repository.DISEASES_COLLECTION.bulk_write(update_operations)
-
-
     repository.save_data_model(data_model)
 
 def get_relationship_by_id_sparql(ro_id):

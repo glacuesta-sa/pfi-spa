@@ -15,6 +15,7 @@ DATA_MODEL_COLLECTION = db['data_model']
 PHENOTYPES_COLLECTION = db['phenotypes']
 ANATOMICAL_COLLECTION = db['anatomical']
 RO_COLLECTION = db['relationships']
+ECTO_COLLECTION = db['exposures']
 
 # FileGrid conn
 fs = gridfs.GridFS(db)
@@ -84,11 +85,15 @@ def get_relationship_by_id(full_id):
     relationship = RO_COLLECTION.find_one({"id": full_id}, {'_id': 0})
     return relationship
 
+# get exposure by id
+def get_exposure_by_id(full_id):
+    exppsure = ECTO_COLLECTION.find_one({"id": full_id}, {'_id': 0})
+    return exppsure
+
 def save_data_model(data_model):
     DATA_MODEL_COLLECTION.delete_many({})
     DATA_MODEL_COLLECTION.insert_one(data_model)
     
-
 def save_disease_dict(disease_dict):
     DISEASES_COLLECTION.delete_many({})
     DISEASES_COLLECTION.insert_many(disease_dict.values())
@@ -105,7 +110,11 @@ def save_ro_dict(ro_dict):
     RO_COLLECTION.delete_many({})
     RO_COLLECTION.insert_many(ro_dict.values())
 
-def save(data_model, disease_dict, phenotype_dict, anatomical_dict, ro_dict):
+def save_ecto_dict(ecto_dict):
+    ECTO_COLLECTION.delete_many({})
+    ECTO_COLLECTION.insert_many(ecto_dict.values())
+
+def save(data_model, disease_dict, phenotype_dict, anatomical_dict, ro_dict, ecto_dict):
     """
     Save the data model and disease dictionary into MongoDB.
 
@@ -123,6 +132,7 @@ def save(data_model, disease_dict, phenotype_dict, anatomical_dict, ro_dict):
     save_phenotypes(phenotype_dict)
     save_anatomical(anatomical_dict)
     save_ro_dict(ro_dict)
+    save_ecto_dict(ecto_dict)
     
 def set_hpo_graph():
     

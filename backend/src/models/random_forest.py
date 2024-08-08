@@ -73,6 +73,8 @@ def generate_model():
                     continue
                 if relationships_types[property_id]["type"] == constants.HP_STR and constants.HP_STR not in target_id:
                     continue
+                if relationships_types[property_id]["type"] == constants.ECTO_STR and constants.ECTO_STR not in target_id:
+                    continue
 
             records.append({
                 'disease_id': disease_id,
@@ -92,6 +94,8 @@ def generate_model():
                 if relationships_types[property_id]["type"] == constants.UBERON_STR and constants.UBERON_STR not in target_id:
                     continue
                 if relationships_types[property_id]["type"] == constants.HP_STR and constants.HP_STR not in target_id:
+                    continue
+                if relationships_types[property_id]["type"] == constants.ECTO_STR and constants.ECTO_STR not in target_id:
                     continue
 
             records.append({
@@ -113,6 +117,8 @@ def generate_model():
                     continue
                 if relationships_types[property_id]["type"] == constants.HP_STR and constants.HP_STR not in target_id:
                     continue
+                if relationships_types[property_id]["type"] == constants.ECTO_STR and constants.ECTO_STR not in target_id:
+                    continue
 
             records.append({
                 'disease_id': disease_id,
@@ -120,6 +126,28 @@ def generate_model():
                 'relationship_type': age_onset['type'],
                 'relationship_property': age_onset['property'],
                 'target_id': age_onset['target']
+            })
+
+        # exposure relationships
+        for exposure in disease.get('exposures', []):
+
+            property_id = exposure['property']
+            target_id = exposure['target']
+
+            if property_id in relationships_types:
+                if relationships_types[property_id]["type"] == constants.UBERON_STR and constants.UBERON_STR not in target_id:
+                    continue
+                if relationships_types[property_id]["type"] == constants.HP_STR and constants.HP_STR not in target_id:
+                    continue
+                if relationships_types[property_id]["type"] == constants.ECTO_STR and constants.ECTO_STR not in target_id:
+                    continue
+
+            records.append({
+                'disease_id': disease_id,
+                'disease_name': disease_name,
+                'relationship_type': exposure['type'],
+                'relationship_property': exposure['property'],
+                'target_id': exposure['target']
             })
 
     # Convertir los registros en un DataFrame
