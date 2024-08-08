@@ -18,6 +18,7 @@ def create_mondo_entry(id, name="Unknown", description="No description available
         "anatomical_structures": [],
         "phenotypes": [],
         "exposures": [],
+        "chemicals": [],
         "age_onsets": [],
         "children": [],
         "parent": None
@@ -54,7 +55,7 @@ def get_all_descendants(node, hierarchy):
             nodes_to_visit.extend(children)
     return descendants
 
-def process_nodes(mondo_data, disease_dict, phenotype_dict, anatomical_dict, ro_dict, ecto_dict, maxo_dict):
+def process_nodes(mondo_data, disease_dict, phenotype_dict, anatomical_dict, ro_dict, ecto_dict, maxo_dict, chebi_dict):
 
     # iterate nodes, get diseases (MONDO ID terms)
     for node in mondo_data['graphs'][0]['nodes']:
@@ -105,6 +106,12 @@ def process_nodes(mondo_data, disease_dict, phenotype_dict, anatomical_dict, ro_
             maxo_dict[node_id] = entry
             continue
 
+        # CHEBI Ontology
+        if "CHEBI_" in node_id:
+            entry = create_entry(node_id, name, description)
+            chebi_dict[node_id] = entry
+            continue
+
         # excluded triples
         # TODO: use regex
         if not node_id or constants.MONDO_STR not in node_id:
@@ -128,7 +135,7 @@ def process_nodes(mondo_data, disease_dict, phenotype_dict, anatomical_dict, ro_
             if tracker_item:
                 disease_entry['tracker_item'] = tracker_item
 
-def process_edges(mondo_data, age_onset_hierarchy, disease_dict, data_model, ro_dict, ecto_dict, maxo_dict):
+def process_edges(mondo_data, age_onset_hierarchy, disease_dict, data_model, ro_dict, ecto_dict, maxo_dict, chebi_dict):
 
     # TODO refactor node labels
     node_labels = {node['id']: node.get('lbl', 'Unknown') for node in mondo_data['graphs'][0]['nodes']}
@@ -162,7 +169,7 @@ def process_edges(mondo_data, age_onset_hierarchy, disease_dict, data_model, ro_
 
                 relationship_entry = utils.create_relationship_entry(relationship_type, property_id, object_id, object_label)
 
-                # TODO axel include CHEBI, GO relationships, discover new features to expand the model
+                # TODO axel include GO relationships, discover new features to expand the model
                 # TODO axel, seggregate the collection in different documents. 
 
                 # Medical Actions Ontology
@@ -237,7 +244,21 @@ def process_edges(mondo_data, age_onset_hierarchy, disease_dict, data_model, ro_
                     if new_rel not in relationships_types[property_id]:
                         relationships_types[property_id].append(new_rel)
 
-                # TODO rest of relationships, CHEBI, GO
+                # Chemicals
+                elif constants.CHEBI_STR in object_id:
+                    if relationship_entry not in disease_entry["chemicals"]:
+                        disease_entry["chemicals"].append(relationship_entry)
+                        if object_id not in data_model["chemical_to_diseases"]:
+                            data_model["chemical_to_diseases"][object_id] = []
+                        data_model["chemical_to_diseases"][object_id].append(subject_id)
+                    
+                    new_rel = {"type": constants.CHEBI_STR, "target": property_id, "label": ""}
+                    if property_id not in relationships_types:
+                        relationships_types[property_id] = []
+                    if new_rel not in relationships_types[property_id]:
+                        relationships_types[property_id].append(new_rel)
+
+                # TODO rest of relationships, GO
                 #else:
                     # Only add non-MAXO, non-UBERON, and non-HP relationships to the relationships field
                  #   if relationship_entry not in disease_entry['relationships']:
@@ -258,6 +279,7 @@ def main():
         "anatomical_to_diseases": {},
         "treatment_to_diseases": {},
         "exposure_to_diseases": {},
+        "chemical_to_diseases": {},
         "relationships_types": {}
     }
 
@@ -267,6 +289,7 @@ def main():
     ro_dict = {}
     ecto_dict = {}
     maxo_dict = {}
+    chebi_dict = {}
 
     # TODO refactor hierarchy generated data
     # Build hierarchies
@@ -276,11 +299,11 @@ def main():
         age_onset_hierarchy[desc] = "Onset"
 
     # Process data
-    process_nodes(mondo_data, disease_dict, phenotypes_dict, anatomical_dict, ro_dict, ecto_dict, maxo_dict) # TODO exclude obsolete terms from disease_dict
-    process_edges(mondo_data, age_onset_hierarchy, disease_dict, data_model, ro_dict, ecto_dict, maxo_dict)
+    process_nodes(mondo_data, disease_dict, phenotypes_dict, anatomical_dict, ro_dict, ecto_dict, maxo_dict, chebi_dict) # TODO exclude obsolete terms from disease_dict
+    process_edges(mondo_data, age_onset_hierarchy, disease_dict, data_model, ro_dict, ecto_dict, maxo_dict, chebi_dict)
 
     # Save to MongoDB
-    repository.save(data_model, disease_dict, phenotypes_dict, anatomical_dict, ro_dict, ecto_dict, maxo_dict)
+    repository.save(data_model, disease_dict, phenotypes_dict, anatomical_dict, ro_dict, ecto_dict, maxo_dict, chebi_dict)
 
     # hpo ontology collection
     #repository.set_hpo_graph()

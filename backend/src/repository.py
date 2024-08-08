@@ -17,6 +17,7 @@ ANATOMICAL_COLLECTION = db['anatomical']
 RO_COLLECTION = db['relationships']
 ECTO_COLLECTION = db['exposures']
 MAXO_COLLECTION = db['treatments']
+CHEBI_COLLECTION = db['chemicals']
 
 # FileGrid conn
 fs = gridfs.GridFS(db)
@@ -96,6 +97,11 @@ def get_treatment_by_id(full_id):
     treat = MAXO_COLLECTION.find_one({"id": full_id}, {'_id': 0})
     return treat
 
+# get chemical by id
+def get_chemical_by_id(full_id):
+    chemical = CHEBI_COLLECTION.find_one({"id": full_id}, {'_id': 0})
+    return chemical
+
 def save_data_model(data_model):
     DATA_MODEL_COLLECTION.delete_many({})
     DATA_MODEL_COLLECTION.insert_one(data_model)
@@ -124,7 +130,11 @@ def save_maxo_dict(maxo_dict):
     MAXO_COLLECTION.delete_many({})
     MAXO_COLLECTION.insert_many(maxo_dict.values())
 
-def save(data_model, disease_dict, phenotype_dict, anatomical_dict, ro_dict, ecto_dict, maxo_dict):
+def save_chebi_dict(chebi_dict):
+    CHEBI_COLLECTION.delete_many({})
+    CHEBI_COLLECTION.insert_many(chebi_dict.values())
+
+def save(data_model, disease_dict, phenotype_dict, anatomical_dict, ro_dict, ecto_dict, maxo_dict, chebi_dict):
     """
     Save the data model and associated relationships collections into MongoDB.
     """
@@ -135,6 +145,7 @@ def save(data_model, disease_dict, phenotype_dict, anatomical_dict, ro_dict, ect
     save_ro_dict(ro_dict)
     save_ecto_dict(ecto_dict)
     save_maxo_dict(maxo_dict)
+    save_chebi_dict(chebi_dict)
     
 def set_hpo_graph():
     

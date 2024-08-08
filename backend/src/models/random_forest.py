@@ -135,6 +135,23 @@ def generate_model():
                 'target_id': exposure['target']
             })
 
+        # chemical relationships
+        for chemical in disease.get('chemicals', []):
+
+            property_id = chemical['property']
+            target_id = chemical['target']
+
+            if not services.is_valid_relationship(property_id, target_id):
+                continue
+
+            records.append({
+                'disease_id': disease_id,
+                'disease_name': disease_name,
+                'relationship_type': chemical['type'],
+                'relationship_property': chemical['property'],
+                'target_id': chemical['target']
+            })
+
     # Convertir los registros en un DataFrame
     df = pd.DataFrame(records)
 

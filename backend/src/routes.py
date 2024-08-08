@@ -113,6 +113,22 @@ def init_routes(app):
         print(f"Found diseases: {diseases}")
         return create_json_response(jsonify(diseases), 200)
     
+    @app.route("/diseases/by_chemicals", methods=["POST"])
+    def diseases_by_chemicals():
+        chemical_ids = request.json.get('chemical_ids')
+        if not chemical_ids:
+            return create_json_response(jsonify("chemical structure IDs are required"), 400)
+        
+        print(f"Received chemical structure IDs: {chemical_ids}")
+        # Transform the chemical structure IDs to include the full URI
+        full_chemical_ids = [f"http://purl.obolibrary.org/obo/{cid}" for cid in chemical_ids]
+        print(f"Transformed chemical structure IDs: {full_chemical_ids}")
+
+        diseases = services.get_diseases_by_chemicals(full_chemical_ids)
+        diseases = utils.convert_objectid_to_str(diseases)
+        print(f"Found diseases: {diseases}")
+        return create_json_response(jsonify(diseases), 200)
+    
     # TODO don't exclude the filters from the structures.
     @app.route("/diseases/by_filters", methods=["POST"])
     def diseases_by_filters():
@@ -122,6 +138,7 @@ def init_routes(app):
         age_onset_ids = body.get('age_onset_ids', [])
         exposure_ids = body.get('exposure_ids', [])
         treatment_ids = body.get('treatment_ids', [])
+        chemical_ids = body.get('chemical_ids', [])
         # include_predictions = body.get('include_predictions', "true")
         
         # Transform the IDs to include the full URI
@@ -130,9 +147,10 @@ def init_routes(app):
         full_age_onset_ids = [f"http://purl.obolibrary.org/obo/{aid}" for aid in age_onset_ids]
         full_exposure_ids = [f"http://purl.obolibrary.org/obo/{eid}" for eid in exposure_ids]
         full_treatment_ids = [f"http://purl.obolibrary.org/obo/{tid}" for tid in treatment_ids]
-        
+        full_chemical_ids = [f"http://purl.obolibrary.org/obo/{cid}" for cid in chemical_ids]
+
         diseases = services.get_diseases_by_filters(full_phenotype_ids, full_anatomical_ids,
-                                                     full_age_onset_ids, full_exposure_ids, full_treatment_ids)
+                                                     full_age_onset_ids, full_exposure_ids, full_treatment_ids, full_chemical_ids)
         diseases = utils.convert_objectid_to_str(diseases)
         return create_json_response(jsonify(diseases), 200)
 
@@ -155,6 +173,10 @@ def init_routes(app):
     @app.route("/treatments", methods=["GET"])
     def get_etreatments():
         return create_json_response(jsonify(services.get_treatments()), 200)
+    
+    @app.route("/chemicals", methods=["GET"])
+    def get_chemicals():
+        return create_json_response(jsonify(services.get_chemicals()), 200)
     
     @app.route("/relationship_types", methods=["GET"])
     def get_relationship_types():

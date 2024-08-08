@@ -133,6 +133,8 @@ def is_valid_relationship(property_id, target_id):
                 return True
             if relationship["type"] == constants.MAXO_STR and constants.MAXO_STR in target_id:
                 return True
+            if relationship["type"] == constants.CHEBI_STR and constants.CHEBI_STR in target_id:
+                return True
         return False
     return True
 
@@ -221,6 +223,7 @@ def get_extended_hierarchy_by_mondo_id(mondo_id):
         "Anatomical Structure": "#1d3952",
         "Exposure": "#1d4022",
         "Treatment": "#2d4022",
+        "Chemical": "#3d4022",
         "Predicted": "#e5ff00"
     }
 
@@ -265,6 +268,12 @@ def get_extended_hierarchy_by_mondo_id(mondo_id):
             treatment_id = treatment['target']
             color = legend["Predicted"] if treatment.get('predicted', False) else legend["Treatment"]
             add_to_hierarchy(treatment_id, id_map[disease_id], treatment['label'], 1, color)
+
+        # Process Chemicals
+        for chemical in disease.get('chemicals', []):
+            chemical_id = chemical['target']
+            color = legend["Predicted"] if chemical.get('predicted', False) else legend["Chemical"]
+            add_to_hierarchy(chemical_id, id_map[disease_id], chemical['label'], 1, color)
 
     if mondo_id in disease_dict:
         add_to_hierarchy(mondo_id, -1, disease_dict[mondo_id]['name'], 1, legend["Disease"])
@@ -441,7 +450,44 @@ def get_diseases_by_treatments(treatment_ids):
 
     return diseases
 
-def get_diseases_by_filters(phenotype_ids, anatomical_ids, age_onset_ids, exposure_ids, treatment_ids):
+
+def get_diseases_by_chemicals(chemical_ids):
+    """
+    Retrieve all diseases associated with all of the given chemicals, excluding the specified chemicals from the chemicals list.
+
+    :param chemical_ids: A list of chemical IDs (CHEBI IDs).
+
+    :return: A list of diseases associated with all the given chemicals.
+    """
+    if not chemical_ids:
+        return []
+    
+    # retrieve all disease IDs from the DISEASES collection
+    all_disease_ids = set(repository.get_diseases_ids())
+
+    if not all_disease_ids:
+        return []
+    
+    filtered_disease_ids = all_disease_ids
+    data_model = repository.get_data_model()
+
+    print(f"Filtering diseases by chemicals: {chemical_ids}")    
+
+    initial_chemical_id = chemical_ids[0]
+    chemical_disease_ids = set(data_model['chemical_to_diseases'].get(initial_chemical_id, []))
+    for chemical_id in chemical_ids[1:]:
+        current_disease_ids = set(data_model['chemical_to_diseases'].get(chemical_id, []))
+        chemical_disease_ids.intersection_update(current_disease_ids)
+    filtered_disease_ids.intersection_update(chemical_disease_ids)
+
+    # diseases that match all filtered disease ids
+    diseases = repository.get_diseases_by_ids(filtered_disease_ids)
+
+    print(f"Matching diseases: {diseases}")
+
+    return diseases
+
+def get_diseases_by_filters(phenotype_ids, anatomical_ids, age_onset_ids, exposure_ids, treatment_ids, chemical_ids):
     """
     Retrieve all diseases associated with all of the given filters
 
@@ -450,7 +496,7 @@ def get_diseases_by_filters(phenotype_ids, anatomical_ids, age_onset_ids, exposu
     
     data_model = repository.get_data_model()
 
-    if not (phenotype_ids or anatomical_ids or age_onset_ids or exposure_ids  or treatment_ids):
+    if not (phenotype_ids or anatomical_ids or age_onset_ids or exposure_ids  or treatment_ids or chemical_ids):
       return []
 
     all_disease_ids = set(repository.get_diseases_ids())
@@ -500,6 +546,14 @@ def get_diseases_by_filters(phenotype_ids, anatomical_ids, age_onset_ids, exposu
             current_disease_ids = set(data_model['treatment_to_diseases'].get(treatment_id, []))
             treatment_disease_ids.intersection_update(current_disease_ids)
         filtered_disease_ids.intersection_update(treatment_disease_ids)
+
+    if chemical_ids:
+        initial_chemical_id = chemical_ids[0]
+        chemical_disease_ids = set(data_model['chemical_to_diseases'].get(initial_chemical_id, []))
+        for chemical_id in chemical_ids[1:]:
+            current_disease_ids = set(data_model['chemical_to_diseases'].get(chemical_id, []))
+            chemical_disease_ids.intersection_update(current_disease_ids)
+        filtered_disease_ids.intersection_update(chemical_disease_ids)
 
     # retrieve the diseases that match all filtered disease ids
     return repository.get_diseases_by_ids(filtered_disease_ids)
@@ -617,6 +671,27 @@ def get_treatments():
     unique_treatments = {v['value']: v for v in treatments}.values()
     return list(unique_treatments)
 
+def get_chemicals():
+    """
+    Retrieve a list of unique chemical from the data model.
+    Returns: a list of dictionaries representing unique chemicals. Each dictionary contains:
+          - The label of the chemical.
+          - The identifier of the chemical, with the URL prefix removed.
+    """
+
+    chemicals = []
+    # TODO, read from data_model chemical to diseases, then match to its collection to get label
+    for disease in repository.get_diseases():
+        for chemical in disease.get('chemicals', []):
+            chemicals.append({
+                "label": chemical.get('label', 'Unknown chemical'),
+                "value": chemical['target'].replace("http://purl.obolibrary.org/obo/", "")
+            })
+    
+    # Remove duplicates
+    unique_chemicals = {v['value']: v for v in chemicals}.values()
+    return list(unique_chemicals)
+
 # get phenotype by id
 def get_phenotype_by_id(full_id):
     return repository.get_phenotype_by_id(full_id)
@@ -637,6 +712,9 @@ def get_exposure_by_id(full_id):
 def get_treatment_by_id(full_id):
     return repository.get_treatment_by_id(full_id)
 
+# get chemical by id
+def get_chemical_by_id(full_id):
+    return repository.get_chemical_by_id(full_id)
   
 def get_relationship_types():
     relationship_types = []
@@ -659,6 +737,7 @@ def update_data_model(full_disease_id, full_new_relationship_property, predicted
     anatomical_structure = get_anatomical_by_id(predicted_target) if constants.UBERON_STR in predicted_target else None
     exposure = get_exposure_by_id(predicted_target) if constants.ECTO_STR in predicted_target else None
     treatment = get_treatment_by_id(predicted_target) if constants.MAXO_STR in predicted_target else None
+    chemical = get_chemical_by_id(predicted_target) if constants.CHEBI_STR in predicted_target else None
 
     data_model = repository.get_data_model()
     relationships = data_model["relationships_types"].get(full_new_relationship_property, [])
@@ -690,6 +769,12 @@ def update_data_model(full_disease_id, full_new_relationship_property, predicted
             if full_disease_id not in treatment_to_diseases:
                 treatment_to_diseases.append(full_disease_id)
             data_model["treatment_to_diseases"][predicted_target] = treatment_to_diseases
+        
+        elif relationship_type_str == constants.CHEBI_STR:
+            chemical_to_diseases = data_model["chemical_to_diseases"].get(predicted_target, [])
+            if full_disease_id not in chemical_to_diseases:
+                chemical_to_diseases.append(full_disease_id)
+            data_model["chemical_to_diseases"][predicted_target] = chemical_to_diseases
 
         for disease in repository.get_diseases():
             if disease["id"] == full_disease_id:
@@ -734,6 +819,16 @@ def update_data_model(full_disease_id, full_new_relationship_property, predicted
                         predicted_target, 
                         treatment["name"], True))
                     update_fields["treatments"] = disease["treatments"]
+
+                elif relationship_type_str == constants.CHEBI_STR and chemical:
+                    if "chemicals" not in disease:
+                        disease["chemicals"] = []
+                    disease["chemicals"].append(utils.create_relationship_entry(
+                        "has_relationship", 
+                        full_new_relationship_property, 
+                        predicted_target, 
+                        chemical["name"], True))
+                    update_fields["chemicals"] = disease["chemicals"]
                 
                 if update_fields:
                     update_operations.append(
