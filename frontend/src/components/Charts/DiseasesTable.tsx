@@ -8,6 +8,8 @@ import { Box, Button, Typography } from '@mui/material';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { Link } from 'react-router-dom';
 import TiredPc from '../../assets/tired-pc.jpg'
+import { useEffect, useState } from 'react';
+import { getDiseasesByFilters } from '../../services/webService';
 
 function createData(
   name: string,
@@ -27,9 +29,31 @@ const rows = [
   createData('Gingerbread', 356, 16.0, 49, 3.9),
 ];
 
-export default function BasicTable() {
-  return (
 
+function getIdFromUrl(url: string){
+  const auxString = url.split('/')
+  return auxString[auxString.length -1]
+}
+
+interface Props {
+  phenotype_ids: Array<string>;
+  anatomical_ids: Array<string>;
+  age_onset_ids: Array<string>;
+}
+
+export default function BasicTable({phenotype_ids, anatomical_ids, age_onset_ids}: Props) {
+  const [rows, setRows] = useState([])
+  
+  useEffect(()=>{
+    async function updateTable(){
+      const response = await getDiseasesByFilters(phenotype_ids, anatomical_ids, age_onset_ids);
+      setRows(response)
+    }
+    console.log(`NEW VALUE ADDED: ${JSON.stringify(phenotype_ids)}`)
+     updateTable()    
+  },[phenotype_ids, anatomical_ids, age_onset_ids])
+
+  return (
     <Paper sx={{margin: 2, padding:4, borderRadius: 2,}}>
             <Box sx={{display: 'flex', justifyContent: 'center'}}>
         <Typography variant="h4" sx={{marginBottom: 2}}>
@@ -38,7 +62,7 @@ export default function BasicTable() {
       </Box>
       <Box sx={{border:1, borderColor: '#1d8bf8', borderRadius:2, padding:2}}>
         {
-          rows.length > 12
+          rows.length === 0 || rows.length > 12
           ? 
           <Box sx= {{ display: 'flex', justifyContent: 'center', height: '500', alignItems: 'center', flexDirection: 'column'}}>
             <Typography color={'#bcbcbc'} variant='h5' sx={{marginBottom: 4}}>
@@ -53,11 +77,7 @@ export default function BasicTable() {
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell align='center'>Dessert (100g serving)</TableCell>
-              <TableCell align="center">Calories</TableCell>
-              <TableCell align="center">Fat&nbsp;(g)</TableCell>
-              <TableCell align="center">Carbs&nbsp;(g)</TableCell>
-              <TableCell align="center">Protein&nbsp;(g)</TableCell>
+              <TableCell align='center'>Enfermedad</TableCell>
               <TableCell align="center">Link</TableCell>
             </TableRow>
           </TableHead>
@@ -70,12 +90,8 @@ export default function BasicTable() {
                 <TableCell component="th" scope="row" align='center'>
                   {row.name}
                 </TableCell>
-                <TableCell align="center">{row.calories}</TableCell>
-                <TableCell align="center">{row.fat}</TableCell>
-                <TableCell align="center">{row.carbs}</TableCell>
-                <TableCell align="center">{row.protein}</TableCell>
                 <TableCell align="center">
-                  <Link to={'/main/' + 'MONDO_0043786'}>
+                  <Link to={'/main/' + getIdFromUrl(row.id)}>
                     <Button variant='contained' endIcon={<ArrowForwardIosIcon/>}>
                       Ver
                     </Button>

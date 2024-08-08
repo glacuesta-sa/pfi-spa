@@ -18,9 +18,10 @@ export default function MainDiseasePage(){
     useEffect(()=>{
         async function setDiseaseData(){
           const response = await getChartsData(diseaseId)
+          console.log(`Response charts: ${JSON.stringify(response)}`)
           const auxDendogram = []
           const auxHeatMap = []
-          response.map((item)=>{
+          response.extended_hierarchy[0].map((item)=>{
             auxDendogram.push(item.slice(0,5))
             auxHeatMap.push(item.slice(1,5))
           })

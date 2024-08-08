@@ -6,8 +6,7 @@ export async function getPhenotypes(): Promise<any>{
             method: 'GET',
             mode: "cors",
             headers:{   
-                'Accept':'*/*',
-                'Host':'http://localhost:5173'
+                'Accept':'*/*'
             }
         })
         return await response.json()
@@ -23,8 +22,23 @@ export async function getAnatomicalStructures(){
             method: 'GET',
             mode: "cors",
             headers:{   
-                'Accept':'*/*',
-                'Host':'http://localhost:5173'
+                'Accept':'*/*'
+            }
+        })
+        return await response.json()
+
+    } catch (error){
+        console.log("error", error)
+    }
+}
+
+export async function getAgesFilter(){
+    try {
+        let response = await fetch(`${url}/age_onsets`,{
+            method: 'GET',
+            mode: "cors",
+            headers:{   
+                'Accept':'*/*'
             }
         })
         return await response.json()
@@ -40,11 +54,46 @@ export async function getChartsData(diseaseId: string) {
             method: 'GET',
             mode: "cors",
             headers:{   
-                'Accept':'*/*',
-                'Host':'http://localhost:5173'
+                'Accept':'*/*'
             }
         })
-        
+        return await response.json()
+    } catch (error){
+        console.log("error", error)
+    }
+}
+
+export async function getDiseaseById(diseaseId: string) {
+    try {
+        let response = await fetch(`${url}/disease/${diseaseId}`,{
+            method: 'GET',
+            mode: "cors",
+            headers:{   
+                'Accept':'*/*'
+            }
+        })
+        return await response.json()
+    } catch (error){
+        console.log("error", error)
+    }
+}
+
+export async function getDiseasesByFilters(phenotype_ids: Array<string>, anatomical_ids: Array<string>, age_onset_ids: Array<string>) {
+    try {
+        console.log(`ENTERING NEW `)
+        let response = await fetch(`${url}/diseases/by_filters`, {
+            method: 'POST',
+            mode: "cors",
+            headers:{   
+                'Accept':'*/*',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                phenotype_ids: phenotype_ids,
+                anatomical_ids: anatomical_ids,
+                age_onset_ids: age_onset_ids
+            })
+        })
         return await response.json()
 
     } catch (error){

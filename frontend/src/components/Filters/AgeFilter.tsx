@@ -5,10 +5,12 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Checkbox from '@mui/material/Checkbox';
+import { getAgesFilter } from '../../services/webService';
 
 
 export default function AgeFilter() {
   const [checked, setChecked] = React.useState([0]);
+  const [options, setOptions] = React.useState([])
 
   const handleToggle = (value: number) => () => {
     const currentIndex = checked.indexOf(value);
@@ -23,28 +25,36 @@ export default function AgeFilter() {
     setChecked(newChecked);
   };
 
+  React.useEffect(()=>{
+    async function setAgeFilter(){
+      const response = await getAgesFilter()
+      setOptions(response)
+    }
+    setAgeFilter()
+  }, [options])
+
   return (
     <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-      {['Infante (0 - 10 años)', 'Adolescente ( 10 - 20 años)','Joven Adulto ( 20 - 30 años)','Adulto ( 30 - 50 años)', 'Adulto Mayor ( 50 - 80 años)'].map((value) => {
-        const labelId = `checkbox-list-label-${value}`;
+      {options.map((item) => {
+        const labelId = `checkbox-list-label-${item.label}`;
 
         return (
           <ListItem
-            key={value}
+            key={item.value}
             disablePadding
           >
-            <ListItemButton role={undefined} onClick={handleToggle(parseInt(value))} dense>
+            <ListItemButton role={undefined} onClick={handleToggle(parseInt(item.label))} dense>
               <ListItemIcon>
                 <Checkbox
                   edge="start"
                   // @ts-ignore
-                  checked={checked.indexOf(value) !== -1}
+                  checked={checked.indexOf(item.label) !== -1}
                   tabIndex={-1}
                   disableRipple
                   inputProps={{ 'aria-labelledby': labelId }}
                 />
               </ListItemIcon>
-              <ListItemText id={labelId} primary={value} primaryTypographyProps={{fontSize: 16}}/>
+              <ListItemText id={labelId} primary={item.label} primaryTypographyProps={{fontSize: 16}}/>
             </ListItemButton>
           </ListItem>
         );

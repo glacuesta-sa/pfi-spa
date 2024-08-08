@@ -5,16 +5,32 @@ import Divider from '@mui/material/Divider';
 import { Box, Button, List, ListItem, Paper } from '@mui/material';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { PulseLoader } from 'react-spinners';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
+import { getDiseaseById } from '../../services/webService';
 
 
 export default function InfoCard() {
 
-    React.useEffect(()=>{
+  const {diseaseId} = useParams()
+  const [title, setTitle] = React.useState('')
+  const [description, setDescription] = React.useState('')
+  const [causes, setCauses] = React.useState([])
+
+  React.useEffect(()=>{
+      async function getDisease(id:string){
+        const response = await getDiseaseById(id)
+
+        setTitle(response.name)
+        setDescription(response.description)
+        setCauses(response.causes)
+
+      }
+      getDisease(diseaseId)
       setTimeout(
           ()=>setLoading(false),
           2000
       )
+
   },[])
 
   const [loading, setLoading] = React.useState(true)
@@ -39,36 +55,26 @@ export default function InfoCard() {
             }}
           >
               <Typography variant="h5" gutterBottom>
-                Epilepsia de Lóbulo Frontal Tipo 1
+                {title}
               <Divider />
               </Typography>
               <Typography paragraph align='justify'>
-              Las convulsiones del lóbulo frontal son un tipo frecuente de epilepsia. La epilepsia es un trastorno del cerebro en el que grupos de neuronas cerebrales envían una descarga de señales eléctricas.
-              </Typography>
-                
-              <Typography paragraph align='justify'>
-                Estas convulsiones comienzan en la parte delantera del cerebro, que es la zona llamada lóbulo frontal.
-                El lóbulo frontal es grande y tiene funciones importantes. Por este motivo, las convulsiones del lóbulo frontal quizás ocasionen síntomas inusuales y pueden parecer relacionados con una enfermedad mental. Además, las convulsiones pueden confundirse con un trastorno del sueño, ya que suelen ocurrir mientras se duerme. Este tipo de convulsiones también reciben el nombre de epilepsia del lóbulo frontal.
+              {description}
               </Typography>
               <Typography variant="h6" gutterBottom>
                 Causas
               </Typography>
               <List sx={{ listStyleType: 'disc' }}>
+                {
+                  causes.map((item)=>(
                 <ListItem sx={{ display: 'list-item', ml:4 }}>
                   <Typography>
-                    Antecedentes familiares de convulsiones o trastornos cerebrales.
+                    {item}
                   </Typography>
                 </ListItem>
-                <ListItem sx={{ display: 'list-item', ml:4 }}>
-                  <Typography>
-                  Infección en el cerebro.
-                  </Typography>
-                </ListItem>
-                <ListItem sx={{ display: 'list-item', ml:4 }}>
-                  <Typography>
-                  Vasos sanguíneos o tejidos del cerebro que se forman de manera irregular.
-                  </Typography>
-                </ListItem>
+
+                  ))
+                }
               </List>
               <Box sx={{display:'flex', justifyContent: 'center'}}>
               <Link to="/treatment">

@@ -8,13 +8,17 @@ import SymptomsFilter from '../Filters/SymptomsFilter';
 import CustomChip from '../IsolatedComponents/CustomChip';
 import { Divider, Typography } from '@mui/material';
 import FilterListIcon from '@mui/icons-material/FilterList';
-import SexFilter from '../Filters/SexFilter';
 import AnatomyFilter from '../Filters/AnatomyFilter';
 import AgeFilter from '../Filters/AgeFilter';
 
 const drawerWidth = 350;
 
-export default function Sidebar({children}: {children: React.ReactNode}) {
+interface Props{
+  children: React.ReactNode,
+  updatePhenotypeFilterArray: (value: string)=>void
+}
+
+export default function Sidebar({children, updatePhenotypeFilterArray}: Props) {
 
   const [symptoms, setSymptoms] = React.useState<string[]>([])
   const [anatomySelection, setAnatomySelection] = React.useState<string[]>([])
@@ -61,7 +65,7 @@ export default function Sidebar({children}: {children: React.ReactNode}) {
           <Typography variant='h6' sx={{marginY: 2}} >
             Sintomas
           </Typography>
-          <SymptomsFilter updateSymptom={updateSymptom}/>
+          <SymptomsFilter updateSymptom={updateSymptom} updateFilterArray={updatePhenotypeFilterArray}/>
         </Box>
         <Box sx={{display: 'flex', justifyContent: 'flex-start'}}>
         <List>
@@ -83,13 +87,6 @@ export default function Sidebar({children}: {children: React.ReactNode}) {
             <CustomChip text={text} key={index}/>
           ))}
         </List>
-        </Box>
-          <Divider sx={{mt: 4}}/>
-        <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-          <Typography variant='h6' sx={{marginTop: 2}} >
-            Sexo
-          </Typography>
-          <SexFilter />
         </Box>
         <Divider sx={{mt: 4}}/>
         <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
