@@ -10,6 +10,7 @@ RO_STR = 'RO_'
 ECTO_NAME = 'The Environmental Conditions, Treatments, and Exposures Ontology'
 HP_NAME = 'The Human Phenotype Ontology'
 UBERON_NAME = 'The Uber-anatomy ontology'
+MAXO_NAME = 'The Medical Action Ontology'
 
 # RELATIONSHIP CONSTANTS
 IS_A_RELATIONSHIP = 'is_a'

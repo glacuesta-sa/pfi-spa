@@ -52,8 +52,22 @@ def generate_model():
         disease_id = disease['id']
         disease_name = disease['name']
     
-    # treatment relationships  
+        # treatment relationships  
         for treatment in disease.get('treatments', []):
+
+            property_id = treatment['property']
+            target_id = treatment['target']
+
+            if property_id in relationships_types:
+                if relationships_types[property_id]["type"] == constants.UBERON_STR and constants.UBERON_STR not in target_id:
+                    continue
+                if relationships_types[property_id]["type"] == constants.HP_STR and constants.HP_STR not in target_id:
+                    continue
+                if relationships_types[property_id]["type"] == constants.ECTO_STR and constants.ECTO_STR not in target_id:
+                    continue
+                if relationships_types[property_id]["type"] == constants.MAXO_STR and constants.MAXO_STR not in target_id:
+                    continue
+
             records.append({
                 'disease_id': disease_id,
                 'disease_name': disease_name,
@@ -74,6 +88,8 @@ def generate_model():
                 if relationships_types[property_id]["type"] == constants.HP_STR and constants.HP_STR not in target_id:
                     continue
                 if relationships_types[property_id]["type"] == constants.ECTO_STR and constants.ECTO_STR not in target_id:
+                    continue
+                if relationships_types[property_id]["type"] == constants.MAXO_STR and constants.MAXO_STR not in target_id:
                     continue
 
             records.append({
@@ -97,6 +113,8 @@ def generate_model():
                     continue
                 if relationships_types[property_id]["type"] == constants.ECTO_STR and constants.ECTO_STR not in target_id:
                     continue
+                if relationships_types[property_id]["type"] == constants.MAXO_STR and constants.MAXO_STR not in target_id:
+                    continue
 
             records.append({
                 'disease_id': disease_id,
@@ -118,6 +136,8 @@ def generate_model():
                 if relationships_types[property_id]["type"] == constants.HP_STR and constants.HP_STR not in target_id:
                     continue
                 if relationships_types[property_id]["type"] == constants.ECTO_STR and constants.ECTO_STR not in target_id:
+                    continue
+                if relationships_types[property_id]["type"] == constants.MAXO_STR and constants.MAXO_STR not in target_id:
                     continue
 
             records.append({

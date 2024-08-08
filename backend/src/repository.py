@@ -16,6 +16,7 @@ PHENOTYPES_COLLECTION = db['phenotypes']
 ANATOMICAL_COLLECTION = db['anatomical']
 RO_COLLECTION = db['relationships']
 ECTO_COLLECTION = db['exposures']
+MAXO_COLLECTION = db['treatments']
 
 # FileGrid conn
 fs = gridfs.GridFS(db)
@@ -90,6 +91,11 @@ def get_exposure_by_id(full_id):
     exppsure = ECTO_COLLECTION.find_one({"id": full_id}, {'_id': 0})
     return exppsure
 
+# get treatment by id
+def get_treatment_by_id(full_id):
+    treat = MAXO_COLLECTION.find_one({"id": full_id}, {'_id': 0})
+    return treat
+
 def save_data_model(data_model):
     DATA_MODEL_COLLECTION.delete_many({})
     DATA_MODEL_COLLECTION.insert_one(data_model)
@@ -114,18 +120,13 @@ def save_ecto_dict(ecto_dict):
     ECTO_COLLECTION.delete_many({})
     ECTO_COLLECTION.insert_many(ecto_dict.values())
 
-def save(data_model, disease_dict, phenotype_dict, anatomical_dict, ro_dict, ecto_dict):
+def save_maxo_dict(maxo_dict):
+    MAXO_COLLECTION.delete_many({})
+    MAXO_COLLECTION.insert_many(maxo_dict.values())
+
+def save(data_model, disease_dict, phenotype_dict, anatomical_dict, ro_dict, ecto_dict, maxo_dict):
     """
-    Save the data model and disease dictionary into MongoDB.
-
-    This function clears existing data in the 'diseases' and 'data_model' collections and 
-    inserts the new data.
-
-    Parameters:
-    data_model (dict): The data model to be saved.
-    disease_dict (dict): A dictionary of disease entries to be saved.
-    phenotype_dict (dict): A dictionary of phenotype entries to be saved.
-    anatomical_dict (dict): A dictionary of uberon entries to be saved.
+    Save the data model and associated relationships collections into MongoDB.
     """
     save_data_model(data_model)
     save_disease_dict(disease_dict)
@@ -133,6 +134,7 @@ def save(data_model, disease_dict, phenotype_dict, anatomical_dict, ro_dict, ect
     save_anatomical(anatomical_dict)
     save_ro_dict(ro_dict)
     save_ecto_dict(ecto_dict)
+    save_maxo_dict(maxo_dict)
     
 def set_hpo_graph():
     

@@ -129,6 +129,8 @@ def is_valid_relationship(property_id, target_id):
             return False
         if relationships_types[property_id]["type"] == constants.ECTO_STR and constants.ECTO_STR not in target_id:
             return False
+        if relationships_types[property_id]["type"] == constants.MAXO_STR and constants.MAXO_STR not in target_id:
+            return False
     return True
 
 def get_hierarchy_by_mondo_id(mondo_id):
@@ -215,6 +217,7 @@ def get_extended_hierarchy_by_mondo_id(mondo_id):
         "Phenotype": "#1d522a",
         "Anatomical Structure": "#1d3952",
         "Exposure": "#1d4022",
+        "Treatment": "#2d4022",
         "Predicted": "#e5ff00"
     }
 
@@ -253,6 +256,12 @@ def get_extended_hierarchy_by_mondo_id(mondo_id):
             exposure_id = exposure['target']
             color = legend["Predicted"] if exposure.get('predicted', False) else legend["Exposure"]
             add_to_hierarchy(exposure_id, id_map[disease_id], exposure['label'], 1, color)
+        
+        # Process Treatments
+        for treatment in disease.get('treatments', []):
+            treatment_id = treatment['target']
+            color = legend["Predicted"] if treatment.get('predicted', False) else legend["Treatment"]
+            add_to_hierarchy(treatment_id, id_map[disease_id], treatment['label'], 1, color)
 
     if mondo_id in disease_dict:
         add_to_hierarchy(mondo_id, -1, disease_dict[mondo_id]['name'], 1, legend["Disease"])
@@ -392,7 +401,44 @@ def get_diseases_by_exposures(exposure_ids):
 
     return diseases
 
-def get_diseases_by_filters(phenotype_ids, anatomical_ids, age_onset_ids, exposure_ids):
+
+def get_diseases_by_treatments(treatment_ids):
+    """
+    Retrieve all diseases associated with all of the given treatments, excluding the specified treatments from the treatments list.
+
+    :param treatment_ids: A list of treatment IDs (MAXO IDs).
+
+    :return: A list of diseases associated with all the given treatments.
+    """
+    if not treatment_ids:
+        return []
+    
+    # retrieve all disease IDs from the DISEASES collection
+    all_disease_ids = set(repository.get_diseases_ids())
+
+    if not all_disease_ids:
+        return []
+    
+    filtered_disease_ids = all_disease_ids
+    data_model = repository.get_data_model()
+
+    print(f"Filtering diseases by treatments: {treatment_ids}")    
+
+    initial_treatment_id = treatment_ids[0]
+    treatment_disease_ids = set(data_model['treatment_to_diseases'].get(initial_treatment_id, []))
+    for treatment_id in treatment_ids[1:]:
+        current_disease_ids = set(data_model['treatment_to_diseases'].get(treatment_id, []))
+        treatment_disease_ids.intersection_update(current_disease_ids)
+    filtered_disease_ids.intersection_update(treatment_disease_ids)
+
+    # diseases that match all filtered disease ids
+    diseases = repository.get_diseases_by_ids(filtered_disease_ids)
+
+    print(f"Matching diseases: {diseases}")
+
+    return diseases
+
+def get_diseases_by_filters(phenotype_ids, anatomical_ids, age_onset_ids, exposure_ids, treatment_ids):
     """
     Retrieve all diseases associated with all of the given filters
 
@@ -401,7 +447,7 @@ def get_diseases_by_filters(phenotype_ids, anatomical_ids, age_onset_ids, exposu
     
     data_model = repository.get_data_model()
 
-    if not (phenotype_ids or anatomical_ids or age_onset_ids or exposure_ids):
+    if not (phenotype_ids or anatomical_ids or age_onset_ids or exposure_ids  or treatment_ids):
       return []
 
     all_disease_ids = set(repository.get_diseases_ids())
@@ -443,6 +489,14 @@ def get_diseases_by_filters(phenotype_ids, anatomical_ids, age_onset_ids, exposu
             current_disease_ids = set(data_model['exposure_to_diseases'].get(exposure_id, []))
             exposure_disease_ids.intersection_update(current_disease_ids)
         filtered_disease_ids.intersection_update(exposure_disease_ids)
+
+    if treatment_ids:
+        initial_treatment_id = treatment_ids[0]
+        treatment_disease_ids = set(data_model['treatment_to_diseases'].get(initial_treatment_id, []))
+        for treatment_id in treatment_ids[1:]:
+            current_disease_ids = set(data_model['treatment_to_diseases'].get(treatment_id, []))
+            treatment_disease_ids.intersection_update(current_disease_ids)
+        filtered_disease_ids.intersection_update(treatment_disease_ids)
 
     # retrieve the diseases that match all filtered disease ids
     return repository.get_diseases_by_ids(filtered_disease_ids)
@@ -531,13 +585,34 @@ def get_exposures():
     for disease in repository.get_diseases():
         for exposure in disease.get('exposures', []):
             exposures.append({
-                "label": exposure.get('label', 'Unknown anatomical structure'),
+                "label": exposure.get('label', 'Unknown exposure'),
                 "value": exposure['target'].replace("http://purl.obolibrary.org/obo/", "")
             })
     
     # Remove duplicates
     unique_exposures = {v['value']: v for v in exposures}.values()
     return list(unique_exposures)
+
+def get_treatments():
+    """
+    Retrieve a list of unique treatment from the data model.
+    Returns: a list of dictionaries representing unique treatments. Each dictionary contains:
+          - The label of the treatment.
+          - The identifier of the treatment, with the URL prefix removed.
+    """
+
+    treatments = []
+    # TODO, read from data_model treatment to diseases, then match to its collection to get label
+    for disease in repository.get_diseases():
+        for treatment in disease.get('treatments', []):
+            treatments.append({
+                "label": treatment.get('label', 'Unknown treatment'),
+                "value": treatment['target'].replace("http://purl.obolibrary.org/obo/", "")
+            })
+    
+    # Remove duplicates
+    unique_treatments = {v['value']: v for v in treatments}.values()
+    return list(unique_treatments)
 
 # get phenotype by id
 def get_phenotype_by_id(full_id):
@@ -554,6 +629,10 @@ def get_relationship_by_id(full_id):
 # get exposure by id
 def get_exposure_by_id(full_id):
     return repository.get_exposure_by_id(full_id)
+
+# get treatment by id
+def get_treatment_by_id(full_id):
+    return repository.get_treatment_by_id(full_id)
 
   
 def get_relationship_types():
@@ -576,6 +655,7 @@ def update_data_model(full_disease_id, full_new_relationship_property, predicted
     phenotype = get_phenotype_by_id(predicted_target) if constants.HP_STR in predicted_target else None
     anatomical_structure = get_anatomical_by_id(predicted_target) if constants.UBERON_STR in predicted_target else None
     exposure = get_exposure_by_id(predicted_target) if constants.ECTO_STR in predicted_target else None
+    treatment = get_treatment_by_id(predicted_target) if constants.MAXO_STR in predicted_target else None
 
     data_model = repository.get_data_model()
     relationship_type = data_model["relationships_types"].get(full_new_relationship_property)
@@ -596,6 +676,11 @@ def update_data_model(full_disease_id, full_new_relationship_property, predicted
         if full_disease_id not in exposure_to_diseases:
             exposure_to_diseases.append(full_disease_id)
         data_model["exposure_to_diseases"][predicted_target] = exposure_to_diseases
+    elif relationship_type["type"] == constants.MAXO_STR:
+        treatment_to_diseases = data_model["treatment_to_diseases"].get(predicted_target, [])
+        if full_disease_id not in treatment_to_diseases:
+            treatment_to_diseases.append(full_disease_id)
+        data_model["treatment_to_diseases"][predicted_target] = treatment_to_diseases
 
     update_operations = []
     for disease in repository.get_diseases():
@@ -631,6 +716,16 @@ def update_data_model(full_disease_id, full_new_relationship_property, predicted
                 predicted_target, 
                 exposure["name"], True))
                 update_fields["exposures"] = disease["exposures"]
+
+            elif relationship_type["type"] == constants.MAXO_STR and treatment:
+                if "treatments" not in disease:
+                    disease["treatments"] = []
+                disease["treatments"].append(utils.create_relationship_entry(
+                "has_relationship", 
+                full_new_relationship_property, 
+                predicted_target, 
+                treatment["name"], True))
+                update_fields["treatments"] = disease["treatments"]
             
             if update_fields:
                 update_operations.append(
