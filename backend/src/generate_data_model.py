@@ -172,7 +172,12 @@ def process_edges(mondo_data, age_onset_hierarchy, disease_dict, data_model, ro_
                         if object_id not in data_model["treatment_to_diseases"]:
                             data_model["treatment_to_diseases"][object_id] = []
                         data_model["treatment_to_diseases"][object_id].append(subject_id)
-                    relationships_types[property_id] = {"type": constants.MAXO_STR, "target": property_id, "label": ""}
+                    
+                    new_rel = {"type": constants.MAXO_STR, "target": property_id, "label": ""}
+                    if property_id not in relationships_types:
+                        relationships_types[property_id] = []
+                    if new_rel not in relationships_types[property_id]:
+                        relationships_types[property_id].append(new_rel)
 
                 # Anatomical Parts
                 elif constants.UBERON_STR in object_id:
@@ -181,7 +186,12 @@ def process_edges(mondo_data, age_onset_hierarchy, disease_dict, data_model, ro_
                         if object_id not in data_model["anatomical_to_diseases"]:
                             data_model["anatomical_to_diseases"][object_id] = []
                         data_model["anatomical_to_diseases"][object_id].append(subject_id)
-                    relationships_types[property_id] = {"type": constants.UBERON_STR, "target": property_id, "label": ""}
+                    
+                    new_rel = {"type": constants.UBERON_STR, "target": property_id, "label": ""}
+                    if property_id not in relationships_types:
+                        relationships_types[property_id] = []
+                    if new_rel not in relationships_types[property_id]:
+                        relationships_types[property_id].append(new_rel)
 
                 # Age Onset
                 elif constants.HP_STR in object_id and object_id in age_onset_hierarchy:
@@ -190,7 +200,12 @@ def process_edges(mondo_data, age_onset_hierarchy, disease_dict, data_model, ro_
                         if object_id not in data_model["age_onset_to_diseases"]:
                             data_model["age_onset_to_diseases"][object_id] = []
                         data_model["age_onset_to_diseases"][object_id].append(subject_id)
-                    relationships_types[property_id] = {"type": constants.HP_STR, "target": property_id, "label": ""}
+                    
+                    new_rel = {"type": constants.HP_STR, "target": property_id, "label": ""}
+                    if property_id not in relationships_types:
+                        relationships_types[property_id] = []
+                    if new_rel not in relationships_types[property_id]:
+                        relationships_types[property_id].append(new_rel)
 
 
                 # Penotypes
@@ -200,7 +215,12 @@ def process_edges(mondo_data, age_onset_hierarchy, disease_dict, data_model, ro_
                         if object_id not in data_model["phenotype_to_diseases"]:
                             data_model["phenotype_to_diseases"][object_id] = []
                         data_model["phenotype_to_diseases"][object_id].append(subject_id)
-                    relationships_types[property_id] = {"type": constants.HP_STR, "target": property_id, "label": ""}
+
+                    new_rel = {"type": constants.HP_STR, "target": property_id, "label": ""}
+                    if property_id not in relationships_types:
+                        relationships_types[property_id] = []
+                    if new_rel not in relationships_types[property_id]:
+                        relationships_types[property_id].append(new_rel)
 
 
                 # Environmental Exposures, Conditions, Treatments 
@@ -210,7 +230,13 @@ def process_edges(mondo_data, age_onset_hierarchy, disease_dict, data_model, ro_
                         if object_id not in data_model["exposure_to_diseases"]:
                             data_model["exposure_to_diseases"][object_id] = []
                         data_model["exposure_to_diseases"][object_id].append(subject_id)
-                    relationships_types[property_id] = {"type": constants.ECTO_STR, "target": property_id, "label": ""}
+                    
+                    new_rel = {"type": constants.ECTO_STR, "target": property_id, "label": ""}
+                    if property_id not in relationships_types:
+                        relationships_types[property_id] = []
+                    if new_rel not in relationships_types[property_id]:
+                        relationships_types[property_id].append(new_rel)
+
                 # TODO rest of relationships, CHEBI, GO
                 #else:
                     # Only add non-MAXO, non-UBERON, and non-HP relationships to the relationships field

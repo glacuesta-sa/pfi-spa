@@ -45,8 +45,6 @@ def generate_model():
     # Preparar los datos para el entrenamiento
     records = []
 
-    relationships_types = data_model.get("relationships_types", {})
-
     # Convertir la estructura de datos en un formato adecuado
     for disease in diseases:
         disease_id = disease['id']
@@ -58,15 +56,8 @@ def generate_model():
             property_id = treatment['property']
             target_id = treatment['target']
 
-            if property_id in relationships_types:
-                if relationships_types[property_id]["type"] == constants.UBERON_STR and constants.UBERON_STR not in target_id:
-                    continue
-                if relationships_types[property_id]["type"] == constants.HP_STR and constants.HP_STR not in target_id:
-                    continue
-                if relationships_types[property_id]["type"] == constants.ECTO_STR and constants.ECTO_STR not in target_id:
-                    continue
-                if relationships_types[property_id]["type"] == constants.MAXO_STR and constants.MAXO_STR not in target_id:
-                    continue
+            if not services.is_valid_relationship(property_id, target_id):
+                continue
 
             records.append({
                 'disease_id': disease_id,
@@ -82,15 +73,8 @@ def generate_model():
             property_id = anatomical['property']
             target_id = anatomical['target']
 
-            if property_id in relationships_types:
-                if relationships_types[property_id]["type"] == constants.UBERON_STR and constants.UBERON_STR not in target_id:
-                    continue
-                if relationships_types[property_id]["type"] == constants.HP_STR and constants.HP_STR not in target_id:
-                    continue
-                if relationships_types[property_id]["type"] == constants.ECTO_STR and constants.ECTO_STR not in target_id:
-                    continue
-                if relationships_types[property_id]["type"] == constants.MAXO_STR and constants.MAXO_STR not in target_id:
-                    continue
+            if not services.is_valid_relationship(property_id, target_id):
+                continue
 
             records.append({
                 'disease_id': disease_id,
@@ -106,15 +90,8 @@ def generate_model():
             property_id = phenotype['property']
             target_id = phenotype['target']
 
-            if property_id in relationships_types:
-                if relationships_types[property_id]["type"] == constants.UBERON_STR and constants.UBERON_STR not in target_id:
-                    continue
-                if relationships_types[property_id]["type"] == constants.HP_STR and constants.HP_STR not in target_id:
-                    continue
-                if relationships_types[property_id]["type"] == constants.ECTO_STR and constants.ECTO_STR not in target_id:
-                    continue
-                if relationships_types[property_id]["type"] == constants.MAXO_STR and constants.MAXO_STR not in target_id:
-                    continue
+            if not services.is_valid_relationship(property_id, target_id):
+                continue
 
             records.append({
                 'disease_id': disease_id,
@@ -130,15 +107,8 @@ def generate_model():
             property_id = age_onset['property']
             target_id = age_onset['target']
 
-            if property_id in relationships_types:
-                if relationships_types[property_id]["type"] == constants.UBERON_STR and constants.UBERON_STR not in target_id:
-                    continue
-                if relationships_types[property_id]["type"] == constants.HP_STR and constants.HP_STR not in target_id:
-                    continue
-                if relationships_types[property_id]["type"] == constants.ECTO_STR and constants.ECTO_STR not in target_id:
-                    continue
-                if relationships_types[property_id]["type"] == constants.MAXO_STR and constants.MAXO_STR not in target_id:
-                    continue
+            if not services.is_valid_relationship(property_id, target_id):
+                continue
 
             records.append({
                 'disease_id': disease_id,
@@ -154,13 +124,8 @@ def generate_model():
             property_id = exposure['property']
             target_id = exposure['target']
 
-            if property_id in relationships_types:
-                if relationships_types[property_id]["type"] == constants.UBERON_STR and constants.UBERON_STR not in target_id:
-                    continue
-                if relationships_types[property_id]["type"] == constants.HP_STR and constants.HP_STR not in target_id:
-                    continue
-                if relationships_types[property_id]["type"] == constants.ECTO_STR and constants.ECTO_STR not in target_id:
-                    continue
+            if not services.is_valid_relationship(property_id, target_id):
+                continue
 
             records.append({
                 'disease_id': disease_id,

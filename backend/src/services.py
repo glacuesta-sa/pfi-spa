@@ -123,14 +123,17 @@ def is_valid_relationship(property_id, target_id):
 
     relationships_types = repository.get_data_model()['relationships_types']
     if property_id in relationships_types:
-        if relationships_types[property_id]["type"] == constants.UBERON_STR and constants.UBERON_STR not in target_id:
-            return False
-        if relationships_types[property_id]["type"] == constants.HP_STR and constants.HP_STR not in target_id:
-            return False
-        if relationships_types[property_id]["type"] == constants.ECTO_STR and constants.ECTO_STR not in target_id:
-            return False
-        if relationships_types[property_id]["type"] == constants.MAXO_STR and constants.MAXO_STR not in target_id:
-            return False
+        valid_types = relationships_types[property_id]
+        for relationship in valid_types:
+            if relationship["type"] == constants.UBERON_STR and constants.UBERON_STR in target_id:
+                return True
+            if relationship["type"] == constants.HP_STR and constants.HP_STR in target_id:
+                return True
+            if relationship["type"] == constants.ECTO_STR and constants.ECTO_STR in target_id:
+                return True
+            if relationship["type"] == constants.MAXO_STR and constants.MAXO_STR in target_id:
+                return True
+        return False
     return True
 
 def get_hierarchy_by_mondo_id(mondo_id):
@@ -658,82 +661,87 @@ def update_data_model(full_disease_id, full_new_relationship_property, predicted
     treatment = get_treatment_by_id(predicted_target) if constants.MAXO_STR in predicted_target else None
 
     data_model = repository.get_data_model()
-    relationship_type = data_model["relationships_types"].get(full_new_relationship_property)
-
-    # Actualizar el diccionario correspondiente
-    if relationship_type["type"] == constants.HP_STR:
-        phenotype_to_diseases = data_model["phenotype_to_diseases"].get(predicted_target, [])
-        if full_disease_id not in phenotype_to_diseases:
-            phenotype_to_diseases.append(full_disease_id)
-        data_model["phenotype_to_diseases"][predicted_target] = phenotype_to_diseases
-    elif relationship_type["type"] == constants.UBERON_STR:
-        anatomical_to_diseases = data_model["anatomical_to_diseases"].get(predicted_target, [])
-        if full_disease_id not in anatomical_to_diseases:
-            anatomical_to_diseases.append(full_disease_id)
-        data_model["anatomical_to_diseases"][predicted_target] = anatomical_to_diseases
-    elif relationship_type["type"] == constants.ECTO_STR:
-        exposure_to_diseases = data_model["exposure_to_diseases"].get(predicted_target, [])
-        if full_disease_id not in exposure_to_diseases:
-            exposure_to_diseases.append(full_disease_id)
-        data_model["exposure_to_diseases"][predicted_target] = exposure_to_diseases
-    elif relationship_type["type"] == constants.MAXO_STR:
-        treatment_to_diseases = data_model["treatment_to_diseases"].get(predicted_target, [])
-        if full_disease_id not in treatment_to_diseases:
-            treatment_to_diseases.append(full_disease_id)
-        data_model["treatment_to_diseases"][predicted_target] = treatment_to_diseases
+    relationships = data_model["relationships_types"].get(full_new_relationship_property, [])
 
     update_operations = []
-    for disease in repository.get_diseases():
-        if disease["id"] == full_disease_id:
+    for relationship_type in relationships:
+        relationship_type_str = relationship_type["type"]
 
-            update_fields = {}
-            if relationship_type["type"] == constants.HP_STR and phenotype:
-                if "phenotypes" not in disease:
-                    disease["phenotypes"] = []
-                disease["phenotypes"].append(utils.create_relationship_entry(
-                    "has_relationship", 
-                    full_new_relationship_property, 
-                    predicted_target, 
-                    phenotype["name"], True))
-                update_fields["phenotypes"] = disease["phenotypes"]
+        if relationship_type_str == constants.HP_STR:
+            phenotype_to_diseases = data_model["phenotype_to_diseases"].get(predicted_target, [])
+            if full_disease_id not in phenotype_to_diseases:
+                phenotype_to_diseases.append(full_disease_id)
+            data_model["phenotype_to_diseases"][predicted_target] = phenotype_to_diseases
+        
+        elif relationship_type_str == constants.UBERON_STR:
+            anatomical_to_diseases = data_model["anatomical_to_diseases"].get(predicted_target, [])
+            if full_disease_id not in anatomical_to_diseases:
+                anatomical_to_diseases.append(full_disease_id)
+            data_model["anatomical_to_diseases"][predicted_target] = anatomical_to_diseases
+        
+        elif relationship_type_str == constants.ECTO_STR:
+            exposure_to_diseases = data_model["exposure_to_diseases"].get(predicted_target, [])
+            if full_disease_id not in exposure_to_diseases:
+                exposure_to_diseases.append(full_disease_id)
+            data_model["exposure_to_diseases"][predicted_target] = exposure_to_diseases
+        
+        elif relationship_type_str == constants.MAXO_STR:
+            treatment_to_diseases = data_model["treatment_to_diseases"].get(predicted_target, [])
+            if full_disease_id not in treatment_to_diseases:
+                treatment_to_diseases.append(full_disease_id)
+            data_model["treatment_to_diseases"][predicted_target] = treatment_to_diseases
+
+        for disease in repository.get_diseases():
+            if disease["id"] == full_disease_id:
+                update_fields = {}
+
+                if relationship_type_str == constants.HP_STR and phenotype:
+                    if "phenotypes" not in disease:
+                        disease["phenotypes"] = []
+                    disease["phenotypes"].append(utils.create_relationship_entry(
+                        "has_relationship", 
+                        full_new_relationship_property, 
+                        predicted_target, 
+                        phenotype["name"], True))
+                    update_fields["phenotypes"] = disease["phenotypes"]
                 
-            elif relationship_type["type"] == constants.UBERON_STR and anatomical_structure:
-                if "anatomical_structures" not in disease:
-                    disease["anatomical_structures"] = []
-                disease["anatomical_structures"].append(utils.create_relationship_entry(
-                "has_relationship", 
-                full_new_relationship_property, 
-                predicted_target, 
-                anatomical_structure["name"], True))
-                update_fields["anatomical_structures"] = disease["anatomical_structures"]
+                elif relationship_type_str == constants.UBERON_STR and anatomical_structure:
+                    if "anatomical_structures" not in disease:
+                        disease["anatomical_structures"] = []
+                    disease["anatomical_structures"].append(utils.create_relationship_entry(
+                        "has_relationship", 
+                        full_new_relationship_property, 
+                        predicted_target, 
+                        anatomical_structure["name"], True))
+                    update_fields["anatomical_structures"] = disease["anatomical_structures"]
 
-            elif relationship_type["type"] == constants.ECTO_STR and exposure:
-                if "exposures" not in disease:
-                    disease["exposures"] = []
-                disease["exposures"].append(utils.create_relationship_entry(
-                "has_relationship", 
-                full_new_relationship_property, 
-                predicted_target, 
-                exposure["name"], True))
-                update_fields["exposures"] = disease["exposures"]
+                elif relationship_type_str == constants.ECTO_STR and exposure:
+                    if "exposures" not in disease:
+                        disease["exposures"] = []
+                    disease["exposures"].append(utils.create_relationship_entry(
+                        "has_relationship", 
+                        full_new_relationship_property, 
+                        predicted_target, 
+                        exposure["name"], True))
+                    update_fields["exposures"] = disease["exposures"]
 
-            elif relationship_type["type"] == constants.MAXO_STR and treatment:
-                if "treatments" not in disease:
-                    disease["treatments"] = []
-                disease["treatments"].append(utils.create_relationship_entry(
-                "has_relationship", 
-                full_new_relationship_property, 
-                predicted_target, 
-                treatment["name"], True))
-                update_fields["treatments"] = disease["treatments"]
-            
-            if update_fields:
-                update_operations.append(
-                    UpdateOne(
-                        {"id": full_disease_id},
-                        {"$set": update_fields}
+                elif relationship_type_str == constants.MAXO_STR and treatment:
+                    if "treatments" not in disease:
+                        disease["treatments"] = []
+                    disease["treatments"].append(utils.create_relationship_entry(
+                        "has_relationship", 
+                        full_new_relationship_property, 
+                        predicted_target, 
+                        treatment["name"], True))
+                    update_fields["treatments"] = disease["treatments"]
+                
+                if update_fields:
+                    update_operations.append(
+                        UpdateOne(
+                            {"id": full_disease_id},
+                            {"$set": update_fields}
+                        )
                     )
-                )
 
     if update_operations:
         repository.DISEASES_COLLECTION.bulk_write(update_operations)
