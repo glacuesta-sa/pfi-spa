@@ -16,9 +16,11 @@ const drawerWidth = 350;
 interface Props{
   children: React.ReactNode,
   updatePhenotypeFilterArray: (value: string)=>void
+  updateAgeFilterArray: (value: string)=>void
+  updateAnatomicFilterArray: (value: string)=>void
 }
 
-export default function Sidebar({children, updatePhenotypeFilterArray}: Props) {
+export default function SidebarFilters({children, updatePhenotypeFilterArray, updateAnatomicFilterArray, updateAgeFilterArray}: Props) {
 
   const [symptoms, setSymptoms] = React.useState<string[]>([])
   const [anatomySelection, setAnatomySelection] = React.useState<string[]>([])
@@ -79,7 +81,7 @@ export default function Sidebar({children, updatePhenotypeFilterArray}: Props) {
           <Typography variant='h6' sx={{marginY: 2}} >
             Anatomia
           </Typography>
-          <AnatomyFilter updateSelection={updateSelection}/>
+          <AnatomyFilter updateSelection={updateSelection} updateAnatomicFilterArray={updateAnatomicFilterArray}/>
         </Box>
         <Box sx={{display: 'flex', justifyContent: 'flex-start'}}>
         <List>

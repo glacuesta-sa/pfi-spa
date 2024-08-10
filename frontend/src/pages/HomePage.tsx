@@ -1,6 +1,6 @@
 import { Box } from "@mui/material";
 import CustomAppBar from "../components/Layout/Appbar";
-import Sidebar from "../components/Layout/Sidebar";
+import SidebarFilters from "../components/Layout/SidebarFilters";
 import DiseasesTable from '../components/Charts/DiseasesTable'
 import { useState } from "react";
 export default function HomePage(){
@@ -13,16 +13,29 @@ export default function HomePage(){
         const aux = [...phenotypeIds, value]
         setPhenotypeIds(aux)
     }
-    
+
+    function updateAnatomicFilterArray(value: string){
+        const aux = [...anatomicalIds, value]
+        setAnatomical(aux)
+    }
+
+    function updateAgeFilterArray(value: string){
+        const aux = [...ageIds, value]
+        setAge(aux)
+    }    
 
     return(
         <>
             <CustomAppBar/>
-            <Sidebar updatePhenotypeFilterArray={updatePhenotypeFilterArray}>
+            <SidebarFilters 
+                updatePhenotypeFilterArray={updatePhenotypeFilterArray} 
+                updateAgeFilterArray={updateAgeFilterArray} 
+                updateAnatomicFilterArray={updateAnatomicFilterArray}
+            >
                 <Box>
                     <DiseasesTable age_onset_ids={ageIds} anatomical_ids={anatomicalIds} phenotype_ids={phenotypeIds} />
                 </Box>
-            </Sidebar>
+            </SidebarFilters>
         </>
     )
 }

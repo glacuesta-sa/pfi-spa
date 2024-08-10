@@ -30,8 +30,9 @@ export default function AgeFilter() {
       const response = await getAgesFilter()
       setOptions(response)
     }
+    console.log(`Age filters!`)
     setAgeFilter()
-  }, [options])
+  }, [])
 
   return (
     <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>

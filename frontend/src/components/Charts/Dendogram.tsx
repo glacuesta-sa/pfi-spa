@@ -3,7 +3,7 @@ import { Box, Paper, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Chart } from "react-google-charts";
 import { PulseLoader } from "react-spinners";
-import { data } from "./TreeMap";
+
 
 
 // export const data = [

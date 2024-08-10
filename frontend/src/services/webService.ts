@@ -2,7 +2,7 @@ const url = 'http://127.0.0.1:5000'
 
 export async function getPhenotypes(): Promise<any>{
     try {
-        let response = await fetch(`${url}/phenotypes`,{
+        const response = await fetch(`${url}/phenotypes`,{
             method: 'GET',
             mode: "cors",
             headers:{   
@@ -18,7 +18,7 @@ export async function getPhenotypes(): Promise<any>{
 
 export async function getAnatomicalStructures(){
     try {
-        let response = await fetch(`${url}/anatomical_structures`,{
+        const response = await fetch(`${url}/anatomical_structures`,{
             method: 'GET',
             mode: "cors",
             headers:{   
@@ -34,7 +34,7 @@ export async function getAnatomicalStructures(){
 
 export async function getAgesFilter(){
     try {
-        let response = await fetch(`${url}/age_onsets`,{
+        const response = await fetch(`${url}/age_onsets`,{
             method: 'GET',
             mode: "cors",
             headers:{   
@@ -50,7 +50,7 @@ export async function getAgesFilter(){
 
 export async function getChartsData(diseaseId: string) {
     try {
-        let response = await fetch(`${url}/filter_hierarchy/${diseaseId}`,{
+        const response = await fetch(`${url}/filter_hierarchy/${diseaseId}`,{
             method: 'GET',
             mode: "cors",
             headers:{   
@@ -65,7 +65,7 @@ export async function getChartsData(diseaseId: string) {
 
 export async function getDiseaseById(diseaseId: string) {
     try {
-        let response = await fetch(`${url}/disease/${diseaseId}`,{
+        const response = await fetch(`${url}/disease/${diseaseId}`,{
             method: 'GET',
             mode: "cors",
             headers:{   
@@ -81,7 +81,7 @@ export async function getDiseaseById(diseaseId: string) {
 export async function getDiseasesByFilters(phenotype_ids: Array<string>, anatomical_ids: Array<string>, age_onset_ids: Array<string>) {
     try {
         console.log(`ENTERING NEW `)
-        let response = await fetch(`${url}/diseases/by_filters`, {
+        const response = await fetch(`${url}/diseases/by_filters`, {
             method: 'POST',
             mode: "cors",
             headers:{   

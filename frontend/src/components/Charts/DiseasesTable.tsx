@@ -11,23 +11,6 @@ import TiredPc from '../../assets/tired-pc.jpg'
 import { useEffect, useState } from 'react';
 import { getDiseasesByFilters } from '../../services/webService';
 
-function createData(
-  name: string,
-  calories: number,
-  fat: number,
-  carbs: number,
-  protein: number,
-) {
-  return { name, calories, fat, carbs, protein };
-}
-
-const rows = [
-  createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-  createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-  createData('Eclair', 262, 16.0, 24, 6.0),
-  createData('Cupcake', 305, 3.7, 67, 4.3),
-  createData('Gingerbread', 356, 16.0, 49, 3.9),
-];
 
 
 function getIdFromUrl(url: string){
@@ -49,7 +32,7 @@ export default function BasicTable({phenotype_ids, anatomical_ids, age_onset_ids
       const response = await getDiseasesByFilters(phenotype_ids, anatomical_ids, age_onset_ids);
       setRows(response)
     }
-    console.log(`NEW VALUE ADDED: ${JSON.stringify(phenotype_ids)}`)
+    console.log(`Updates anatomy: ${JSON.stringify(anatomical_ids)}`)
      updateTable()    
   },[phenotype_ids, anatomical_ids, age_onset_ids])
 

@@ -72,7 +72,6 @@ export default function InfoCard() {
                     {item}
                   </Typography>
                 </ListItem>
-
                   ))
                 }
               </List>
