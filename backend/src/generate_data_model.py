@@ -1,9 +1,6 @@
 import utils
 import models.random_forest as random_forest
-import models.ontogpt as ontogpt
 import constants
-from rdflib import Graph, Namespace
-from rdflib.namespace import RDF, RDFS
 
 import repository
 
@@ -310,8 +307,7 @@ def main():
 
     # train models
 
-    random_forest.generate_model()
-    ontogpt.generate_model()
+    random_forest.generate_model(include_cluster=False)
 
 
 if __name__ == "__main__":
