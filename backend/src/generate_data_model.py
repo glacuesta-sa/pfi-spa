@@ -306,7 +306,7 @@ def main():
 
     # train models
     # Random Forest alone
-    #random_forest.generate_model(None, False)
+    random_forest.generate_model(None, False)
     # Random Forest specialized
     #random_forest_specialized.generate_models()
     # Random Forest + DBSCAN
@@ -320,7 +320,7 @@ def main():
     # GradientBoost + DBSCAN
     #gradient_boost.generate_model(dbscan.get_clustering_data_frame(), True)
     # Random GradientBoost + HDBSCAN
-    gradient_boost.generate_model(hdbscan.get_clustering_data_frame(), True)
+    #gradient_boost.generate_model(hdbscan.get_clustering_data_frame(), True)
 
     # K-Means no porque no es aplicable a los datos, no son esfericos y hay ruido.
 
