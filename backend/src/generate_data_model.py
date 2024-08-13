@@ -1,6 +1,8 @@
 import utils
 import models.random_forest as random_forest
 import models.dbscan as dbscan
+import models.hdbscan as hdbscan
+import models.gradient_boost as gradient_boost
 import constants
 
 import repository
@@ -303,19 +305,24 @@ def main():
     repository.save(data_model, disease_dict, phenotypes_dict, anatomical_dict, ro_dict, ecto_dict, maxo_dict, chebi_dict)
 
     # train models
-
-    # Random Forest + DBSCAN
-    #random_forest.generate_model(dbscan.get_clustering_data_frame(), True)
-
-    # Random Forest + HDBSCAN
-    random_forest.generate_model(hdbscan.get_clustering_data_frame(), True)
-
     # Random Forest alone
-    random_forest.generate_model(None, False)
-
+    #random_forest.generate_model(None, False)
     # Random Forest specialized
     #random_forest_specialized.generate_models()
+    # Random Forest + DBSCAN
+    #random_forest.generate_model(dbscan.get_clustering_data_frame(), True)
+    # Random Forest + HDBSCAN
+    #random_forest.generate_model(hdbscan.get_clustering_data_frame(), True)
+    
 
+    # GradientBoost XGBoost alone
+    #gradient_boost.generate_model(None, False)
+    # GradientBoost + DBSCAN
+    #gradient_boost.generate_model(dbscan.get_clustering_data_frame(), True)
+    # Random GradientBoost + HDBSCAN
+    gradient_boost.generate_model(hdbscan.get_clustering_data_frame(), True)
+
+    # K-Means no porque no es aplicable a los datos, no son esfericos y hay ruido.
 
 if __name__ == "__main__":
     main()
