@@ -1,9 +1,9 @@
 import utils
 import models.random_forest as random_forest
-import models.ontogpt as ontogpt
+import models.dbscan as dbscan
+import models.hdbscan as hdbscan
+import models.gradient_boost as gradient_boost
 import constants
-from rdflib import Graph, Namespace
-from rdflib.namespace import RDF, RDFS
 
 import repository
 
@@ -170,7 +170,6 @@ def process_edges(mondo_data, age_onset_hierarchy, disease_dict, data_model, ro_
                 relationship_entry = utils.create_relationship_entry(relationship_type, property_id, object_id, object_label)
 
                 # TODO axel include GO relationships, discover new features to expand the model
-                # TODO axel, seggregate the collection in different documents. 
 
                 # Medical Actions Ontology
                 if constants.MAXO_STR in object_id:
@@ -305,14 +304,25 @@ def main():
     # Save to MongoDB
     repository.save(data_model, disease_dict, phenotypes_dict, anatomical_dict, ro_dict, ecto_dict, maxo_dict, chebi_dict)
 
-    # hpo ontology collection
-    #repository.set_hpo_graph()
-
     # train models
+    # Random Forest alone
+    random_forest.generate_model(None, False)
+    # Random Forest specialized
+    #random_forest_specialized.generate_models()
+    # Random Forest + DBSCAN
+    #random_forest.generate_model(dbscan.get_clustering_data_frame(), True)
+    # Random Forest + HDBSCAN
+    #random_forest.generate_model(hdbscan.get_clustering_data_frame(), True)
+    
 
-    random_forest.generate_model()
-    ontogpt.generate_model()
+    # GradientBoost XGBoost alone
+    #gradient_boost.generate_model(None, False)
+    # GradientBoost + DBSCAN
+    #gradient_boost.generate_model(dbscan.get_clustering_data_frame(), True)
+    # Random GradientBoost + HDBSCAN
+    #gradient_boost.generate_model(hdbscan.get_clustering_data_frame(), True)
 
+    # K-Means no porque no es aplicable a los datos, no son esfericos y hay ruido.
 
 if __name__ == "__main__":
     main()
