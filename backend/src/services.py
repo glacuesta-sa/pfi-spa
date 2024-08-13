@@ -4,8 +4,6 @@ import random
 import tempfile
 import time
 
-from flask import jsonify, request
-from rdflib import Graph
 import utils
 import constants
 import repository

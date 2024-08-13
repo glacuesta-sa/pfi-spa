@@ -1,9 +1,7 @@
 import time
 import gridfs
 from pymongo import MongoClient
-from rdflib import Graph
 import config
-import services
 
 ## TODO __init__ method
 
@@ -21,18 +19,6 @@ CHEBI_COLLECTION = db['chemicals']
 
 # FileGrid conn
 fs = gridfs.GridFS(db)
-
-HPO_KG = Graph()
-def get_hpo_kg():
-    file = fs.find_one({"filename": "ro.ttl"})
-    if file is None:
-        raise Exception(f"File ro.ttl not found in MongoDB GridFS.")
-    
-    ttl_data = file.read().decode('utf-8')
-
-    graph = Graph()
-    graph.parse(data=ttl_data, format='xml')
-    return graph
 
 # TODO mongoDB adapter
 # TODO DynamoDB adapter
@@ -146,38 +132,6 @@ def save(data_model, disease_dict, phenotype_dict, anatomical_dict, ro_dict, ect
     save_ecto_dict(ecto_dict)
     save_maxo_dict(maxo_dict)
     save_chebi_dict(chebi_dict)
-    
-def set_hpo_graph():
-    
-    # TODO: CI-CD generate .ttl 
-    print('loading hpo ontology')
-    owl_file_path = "datasets/hpo/hp-base.owl"
-    ttl_file_path = "datasets/hpo/hp-base.ttl"
-
-    # load owl, save ttl
-    graph = Graph()
-    graph.parse(owl_file_path, format='xml')
-    graph.serialize(destination=ttl_file_path, format='turtle')  
-    
-    with open(ttl_file_path, 'r') as file:
-        ttl_data = file.read()
-
-    ttl_data_bytes = ttl_data.encode('utf-8')
-
-    fs.put(ttl_data_bytes, filename="ro.ttl")
-
-    print('finished parsing hpo ontology')
-
-    print('setting hpo graph')
-
-    #services.wait_for_file_in_mongo("ro.ttl")
-    #file = fs.find_one({"filename": "ro.ttl"})
-    #ttl_data = file.read().decode('utf-8')
-    # Copiar todos los triples del grafo original al nuevo grafo
-    #for triple in graph:
-    #    HPO_KG.add(triple)
-    
-    print('len de hpo graph: ', len(graph))
 
 def wait_for_file_in_mongo(filename, timeout=300):
     """
