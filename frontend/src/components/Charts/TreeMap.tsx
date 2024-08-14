@@ -50,17 +50,19 @@ export const options = {
 };
 
 export default function TreeMap(props) {
-  console.log(`Trre Map data: ${JSON.stringify(props.data)}`)
-
+  const [data, setData] = useState([])
   
   useEffect(()=>{
     setTimeout(
         ()=>setLoading(false),
         2000
     )
+   
   },[])
 
   const [loading, setLoading] = useState(true)
+
+  console.log(`AUX DATA: ${props.data}`)
 
   return (
     <Paper sx={{margin: 2, padding:2, borderRadius: 2, width: '50%'}}>

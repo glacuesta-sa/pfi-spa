@@ -9,14 +9,25 @@ export default function HomePage(){
     const [anatomicalIds, setAnatomical] = useState<Array<string>>([])
     const [ageIds, setAge] = useState<Array<string>>([])
 
-    function updatePhenotypeFilterArray(value: string){
-        const aux = [...phenotypeIds, value]
-        setPhenotypeIds(aux)
+    function updatePhenotypeFilterArray(value: string, remove?: boolean){
+        if(remove){
+            const aux = [...phenotypeIds]
+            const index = aux.indexOf(value)
+            aux.splice(index,1)
+            setPhenotypeIds(aux)
+        }else {
+            const aux = [...phenotypeIds, value]
+            setPhenotypeIds(aux)
+        }
     }
 
-    function updateAnatomicFilterArray(value: string){
-        const aux = [...anatomicalIds, value]
-        setAnatomical(aux)
+    function updateAnatomicFilterArray(value: string, remove?: boolean){
+        if(remove){
+
+        }else {
+            const aux = [...anatomicalIds, value]
+            setAnatomical(aux)
+        }
     }
 
     function updateAgeFilterArray(value: string){

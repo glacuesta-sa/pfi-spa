@@ -7,22 +7,30 @@ import ListItemText from '@mui/material/ListItemText';
 import Checkbox from '@mui/material/Checkbox';
 import { getAgesFilter } from '../../services/webService';
 
+interface Item {
+  value: string,
+  label: string
+}
 
-export default function AgeFilter() {
-  const [checked, setChecked] = React.useState([0]);
-  const [options, setOptions] = React.useState([])
+interface Props {
+  updateAgeFilterArray: (value: string)=>void
+}
 
-  const handleToggle = (value: number) => () => {
-    const currentIndex = checked.indexOf(value);
+export default function AgeFilter({updateAgeFilterArray}: Props) {
+  const [checked, setChecked] = React.useState<Array<string>>([]);
+  const [options, setOptions] = React.useState<Array<Item>>([])
+
+  const handleToggle = (item: {value: string, label:string}) => () => {
+    const currentIndex = checked.indexOf(item.label);
     const newChecked = [...checked];
 
     if (currentIndex === -1) {
-      newChecked.push(value);
+      newChecked.push(item.label);
     } else {
       newChecked.splice(currentIndex, 1);
     }
-
     setChecked(newChecked);
+    updateAgeFilterArray(item.value)
   };
 
   React.useEffect(()=>{
@@ -30,13 +38,12 @@ export default function AgeFilter() {
       const response = await getAgesFilter()
       setOptions(response)
     }
-    console.log(`Age filters!`)
     setAgeFilter()
   }, [])
 
   return (
     <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-      {options.map((item) => {
+      {options.map((item, index) => {
         const labelId = `checkbox-list-label-${item.label}`;
 
         return (
@@ -44,7 +51,7 @@ export default function AgeFilter() {
             key={item.value}
             disablePadding
           >
-            <ListItemButton role={undefined} onClick={handleToggle(parseInt(item.label))} dense>
+            <ListItemButton role={undefined} onClick={handleToggle(item)} dense>
               <ListItemIcon>
                 <Checkbox
                   edge="start"

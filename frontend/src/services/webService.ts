@@ -13,6 +13,7 @@ export async function getPhenotypes(): Promise<any>{
 
     } catch (error){
         console.log("error", error)
+        return []
     }
 }
 
@@ -29,6 +30,7 @@ export async function getAnatomicalStructures(){
 
     } catch (error){
         console.log("error", error)
+        return []
     }
 }
 
@@ -45,6 +47,24 @@ export async function getAgesFilter(){
 
     } catch (error){
         console.log("error", error)
+        return []
+    }
+}
+
+export async function getRelationshipTypesFilter(){
+    try {
+        // const response = await fetch(`${url}/age_onsets`,{
+        //     method: 'GET',
+        //     mode: "cors",
+        //     headers:{   
+        //         'Accept':'*/*'
+        //     }
+        // })
+        // return await response.json()
+        return[{label:'Relationship 1', value: '1'}, {label:'Relationship 2', value: '2'}]
+    } catch (error){
+        console.log("error", error)
+        return []
     }
 }
 
@@ -60,6 +80,7 @@ export async function getChartsData(diseaseId: string) {
         return await response.json()
     } catch (error){
         console.log("error", error)
+        return []
     }
 }
 
@@ -75,12 +96,12 @@ export async function getDiseaseById(diseaseId: string) {
         return await response.json()
     } catch (error){
         console.log("error", error)
+        return []
     }
 }
 
 export async function getDiseasesByFilters(phenotype_ids: Array<string>, anatomical_ids: Array<string>, age_onset_ids: Array<string>) {
     try {
-        console.log(`ENTERING NEW `)
         const response = await fetch(`${url}/diseases/by_filters`, {
             method: 'POST',
             mode: "cors",
@@ -98,5 +119,6 @@ export async function getDiseasesByFilters(phenotype_ids: Array<string>, anatomi
 
     } catch (error){
         console.log("error", error)
+        return []
     }
 }

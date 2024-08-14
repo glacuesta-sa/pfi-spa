@@ -2,10 +2,10 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
-import SymptomsFilter from '../Filters/SymptomsFilter';
 import CustomChip from '../IsolatedComponents/CustomChip';
 import { Divider, Typography } from '@mui/material';
 import FilterListIcon from '@mui/icons-material/FilterList';
+import RelationshipTypeFilter from '../Filters/RelationshipTypeFilter';
 
 const drawerWidth = 350;
 
@@ -16,7 +16,7 @@ interface Props{
 
 export default function SidebarDisease({children}: Props) {
 
-  const [symptoms, setSymptoms] = React.useState<string[]>([])
+  const [types, setTypes] = React.useState<string[]>([])
 
   return (
     <Box sx={{ display: 'flex'}}>
@@ -41,13 +41,19 @@ export default function SidebarDisease({children}: Props) {
         <Box sx={{display: 'flex', justifyContent: 'center', alignItems:'center' ,marginBottom: 2}}>
           <FilterListIcon />
           <Typography variant='h5' sx={{marginX: 2}} >
-            Filtros
+            Tipos de Relaciones
           </Typography>
         </Box>
         <Divider/>
+        <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+          <Typography variant='h6' sx={{marginY: 2}} >
+            Sintomas
+          </Typography>
+          <RelationshipTypeFilter />
+        </Box>
         <Box sx={{display: 'flex', justifyContent: 'flex-start'}}>
         <List>
-          {symptoms.map((text, index) => (
+          {types.map((text, index) => (
             <CustomChip text={text} key={index}/>
           ))}
         </List>

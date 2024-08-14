@@ -29,10 +29,10 @@ export default function BasicTable({phenotype_ids, anatomical_ids, age_onset_ids
   
   useEffect(()=>{
     async function updateTable(){
+      console.log(`Pheno: ${phenotype_ids}`)
       const response = await getDiseasesByFilters(phenotype_ids, anatomical_ids, age_onset_ids);
       setRows(response)
     }
-    console.log(`Updates anatomy: ${JSON.stringify(anatomical_ids)}`)
      updateTable()    
   },[phenotype_ids, anatomical_ids, age_onset_ids])
 
