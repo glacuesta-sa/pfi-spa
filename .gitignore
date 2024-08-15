@@ -29,5 +29,6 @@ dist-ssr
 .amplify
 amplify_outputs*
 amplifyconfiguration*
-backend/src/models/__pycache__/random_forest.cpython-312.pyc
+backend/src/models/__pycache__/
+backend/src/__pycache__/
 backend/datasets/hpo/hp-international.owl

@@ -164,6 +164,24 @@ def process_edges(mondo_data, age_onset_hierarchy, disease_dict, data_model, ro_
         if subject_id and property_id and object_id and constants.MONDO_STR in subject_id:
             if subject_id in disease_dict:
                 disease_entry = disease_dict[subject_id]
+
+                # TODO add source of addition
+                '''{
+                    "sub" : "http://purl.obolibrary.org/obo/MONDO_1010420",
+                    "pred" : "is_a",
+                    "obj" : "http://purl.obolibrary.org/obo/MONDO_1010003",
+                    "meta" : {
+                        "basicPropertyValues" : [ {
+                        "pred" : "http://www.geneontology.org/formats/oboInOwl#source",
+                        "val" : "OMIA:000703"
+                        }, {
+                        "pred" : "http://www.geneontology.org/formats/oboInOwl#source",
+                        "val" : "https://orcid.org/0000-0002-5002-8648"
+                        } ]
+                    }
+                } '''
+
+
                 relationship_type = "has_relationship"
                 object_label = node_labels.get(object_id, 'Unknown')
 

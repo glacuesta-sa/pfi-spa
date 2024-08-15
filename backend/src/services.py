@@ -274,8 +274,7 @@ def get_extended_hierarchy_by_mondo_id(mondo_id):
             add_to_hierarchy(chemical_id, id_map[disease_id], chemical['label'], 1, color)
 
     if mondo_id in disease_dict:
-        add_to_hierarchy(mondo_id, -1, disease_dict[mondo_id]['name'], 1, legend["Disease"])
-        process_hierarchy(mondo_id, id_map[mondo_id])
+        process_hierarchy(mondo_id, -1)
 
     return hierarchy, legend
 
