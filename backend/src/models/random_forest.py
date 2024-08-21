@@ -1,12 +1,14 @@
 import json
 import tempfile
+import time
 import services
 import constants
+import psutil
 
 import repository
 import numpy as np
 import pandas as pd
-from sklearn.model_selection import train_test_split, RandomizedSearchCV
+from sklearn.model_selection import cross_val_score, train_test_split, RandomizedSearchCV
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 from sklearn.metrics import accuracy_score, classification_report
@@ -63,6 +65,8 @@ def generate_model(df_with_clusters, include_cluster):
     le_disease_rel_prop = LabelEncoder()
     df['disease_rel_prop'] = le_disease_rel_prop.fit_transform(df['disease_rel_prop'])
 
+    # TODO disease_age_onset
+
     X = df[['disease_id', 'relationship_type', 'relationship_property', 'disease_rel_prop']]
 
     if include_cluster:
@@ -97,8 +101,15 @@ def generate_model(df_with_clusters, include_cluster):
         'min_samples_leaf': randint(1, 3),
     }
 
+    # cross validation sets
+    cv = 10
+
+    # pefromance tracking
+    start_time = time.time()
+    process = psutil.Process()
+
     # RandomizedSearchCV parameters, less iterators single worker
-    random_search = RandomizedSearchCV(estimator=rf, param_distributions=param_dist, n_iter=10, cv=3, n_jobs=1, verbose=0, random_state=42)
+    random_search = RandomizedSearchCV(estimator=rf, param_distributions=param_dist, n_iter=10, cv=cv, n_jobs=1, verbose=0, random_state=42)
     random_search.fit(X_train_res, y_train_res)
 
     # get RandomForest best indicator
@@ -110,11 +121,26 @@ def generate_model(df_with_clusters, include_cluster):
     # unique labels in test subset
     unique_labels = np.unique(y_test)
 
+    # performance metrics
+    elapsed_time = time.time() - start_time
+    memory_usage = process.memory_info().rss / (1024 * 1024)  # convert to MB
+
+    print(f"Elapsed Time: {elapsed_time:.2f} seconds")
+    print(f"Memory Usage: {memory_usage:.2f} MB")
+
     # evaluate model TODO needs improvement
     accuracy = accuracy_score(y_test, y_pred)
     print(f'Accuracy: {accuracy}')
+
+    # cross validation
+    cross_val_scores = cross_val_score(best_rf, X_train_res, y_train_res, cv=cv, scoring='accuracy', error_score='raise')
+    print(f"Cross-Validation Score (mean): {cross_val_scores.mean():.4f}")
+    print(f"Cross-Validation Score (std): {cross_val_scores.std():.4f}")
+
+
     #print('Classification Report:')
     #print(classification_report(y_test, y_pred, labels=unique_labels, target_names=le_target_id.inverse_transform(unique_labels)))
+    # TODO save outputs to .jpg file in output folder
 
 
     if not include_cluster:

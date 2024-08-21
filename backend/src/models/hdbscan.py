@@ -73,8 +73,8 @@ def get_clustering_data_frame():
     scaled_features = scaler.fit_transform(df[features])
 
     # apply HDBSCAN
-    min_cluster_size = 10 
-    hdbscan_clusterer = HDBSCAN(min_cluster_size=min_cluster_size, metric='euclidean')
+    min_cluster_size = 25 
+    hdbscan_clusterer = HDBSCAN(min_cluster_size=min_cluster_size, metric='manhattan')
     clusters = hdbscan_clusterer.fit_predict(scaled_features)
 
     df['Cluster'] = clusters
@@ -88,5 +88,6 @@ def get_clustering_data_frame():
 
     sil_score = silhouette_score(scaled_features, clusters)
     print(f'Silhouette Score: {sil_score:.2f}')
+    # TODO save outputs to .jpg file in output folder
 
     return df

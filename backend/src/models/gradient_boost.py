@@ -1,18 +1,19 @@
-import json
-import tempfile
+import time
+import psutil
 import services
-import constants
-
 import repository
+
 import numpy as np
 import pandas as pd
-from sklearn.model_selection import train_test_split, RandomizedSearchCV
+from sklearn.model_selection import cross_val_score, train_test_split
 from xgboost import XGBClassifier
-from sklearn.preprocessing import LabelEncoder, StandardScaler
+from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import accuracy_score, classification_report
+from sklearn.model_selection import StratifiedKFold
+
+from imblearn.over_sampling import SMOTE
+from imblearn.under_sampling import RandomUnderSampler
 from imblearn.over_sampling import RandomOverSampler
-from scipy.stats import randint
-import joblib
 
 
 def generate_model(df_with_clusters, include_cluster):
@@ -58,6 +59,8 @@ def generate_model(df_with_clusters, include_cluster):
     le_disease_rel_prop = LabelEncoder()
     df['disease_rel_prop'] = le_disease_rel_prop.fit_transform(df['disease_rel_prop'])
 
+    # TODO disease_age_onset
+
     X = df[['disease_id', 'relationship_type', 'relationship_property', 'disease_rel_prop']]
 
     if include_cluster:
@@ -68,22 +71,49 @@ def generate_model(df_with_clusters, include_cluster):
     y = df['target_id']
     y = le_target_id.fit_transform(y)
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+    # data augmentation for minority clases
+    #smote = SMOTE(k_neighbors=1)
+    #X_resampled, y_resampled = smote.fit_resample(X, y)
+    ros = RandomOverSampler(random_state=42)
+    X_resampled, y_resampled = ros.fit_resample(X, y)
+
+    # data reduction for majority classes
+    #rus = RandomUnderSampler()
+    #X_resampled, y_resampled = rus.fit_resample(X, y)
+
+    X_train, X_test, y_train, y_test = train_test_split(X_resampled, y_resampled, test_size=0.3, random_state=42)
 
     # ensure seen labels
     y_train = le_target_id.fit_transform(y_train)
     y_test = safe_transform(le_target_id, y_test)
 
+    # pefromance tracking
+    start_time = time.time()
+    process = psutil.Process()
+
     # Define the XGBoost model
-    xgb = XGBClassifier(n_estimators=100, max_depth=3, learning_rate=0.1, eval_metric='mlogloss', verbosity=3)
+    xgb = XGBClassifier(n_estimators=50, max_depth=3, learning_rate=0.1, eval_metric='mlogloss', verbosity=0)
     xgb.fit(X_train, y_train)
 
+    # cross validation scores
+    cross_val_scores = cross_val_score(xgb, X_resampled, y_resampled, cv=3, scoring='accuracy', error_score='raise')
+    print(f"Cross-Validation Score (mean): {cross_val_scores.mean():.4f}")
+    print(f"Cross-Validation Score (std): {cross_val_scores.std():.4f}")
+    
     # predict
     y_pred = xgb.predict(X_test)
+
+    # performance metrics
+    elapsed_time = time.time() - start_time
+    memory_usage = process.memory_info().rss / (1024 * 1024)  # convert to MB
+
+    print(f"Elapsed Time: {elapsed_time:.2f} seconds")
+    print(f"Memory Usage: {memory_usage:.2f} MB")
 
     # Evaluate model
     accuracy = accuracy_score(y_test, y_pred)
     print(f'Accuracy: {accuracy}')
+    # TODO save outputs to .jpg file in output folder
 
 def get_data_frame():
     # get data structures previously generated collections

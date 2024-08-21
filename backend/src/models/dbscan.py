@@ -84,7 +84,7 @@ def get_clustering_data_frame():
     scaled_features = scaler.fit_transform(df[features])
 
     # apply DBSCAN
-    eps_value = 0.9 
+    eps_value = 0.9
     min_samples_value = 2 * len(features)
 
     dbscan_clusterer = DBSCAN(eps=eps_value, min_samples=min_samples_value)
@@ -104,6 +104,7 @@ def get_clustering_data_frame():
     #pca = PCA(n_components=2)
     #pca_result = pca.fit_transform(scaled_features)
 
+    # TODO save it to .jpg file in output folder
     # Plot the clusters
     #plt.figure(figsize=(10, 7))
     #plt.scatter(pca_result[:, 0], pca_result[:, 1], c=df['Cluster'], cmap='viridis', marker='o', edgecolor='k')

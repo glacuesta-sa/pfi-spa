@@ -36,9 +36,13 @@ def create_entry(id, name="Unknown", description="No description available"):
     return entry
 
 def build_is_a_hierarchy(mondo_data):
+    '''
+    Creates hierarchy of is_a relationships. Parent-Child
+    epilepsy of type 1 is children of epilepsy. 
+    '''
     is_a_hierarchy = {}
     for edge in mondo_data['graphs'][0]['edges']:
-        if edge['pred'] == 'is_a':
+        if edge['pred'] == constants.IS_A_RELATIONSHIP:
             if edge['obj'] not in is_a_hierarchy:
                 is_a_hierarchy[edge['obj']] = []
             is_a_hierarchy[edge['obj']].append(edge['sub'])
@@ -180,6 +184,25 @@ def process_edges(mondo_data, age_onset_hierarchy, disease_dict, data_model, ro_
                         } ]
                     }
                 } '''
+
+
+                # TODO gene relationship
+                # Gene relationship
+                #    Wiedemann-Steiner syndrome
+                #    has material basis in germline mutation in
+                #    KMT2A
+
+                '''{
+                    "sub" : "http://purl.obolibrary.org/obo/MONDO_0011518",
+                    "pred" : "http://purl.obolibrary.org/obo/RO_0004003",
+                    "obj" : "http://identifiers.org/hgnc/7132",
+                    "meta" : {
+                        "basicPropertyValues" : [ {
+                        "pred" : "http://www.geneontology.org/formats/oboInOwl#source",
+                        "val" : "MONDO:mim2gene_medgen"
+                        } ]
+                    }
+                }'''
 
 
                 relationship_type = "has_relationship"
@@ -338,7 +361,7 @@ def main():
     # GradientBoost + DBSCAN
     #gradient_boost.generate_model(dbscan.get_clustering_data_frame(), True)
     # Random GradientBoost + HDBSCAN
-    #gradient_boost.generate_model(hdbscan.get_clustering_data_frame(), True)
+    ##gradient_boost.generate_model(hdbscan.get_clustering_data_frame(), True)
 
     # K-Means no porque no es aplicable a los datos, no son esfericos y hay ruido.
 

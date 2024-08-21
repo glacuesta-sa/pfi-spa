@@ -48,7 +48,7 @@ def set_llm_fields(disease):
 
         result_content = completion.choices[0].message.content
 
-        # Convertir result_content de cadena JSON a diccionario de Python
+        # json to dict
         result_json = json.loads(result_content)
 
         disease['description'] = result_json['description']
