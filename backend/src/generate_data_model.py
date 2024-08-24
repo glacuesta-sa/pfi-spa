@@ -373,11 +373,6 @@ def main():
         {
             "disease": "http://purl.obolibrary.org/obo/MONDO_0000986", # pleurisy
             "property": "http://purl.obolibrary.org/obo/RO_0000053", # has characteristic
-            "target": "http://purl.obolibrary.org/obo/HP_0012531", # pain
-        },
-        {
-            "disease": "http://purl.obolibrary.org/obo/MONDO_0000986", # pleurisy
-            "property": "http://purl.obolibrary.org/obo/RO_0000053", # has characteristic
             "target": "http://purl.obolibrary.org/obo/HP_0002098", # Respiratory distress
         },
         {
@@ -388,7 +383,7 @@ def main():
         {
             "disease": "http://purl.obolibrary.org/obo/MONDO_0000986", # pleurisy
             "property": "http://purl.obolibrary.org/obo/RO_0000053", # has characteristic
-            "target": "http://purl.obolibrary.org/obo/HP_0001945", # Cough
+            "target": "http://purl.obolibrary.org/obo/HP_0001945", # Fever
         },
         {
             "disease": "http://purl.obolibrary.org/obo/MONDO_0000986", # pleurisy
@@ -397,9 +392,78 @@ def main():
         },
         {
             "disease": "http://purl.obolibrary.org/obo/MONDO_0000986", # pleurisy
+            "property": "http://purl.obolibrary.org/obo/mondo#disease_responds_to", # has characteristic
+            "target": "http://purl.obolibrary.org/obo/MAXO_0000169", #  # treatment: generic anti inflamatory.
+        },
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0000986", # pleurisy
             "property": "http://purl.obolibrary.org/obo/mondo#predisposes_towards", # has characteristic
             "target": "http://purl.obolibrary.org/obo/MONDO_0005242", #  pus in pleural space (lungs)
-        },        
+        },
+
+        ## PNEUMONIA
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0005249", # pneumonia
+            "property": "http://purl.obolibrary.org/obo/mondo#predisposes_towards", # has characteristic
+            "target": "http://purl.obolibrary.org/obo/MONDO_0005242", #  pus in pleural space (lungs)
+        },      
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0005249", # pneumonia
+            "property": "http://purl.obolibrary.org/obo/mondo#disease_responds_to", # has characteristic
+            "target": "http://purl.obolibrary.org/obo/MAXO_0000061", #  # treatment: antibiotics to kill bacteria
+        },
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0005249", # pneumonia
+            "property": "http://purl.obolibrary.org/obo/RO_0000053", # has characteristic
+            "target": "http://purl.obolibrary.org/obo/HP_0012531", # pain
+        },
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0005249", # pneumonia
+            "property": "http://purl.obolibrary.org/obo/RO_0000053", # has characteristic
+            "target": "http://purl.obolibrary.org/obo/HP_0002098", # Respiratory distress
+        },
+                {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0005249", # pneumonia
+            "property": "http://purl.obolibrary.org/obo/RO_0001025", # has location in
+            "target": "http://purl.obolibrary.org/obo/UBERON_0002048", #lung
+        },
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0005249", # pneumonia
+            "property": "http://purl.obolibrary.org/obo/RO_0001025", # has location in
+            "target": "http://purl.obolibrary.org/obo/UBERON_0001443", # chest
+        },
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0005249", # pneumonia
+            "property": "http://purl.obolibrary.org/obo/RO_0000053", # has characteristic
+            "target": "http://purl.obolibrary.org/obo/HP_0001945", # Fever
+        },
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0005249", # pneumonia
+            "property": "http://purl.obolibrary.org/obo/RO_0000053", # has characteristic
+            "target": "http://purl.obolibrary.org/obo/HP_0001944", # Dehydratation
+        },
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0005249", # pneumonia
+            "property": "http://purl.obolibrary.org/obo/RO_0000053", # has characteristic
+            "target": "http://purl.obolibrary.org/obo/HP_0030829", # Abnormal Breath-Sound
+        },
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0005249", # pneumonia
+            "property": "http://purl.obolibrary.org/obo/RO_0000053", # has characteristic
+            "target": "http://purl.obolibrary.org/obo/HP_0030828", # Wheezing  A high-pitched whistling sound associated with labored breathi
+        },
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0005249", # pneumonia
+            "property": "http://purl.obolibrary.org/obo/RO_0000053", # has characteristic
+            "target": "http://purl.obolibrary.org/obo/HP_0001649", # Tachycardia
+        }, 
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0005249", # pneumonia
+            "property": "http://purl.obolibrary.org/obo/RO_0000053", # has characteristic
+            "target": "http://purl.obolibrary.org/obo/HP_0002017", # Nausea and vomitting
+        },    
+
+        
     ]
 
     for triple in triples_to_add:
