@@ -421,7 +421,7 @@ def main():
     
     # train models
     # Random Forest alone
-    #random_forest.generate_model(None, False)
+    random_forest.generate_model(None, False)
     # Random Forest specialized
     #random_forest_specialized.generate_models()
     # Random Forest + DBSCAN
