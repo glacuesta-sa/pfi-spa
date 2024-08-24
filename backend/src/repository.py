@@ -11,7 +11,7 @@ db = client[config.MONDO_DB]
 DISEASES_COLLECTION = db['diseases']
 DATA_MODEL_COLLECTION = db['data_model']
 PHENOTYPES_COLLECTION = db['phenotypes']
-ANATOMICAL_COLLECTION = db['anatomical']
+ANATOMICAL_COLLECTION = db['anatomical_structures']
 RO_COLLECTION = db['relationships']
 ECTO_COLLECTION = db['exposures']
 MAXO_COLLECTION = db['treatments']
@@ -63,7 +63,7 @@ def get_phenotype_by_id(full_id):
     phenotype = PHENOTYPES_COLLECTION.find_one({"id": full_id}, {'_id': 0})
     return phenotype
 
-# get anatomical by id
+# get anatomical_structures by id
 def get_anatomical_by_id(full_id):
     anatomical = ANATOMICAL_COLLECTION.find_one({"id": full_id}, {'_id': 0})
     return anatomical

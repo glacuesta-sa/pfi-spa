@@ -136,6 +136,46 @@ def is_valid_relationship(property_id, target_id):
         return False
     return True
 
+def get_details(target_id, diseases_dict, phenotypes_dict, anatomical_dict, ecto_dict, maxo_dict, chebi_dict, age_onset_hierarchy):
+    """
+    returns relationship type and label from dict
+    """
+    rtype = "invalid"
+
+    if constants.UBERON_STR in target_id:
+        rtype = "anatomical_structures"
+    elif constants.HP_STR in target_id:
+        rtype =  "phenotypes"
+        if target_id in age_onset_hierarchy:
+            rtype= "age_onsets"
+    elif constants.ECTO_STR in target_id:
+        rtype =  "exposures"
+    elif constants.MAXO_STR in target_id:
+        rtype =  "treatments"
+    elif constants.CHEBI_STR in target_id:
+        rtype = "chemicals"
+    elif constants.MONDO_STR in target_id:
+        rtype = "diseases"
+
+    label = "dummy"
+    if "anatomical" in rtype:
+        dict = anatomical_dict
+    elif "phenotype"  in rtype or "age_onset" in rtype:
+        dict = phenotypes_dict
+    elif "treatment"  in rtype:
+        dict = maxo_dict
+    elif "chemical"  in rtype:
+        dict = chebi_dict
+    elif "exposure" in rtype:
+        dict = ecto_dict
+    elif "diseases" in rtype:
+        dict = diseases_dict
+
+    entity = get_entity_by_dict_and_id(dict, target_id)
+    if entity != None: 
+        label = entity["name"]
+    return rtype, label
+
 def get_hierarchy_by_mondo_id(mondo_id):
 
     """
@@ -217,12 +257,12 @@ def get_extended_hierarchy_by_mondo_id(mondo_id):
 
     legend = {
         "Disease": "#0a0a0a",
-        "Phenotype": "#1d522a",
-        "Anatomical Structure": "#1d3952",
-        "Exposure": "#1d4022",
-        "Treatment": "#2d4022",
-        "Chemical": "#3d4022",
-        "Predicted": "#e5ff00"
+        "Phenotype": "#ce93d8",
+        "Anatomical Structure": "#f44336",
+        "Exposure": "#90caf9",
+        "Treatment": "#29b6f6",
+        "Chemical": "#66bb6a",
+        "Predicted": "#ffa726"
     }
 
     def add_to_hierarchy(node_id, parent_id, label, size, color):
@@ -301,9 +341,9 @@ def get_diseases_by_phenotypes(phenotype_ids):
     print(f"Filtering diseases by phenotypes: {phenotype_ids}")    
 
     initial_phenotype_id = phenotype_ids[0]
-    phenotype_disease_ids = set(data_model['phenotype_to_diseases'].get(initial_phenotype_id, []))
+    phenotype_disease_ids = set(data_model['phenotypes'].get(initial_phenotype_id, []))
     for phenotype_id in phenotype_ids[1:]:
-        current_disease_ids = set(data_model['phenotype_to_diseases'].get(phenotype_id, []))
+        current_disease_ids = set(data_model['phenotypes'].get(phenotype_id, []))
         phenotype_disease_ids.intersection_update(current_disease_ids)
     filtered_disease_ids.intersection_update(phenotype_disease_ids)
 
@@ -334,9 +374,9 @@ def get_diseases_by_age_onsets(age_onset_ids):
     data_model = repository.get_data_model()
 
     initial_age_onset_id = age_onset_ids[0]
-    age_onset_disease_ids = set(data_model['age_onset_to_diseases'].get(initial_age_onset_id, []))
+    age_onset_disease_ids = set(data_model['age_onsets'].get(initial_age_onset_id, []))
     for age_onset_id in age_onset_ids[1:]:
-        current_disease_ids = set(data_model['age_onset_to_diseases'].get(age_onset_id, []))
+        current_disease_ids = set(data_model['age_onsets'].get(age_onset_id, []))
         age_onset_disease_ids.intersection_update(current_disease_ids)
     filtered_disease_ids.intersection_update(age_onset_disease_ids)
 
@@ -364,9 +404,9 @@ def get_diseases_by_anatomical_structures(anatomical_ids):
     data_model = repository.get_data_model()
 
     initial_anatomical_id = anatomical_ids[0]
-    anatomical_disease_ids = set(data_model['anatomical_to_diseases'].get(initial_anatomical_id, []))
+    anatomical_disease_ids = set(data_model['anatomical_structures'].get(initial_anatomical_id, []))
     for anatomical_id in anatomical_ids[1:]:
-        current_disease_ids = set(data_model['anatomical_to_diseases'].get(anatomical_id, []))
+        current_disease_ids = set(data_model['anatomical_structures'].get(anatomical_id, []))
         anatomical_disease_ids.intersection_update(current_disease_ids)
     filtered_disease_ids.intersection_update(anatomical_disease_ids)
 
@@ -397,9 +437,9 @@ def get_diseases_by_exposures(exposure_ids):
     print(f"Filtering diseases by exposures: {exposure_ids}")    
 
     initial_exposure_id = exposure_ids[0]
-    exposure_disease_ids = set(data_model['exposure_to_diseases'].get(initial_exposure_id, []))
+    exposure_disease_ids = set(data_model['exposures'].get(initial_exposure_id, []))
     for exposure_id in exposure_ids[1:]:
-        current_disease_ids = set(data_model['exposure_to_diseases'].get(exposure_id, []))
+        current_disease_ids = set(data_model['exposures'].get(exposure_id, []))
         exposure_disease_ids.intersection_update(current_disease_ids)
     filtered_disease_ids.intersection_update(exposure_disease_ids)
 
@@ -434,9 +474,9 @@ def get_diseases_by_treatments(treatment_ids):
     print(f"Filtering diseases by treatments: {treatment_ids}")    
 
     initial_treatment_id = treatment_ids[0]
-    treatment_disease_ids = set(data_model['treatment_to_diseases'].get(initial_treatment_id, []))
+    treatment_disease_ids = set(data_model['treatments'].get(initial_treatment_id, []))
     for treatment_id in treatment_ids[1:]:
-        current_disease_ids = set(data_model['treatment_to_diseases'].get(treatment_id, []))
+        current_disease_ids = set(data_model['treatments'].get(treatment_id, []))
         treatment_disease_ids.intersection_update(current_disease_ids)
     filtered_disease_ids.intersection_update(treatment_disease_ids)
 
@@ -471,9 +511,9 @@ def get_diseases_by_chemicals(chemical_ids):
     print(f"Filtering diseases by chemicals: {chemical_ids}")    
 
     initial_chemical_id = chemical_ids[0]
-    chemical_disease_ids = set(data_model['chemical_to_diseases'].get(initial_chemical_id, []))
+    chemical_disease_ids = set(data_model['chemicals'].get(initial_chemical_id, []))
     for chemical_id in chemical_ids[1:]:
-        current_disease_ids = set(data_model['chemical_to_diseases'].get(chemical_id, []))
+        current_disease_ids = set(data_model['chemicals'].get(chemical_id, []))
         chemical_disease_ids.intersection_update(current_disease_ids)
     filtered_disease_ids.intersection_update(chemical_disease_ids)
 
@@ -506,49 +546,49 @@ def get_diseases_by_filters(phenotype_ids, anatomical_ids, age_onset_ids, exposu
     # filtering logic
     if phenotype_ids:
         initial_phenotype_id = phenotype_ids[0]
-        phenotype_disease_ids = set(data_model['phenotype_to_diseases'].get(initial_phenotype_id, []))
+        phenotype_disease_ids = set(data_model['phenotypes'].get(initial_phenotype_id, []))
         for phenotype_id in phenotype_ids[1:]:
-            current_disease_ids = set(data_model['phenotype_to_diseases'].get(phenotype_id, []))
+            current_disease_ids = set(data_model['phenotypes'].get(phenotype_id, []))
             phenotype_disease_ids.intersection_update(current_disease_ids)
         filtered_disease_ids.intersection_update(phenotype_disease_ids)
 
     if anatomical_ids:
         initial_anatomical_id = anatomical_ids[0]
-        anatomical_disease_ids = set(data_model['anatomical_to_diseases'].get(initial_anatomical_id, []))
+        anatomical_disease_ids = set(data_model['anatomical_structures'].get(initial_anatomical_id, []))
         for anatomical_id in anatomical_ids[1:]:
-            current_disease_ids = set(data_model['anatomical_to_diseases'].get(anatomical_id, []))
+            current_disease_ids = set(data_model['anatomical_structures'].get(anatomical_id, []))
             anatomical_disease_ids.intersection_update(current_disease_ids)
         filtered_disease_ids.intersection_update(anatomical_disease_ids)
 
     if age_onset_ids:
         initial_age_onset_id = age_onset_ids[0]
-        age_onset_disease_ids = set(data_model['age_onset_to_diseases'].get(initial_age_onset_id, []))
+        age_onset_disease_ids = set(data_model['age_onsets'].get(initial_age_onset_id, []))
         for age_onset_id in age_onset_ids[1:]:
-            current_disease_ids = set(data_model['age_onset_to_diseases'].get(age_onset_id, []))
+            current_disease_ids = set(data_model['age_onsets'].get(age_onset_id, []))
             age_onset_disease_ids.intersection_update(current_disease_ids)
         filtered_disease_ids.intersection_update(age_onset_disease_ids)
 
     if exposure_ids:
         initial_exposure_id = exposure_ids[0]
-        exposure_disease_ids = set(data_model['exposure_to_diseases'].get(initial_exposure_id, []))
+        exposure_disease_ids = set(data_model['exposures'].get(initial_exposure_id, []))
         for exposure_id in exposure_ids[1:]:
-            current_disease_ids = set(data_model['exposure_to_diseases'].get(exposure_id, []))
+            current_disease_ids = set(data_model['exposures'].get(exposure_id, []))
             exposure_disease_ids.intersection_update(current_disease_ids)
         filtered_disease_ids.intersection_update(exposure_disease_ids)
 
     if treatment_ids:
         initial_treatment_id = treatment_ids[0]
-        treatment_disease_ids = set(data_model['treatment_to_diseases'].get(initial_treatment_id, []))
+        treatment_disease_ids = set(data_model['treatments'].get(initial_treatment_id, []))
         for treatment_id in treatment_ids[1:]:
-            current_disease_ids = set(data_model['treatment_to_diseases'].get(treatment_id, []))
+            current_disease_ids = set(data_model['treatments'].get(treatment_id, []))
             treatment_disease_ids.intersection_update(current_disease_ids)
         filtered_disease_ids.intersection_update(treatment_disease_ids)
 
     if chemical_ids:
         initial_chemical_id = chemical_ids[0]
-        chemical_disease_ids = set(data_model['chemical_to_diseases'].get(initial_chemical_id, []))
+        chemical_disease_ids = set(data_model['chemicals'].get(initial_chemical_id, []))
         for chemical_id in chemical_ids[1:]:
-            current_disease_ids = set(data_model['chemical_to_diseases'].get(chemical_id, []))
+            current_disease_ids = set(data_model['chemicals'].get(chemical_id, []))
             chemical_disease_ids.intersection_update(current_disease_ids)
         filtered_disease_ids.intersection_update(chemical_disease_ids)
 
@@ -712,7 +752,18 @@ def get_treatment_by_id(full_id):
 # get chemical by id
 def get_chemical_by_id(full_id):
     return repository.get_chemical_by_id(full_id)
-  
+
+
+# get generic entity by its dict and its id
+def get_entity_by_dict_and_id(dict, full_id):
+
+    entry = dict.get(full_id)
+    if not entry:
+        print(f"{full_id} not found in the dictionary.")
+        return None
+    return entry
+
+
 def get_relationship_types():
     relationship_types = []
     for key, _ in repository.get_data_model()['relationships_types'].items():
@@ -744,34 +795,34 @@ def update_data_model(full_disease_id, full_new_relationship_property, predicted
         relationship_type_str = relationship_type["type"]
 
         if relationship_type_str == constants.HP_STR:
-            phenotype_to_diseases = data_model["phenotype_to_diseases"].get(predicted_target, [])
-            if full_disease_id not in phenotype_to_diseases:
-                phenotype_to_diseases.append(full_disease_id)
-            data_model["phenotype_to_diseases"][predicted_target] = phenotype_to_diseases
+            phenotypes = data_model["phenotypes"].get(predicted_target, [])
+            if full_disease_id not in phenotypes:
+                phenotypes.append(full_disease_id)
+            data_model["phenotypes"][predicted_target] = phenotypes
         
         elif relationship_type_str == constants.UBERON_STR:
-            anatomical_to_diseases = data_model["anatomical_to_diseases"].get(predicted_target, [])
-            if full_disease_id not in anatomical_to_diseases:
-                anatomical_to_diseases.append(full_disease_id)
-            data_model["anatomical_to_diseases"][predicted_target] = anatomical_to_diseases
+            anatomical_structures = data_model["anatomical_structures"].get(predicted_target, [])
+            if full_disease_id not in anatomical_structures:
+                anatomical_structures.append(full_disease_id)
+            data_model["anatomical_structures"][predicted_target] = anatomical_structures
         
         elif relationship_type_str == constants.ECTO_STR:
-            exposure_to_diseases = data_model["exposure_to_diseases"].get(predicted_target, [])
-            if full_disease_id not in exposure_to_diseases:
-                exposure_to_diseases.append(full_disease_id)
-            data_model["exposure_to_diseases"][predicted_target] = exposure_to_diseases
+            exposures = data_model["exposures"].get(predicted_target, [])
+            if full_disease_id not in exposures:
+                exposures.append(full_disease_id)
+            data_model["exposures"][predicted_target] = exposures
         
         elif relationship_type_str == constants.MAXO_STR:
-            treatment_to_diseases = data_model["treatment_to_diseases"].get(predicted_target, [])
-            if full_disease_id not in treatment_to_diseases:
-                treatment_to_diseases.append(full_disease_id)
-            data_model["treatment_to_diseases"][predicted_target] = treatment_to_diseases
+            treatments = data_model["treatments"].get(predicted_target, [])
+            if full_disease_id not in treatments:
+                treatments.append(full_disease_id)
+            data_model["treatments"][predicted_target] = treatments
         
         elif relationship_type_str == constants.CHEBI_STR:
-            chemical_to_diseases = data_model["chemical_to_diseases"].get(predicted_target, [])
-            if full_disease_id not in chemical_to_diseases:
-                chemical_to_diseases.append(full_disease_id)
-            data_model["chemical_to_diseases"][predicted_target] = chemical_to_diseases
+            chemicals = data_model["chemicals"].get(predicted_target, [])
+            if full_disease_id not in chemicals:
+                chemicals.append(full_disease_id)
+            data_model["chemicals"][predicted_target] = chemicals
 
         for disease in repository.get_diseases():
             if disease["id"] == full_disease_id:
@@ -849,3 +900,45 @@ def get_relationship_by_id_sparql(ro_id):
     for row in results:
         result_list.append({str(var): str(row[var]) for var in row.labels})
     return result_list
+
+from pymongo import UpdateOne
+
+def add_da_relationship(data_model, disease_dict, subject_id, relationship_property, target_id, label, relationship_type):
+    """
+    Add a data augmentation relationship to the specified disease in both the data model and diseases collection.
+
+    
+    """
+    # data model    
+    data_key = f"{relationship_type}"
+    relationships = data_model.get(data_key, {})
+    
+    if target_id not in relationships:
+        relationships[target_id] = []
+    
+    if subject_id not in relationships[target_id]:
+        relationships[target_id].append(subject_id)
+    
+    data_model[data_key] = relationships
+    
+    # diseases collection
+    disease_entry = disease_dict.get(subject_id)
+    if not disease_entry:
+        print(f"{subject_id} not found in the disease dictionary.")
+        return
+    
+    relationship_entry = {
+        "type": "has_relationship",
+        "property": relationship_property,
+        "target": target_id,
+        "label": label,
+        "predicted": False
+    }
+    
+    if relationship_type not in disease_entry:
+        disease_entry[relationship_type] = []
+    
+    if relationship_entry not in disease_entry[relationship_type]:
+        disease_entry[relationship_type].append(relationship_entry)
+
+    print(f"relationship added between {subject_id} and {target_id} under {relationship_type}.")

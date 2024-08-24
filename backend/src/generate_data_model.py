@@ -4,6 +4,7 @@ import models.dbscan as dbscan
 import models.hdbscan as hdbscan
 import models.gradient_boost as gradient_boost
 import constants
+import services
 
 import repository
 
@@ -86,7 +87,7 @@ def process_nodes(mondo_data, disease_dict, phenotype_dict, anatomical_dict, ro_
             phenotype_dict[node_id] = phenotype_entry
             continue
 
-        # anatomical
+        # anatomical_structures
         if "UBERON_" in node_id:
             anatomical_entry = create_entry(node_id, name, description)
             anatomical_dict[node_id] = anatomical_entry
@@ -216,9 +217,9 @@ def process_edges(mondo_data, age_onset_hierarchy, disease_dict, data_model, ro_
                 if constants.MAXO_STR in object_id:
                     if relationship_entry not in disease_entry["treatments"]:
                         disease_entry["treatments"].append(relationship_entry)
-                        if object_id not in data_model["treatment_to_diseases"]:
-                            data_model["treatment_to_diseases"][object_id] = []
-                        data_model["treatment_to_diseases"][object_id].append(subject_id)
+                        if object_id not in data_model["treatments"]:
+                            data_model["treatments"][object_id] = []
+                        data_model["treatments"][object_id].append(subject_id)
                     
                     new_rel = {"type": constants.MAXO_STR, "target": property_id, "label": ""}
                     if property_id not in relationships_types:
@@ -230,9 +231,9 @@ def process_edges(mondo_data, age_onset_hierarchy, disease_dict, data_model, ro_
                 elif constants.UBERON_STR in object_id:
                     if relationship_entry not in disease_entry["anatomical_structures"]:
                         disease_entry["anatomical_structures"].append(relationship_entry)
-                        if object_id not in data_model["anatomical_to_diseases"]:
-                            data_model["anatomical_to_diseases"][object_id] = []
-                        data_model["anatomical_to_diseases"][object_id].append(subject_id)
+                        if object_id not in data_model["anatomical_structures"]:
+                            data_model["anatomical_structures"][object_id] = []
+                        data_model["anatomical_structures"][object_id].append(subject_id)
                     
                     new_rel = {"type": constants.UBERON_STR, "target": property_id, "label": ""}
                     if property_id not in relationships_types:
@@ -244,9 +245,9 @@ def process_edges(mondo_data, age_onset_hierarchy, disease_dict, data_model, ro_
                 elif constants.HP_STR in object_id and object_id in age_onset_hierarchy:
                     if relationship_entry not in disease_entry["age_onsets"]:
                         disease_entry["age_onsets"].append(relationship_entry)
-                        if object_id not in data_model["age_onset_to_diseases"]:
-                            data_model["age_onset_to_diseases"][object_id] = []
-                        data_model["age_onset_to_diseases"][object_id].append(subject_id)
+                        if object_id not in data_model["age_onsets"]:
+                            data_model["age_onsets"][object_id] = []
+                        data_model["age_onsets"][object_id].append(subject_id)
                     
                     new_rel = {"type": constants.HP_STR, "target": property_id, "label": ""}
                     if property_id not in relationships_types:
@@ -259,9 +260,9 @@ def process_edges(mondo_data, age_onset_hierarchy, disease_dict, data_model, ro_
                 elif constants.HP_STR in object_id:
                     if relationship_entry not in disease_entry["phenotypes"]:
                         disease_entry["phenotypes"].append(relationship_entry)
-                        if object_id not in data_model["phenotype_to_diseases"]:
-                            data_model["phenotype_to_diseases"][object_id] = []
-                        data_model["phenotype_to_diseases"][object_id].append(subject_id)
+                        if object_id not in data_model["phenotypes"]:
+                            data_model["phenotypes"][object_id] = []
+                        data_model["phenotypes"][object_id].append(subject_id)
 
                     new_rel = {"type": constants.HP_STR, "target": property_id, "label": ""}
                     if property_id not in relationships_types:
@@ -274,9 +275,9 @@ def process_edges(mondo_data, age_onset_hierarchy, disease_dict, data_model, ro_
                 elif constants.ECTO_STR in object_id:
                     if relationship_entry not in disease_entry["exposures"]:
                         disease_entry["exposures"].append(relationship_entry)
-                        if object_id not in data_model["exposure_to_diseases"]:
-                            data_model["exposure_to_diseases"][object_id] = []
-                        data_model["exposure_to_diseases"][object_id].append(subject_id)
+                        if object_id not in data_model["exposures"]:
+                            data_model["exposures"][object_id] = []
+                        data_model["exposures"][object_id].append(subject_id)
                     
                     new_rel = {"type": constants.ECTO_STR, "target": property_id, "label": ""}
                     if property_id not in relationships_types:
@@ -288,9 +289,9 @@ def process_edges(mondo_data, age_onset_hierarchy, disease_dict, data_model, ro_
                 elif constants.CHEBI_STR in object_id:
                     if relationship_entry not in disease_entry["chemicals"]:
                         disease_entry["chemicals"].append(relationship_entry)
-                        if object_id not in data_model["chemical_to_diseases"]:
-                            data_model["chemical_to_diseases"][object_id] = []
-                        data_model["chemical_to_diseases"][object_id].append(subject_id)
+                        if object_id not in data_model["chemicals"]:
+                            data_model["chemicals"][object_id] = []
+                        data_model["chemicals"][object_id].append(subject_id)
                     
                     new_rel = {"type": constants.CHEBI_STR, "target": property_id, "label": ""}
                     if property_id not in relationships_types:
@@ -314,12 +315,12 @@ def main():
     }
 
     data_model = {
-        "phenotype_to_diseases": {},
-        "age_onset_to_diseases": {},
-        "anatomical_to_diseases": {},
-        "treatment_to_diseases": {},
-        "exposure_to_diseases": {},
-        "chemical_to_diseases": {},
+        "phenotypes": {},
+        "age_onsets": {},
+        "anatomical_structures": {},
+        "treatments": {},
+        "exposures": {},
+        "chemicals": {},
         "relationships_types": {}
     }
 
@@ -342,12 +343,85 @@ def main():
     process_nodes(mondo_data, disease_dict, phenotypes_dict, anatomical_dict, ro_dict, ecto_dict, maxo_dict, chebi_dict) # TODO exclude obsolete terms from disease_dict
     process_edges(mondo_data, age_onset_hierarchy, disease_dict, data_model, ro_dict, ecto_dict, maxo_dict, chebi_dict)
 
+    # data augmentation
+    triples_to_add = [
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0000986", # pleurisy
+            "property": "http://purl.obolibrary.org/obo/RO_0001025", # has location in
+            "target": "http://purl.obolibrary.org/obo/UBERON_0002048", #lung
+        },
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0000986",  # pleurisy
+            "property": "http://purl.obolibrary.org/obo/RO_0001025", # has location in
+            "target": "http://purl.obolibrary.org/obo/UBERON_0001443", # chest
+        },
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0000986", # pleurisy
+            "property": "http://purl.obolibrary.org/obo/RO_0000053", # has characteristic
+            "target": "http://purl.obolibrary.org/obo/HP_0003621", #juvenile onset
+        },
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0000986", # pleurisy
+            "property": "http://purl.obolibrary.org/obo/RO_0000053", # has characteristic
+            "target": "http://purl.obolibrary.org/obo/HP_0003581", #adult onset
+        },
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0000986", # pleurisy
+            "property": "http://purl.obolibrary.org/obo/RO_0000053", # has characteristic
+            "target": "http://purl.obolibrary.org/obo/HP_0012531", # pain
+        },
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0000986", # pleurisy
+            "property": "http://purl.obolibrary.org/obo/RO_0000053", # has characteristic
+            "target": "http://purl.obolibrary.org/obo/HP_0012531", # pain
+        },
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0000986", # pleurisy
+            "property": "http://purl.obolibrary.org/obo/RO_0000053", # has characteristic
+            "target": "http://purl.obolibrary.org/obo/HP_0002098", # Respiratory distress
+        },
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0000986", # pleurisy
+            "property": "http://purl.obolibrary.org/obo/RO_0000053", # has characteristic
+            "target": "http://purl.obolibrary.org/obo/HP_0012735", # Cough
+        },
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0000986", # pleurisy
+            "property": "http://purl.obolibrary.org/obo/RO_0000053", # has characteristic
+            "target": "http://purl.obolibrary.org/obo/HP_0001945", # Cough
+        },
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0000986", # pleurisy
+            "property": "http://purl.obolibrary.org/obo/mondo#disease_responds_to", # has characteristic
+            "target": "http://purl.obolibrary.org/obo/MAXO_0000221", #  # treatment: Treatment might include anti-inflammatories (NSAIDs), pain relievers and rest.
+        },
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0000986", # pleurisy
+            "property": "http://purl.obolibrary.org/obo/mondo#predisposes_towards", # has characteristic
+            "target": "http://purl.obolibrary.org/obo/MONDO_0005242", #  pus in pleural space (lungs)
+        },        
+    ]
+
+    for triple in triples_to_add:
+        # validate rel type before add
+        rtype, lbl = services.get_details(triple["target"], disease_dict, phenotypes_dict, anatomical_dict, ecto_dict, maxo_dict, chebi_dict, age_onset_hierarchy)
+        services.add_da_relationship(
+            data_model,
+            disease_dict,
+            subject_id=triple["disease"],
+            relationship_property=triple["property"],
+            target_id=triple["target"],
+            label=lbl,
+            relationship_type=rtype
+        )
+
     # Save to MongoDB
     repository.save(data_model, disease_dict, phenotypes_dict, anatomical_dict, ro_dict, ecto_dict, maxo_dict, chebi_dict)
 
+    
     # train models
     # Random Forest alone
-    random_forest.generate_model(None, False)
+    #random_forest.generate_model(None, False)
     # Random Forest specialized
     #random_forest_specialized.generate_models()
     # Random Forest + DBSCAN
