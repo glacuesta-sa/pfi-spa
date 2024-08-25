@@ -1,12 +1,25 @@
 import * as React from 'react';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
+import { getAnatomicalStructures } from '../../services/webService';
 
-const options = ['Cerebro','Corazon','Pulmones','Riñones','Lobulo Frontal','Dermis','Laringe'];
 
-export default function AnatomyFilter({updateSelection}:{updateSelection:(value: string)=>void}) {
+export default function AnatomyFilter({updateSelection, updateAnatomicFilterArray}:{updateSelection:(value: string)=>void, updateAnatomicFilterArray:(value: string)=>void}) {
   const [value, setValue] = React.useState<string | null>();
   const [inputValue, setInputValue] = React.useState('');
+  const [optionsLabel, setOptionsLabel] = React.useState([])
+  const [options, setOptions] = React.useState([])
+
+  React.useEffect(()=>{
+    async function setAnatomy(){
+      const filters = await getAnatomicalStructures()
+      const aux = filters.map((item)=> item.label)
+      const aux2 = filters.map((item)=> item)
+      setOptionsLabel(aux)
+      setOptions(aux2)
+    }
+    setAnatomy()
+  },[])
 
   return (
       <Autocomplete
@@ -16,6 +29,8 @@ export default function AnatomyFilter({updateSelection}:{updateSelection:(value:
           setValue(newValue);
           if(newValue){
             updateSelection(newValue)
+            const aux = options.find((item)=> item.label === newValue)
+            updateAnatomicFilterArray(aux.value)
           }
         }}
         // @ts-ignore
@@ -24,7 +39,7 @@ export default function AnatomyFilter({updateSelection}:{updateSelection:(value:
         }}
         inputValue={inputValue}
         id="controllable-states-demo"
-        options={options}
+        options={optionsLabel}
         sx={{ width: 300 }}
         renderInput={(params) => <TextField {...params} label="Anatomia Involucrada" />}
       />
