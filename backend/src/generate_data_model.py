@@ -462,8 +462,12 @@ def main():
             "property": "http://purl.obolibrary.org/obo/RO_0000053", # has characteristic
             "target": "http://purl.obolibrary.org/obo/HP_0002017", # Nausea and vomitting
         },    
-
-        
+        # PLEUROPNEUMONIA
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0001940", # pleuropneumonia
+            "property": "http://purl.obolibrary.org/obo/RO_0000053", # has characteristic
+            "target": "http://purl.obolibrary.org/obo/HP_0002102", # pleuritis
+        },           
     ]
 
     for triple in triples_to_add:

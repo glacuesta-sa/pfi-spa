@@ -176,7 +176,7 @@ def get_details(target_id, diseases_dict, phenotypes_dict, anatomical_dict, ecto
         label = entity["name"]
     return rtype, label
 
-def get_hierarchy_by_mondo_id(mondo_id):
+def get_hierarchy_by_disease_id(disease_id):
 
     """
     Generate a hierarchical representation of diseases starting from a given MONDO ID.
@@ -186,7 +186,7 @@ def get_hierarchy_by_mondo_id(mondo_id):
     where each node represents a disease and its relationship to its parent.
 
     Parameters:
-    mondo_id (str): The MONDO ID of the root disease to start the hierarchy from.
+    disease_id (str): The MONDO ID of the root disease to start the hierarchy from.
 
     Returns:
     list: A list of lists representing the hierarchy. Each sublist contains information
@@ -226,20 +226,20 @@ def get_hierarchy_by_mondo_id(mondo_id):
         for child_id in disease.get('children', []):
             process_hierarchy(child_id, id_map[disease_id])
 
-    if mondo_id in disease_dict:
-        add_to_hierarchy(mondo_id, -1, disease_dict[mondo_id]['name'], 1, "#1d8bf8")
-        for child_id in disease_dict[mondo_id].get('children', []):
-            process_hierarchy(child_id, id_map[mondo_id])
+    if disease_id in disease_dict:
+        add_to_hierarchy(disease_id, -1, disease_dict[disease_id]['name'], 1, "#1d8bf8")
+        for child_id in disease_dict[disease_id].get('children', []):
+            process_hierarchy(child_id, id_map[disease_id])
 
     return hierarchy
 
-def get_extended_hierarchy_by_mondo_id(mondo_id):
+def get_extended_hierarchy_by_disease_id(disease_id):
     """
     Generate a hierarchical representation of diseases, phenotypes, and anatomical structures starting from a given MONDO ID.
     This function retrieves the hierarchy starting from a specified MONDO ID and includes branches for phenotypes and anatomical structures.
     
     Parameters:
-    mondo_id (str): The MONDO ID of the root disease to start the hierarchy from.
+    disease_id (str): The MONDO ID of the root disease to start the hierarchy from.
 
     Returns:
     tuple: A tuple containing the hierarchy list and a legend dict.
@@ -313,8 +313,8 @@ def get_extended_hierarchy_by_mondo_id(mondo_id):
             color = legend["Predicted"] if chemical.get('predicted', False) else legend["Chemical"]
             add_to_hierarchy(chemical_id, id_map[disease_id], chemical['label'], 1, color)
 
-    if mondo_id in disease_dict:
-        process_hierarchy(mondo_id, -1)
+    if disease_id in disease_dict:
+        process_hierarchy(disease_id, -1)
 
     return hierarchy, legend
 

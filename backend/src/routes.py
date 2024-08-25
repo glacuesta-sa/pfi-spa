@@ -8,9 +8,9 @@ import utils
 # TODO implement controller-services-repository pattern
 def init_routes(app):
 
-    @app.route("/disease/<mondo_id>", methods=["GET"])
-    def get_disease(mondo_id):
-        full_id = f"http://purl.obolibrary.org/obo/{mondo_id}"
+    @app.route("/v1/diseases/<disease_id>", methods=["GET"])
+    def get_disease_by_id(disease_id):
+        full_id = f"http://purl.obolibrary.org/obo/{disease_id}"
         disease = repository.get_disease_by_id(full_id)
         if disease:
             try:
@@ -22,116 +22,19 @@ def init_routes(app):
         else:
             return create_json_response(jsonify("Disease not found"), 404)
 
-    @app.route("/filter_hierarchy/<mondo_id>", methods=["GET"])
-    def filter_hierarchy(mondo_id):
-        full_id = f"http://purl.obolibrary.org/obo/{mondo_id}"
+    @app.route("/v1/diseases/<disease_id>/hierarchy", methods=["GET"])
+    def get_hierarchy_by_id(disease_id):
+        full_id = f"http://purl.obolibrary.org/obo/{disease_id}"
         if not repository.get_disease_by_id(full_id):
             return create_json_response(jsonify("Disease not found"), 404)
-        hierarchy = services.get_hierarchy_by_mondo_id(full_id)
+        hierarchy = services.get_hierarchy_by_disease_id(full_id)
 
-        extended_hierarchy = services.get_extended_hierarchy_by_mondo_id(full_id)
+        extended_hierarchy = services.get_extended_hierarchy_by_disease_id(full_id)
 
         return create_json_response(jsonify({"hierarchy": hierarchy, "extended_hierarchy": extended_hierarchy}), 200)
-    
-    @app.route("/diseases/by_phenotypes", methods=["POST"])
-    def diseases_by_phenotypes():
-        phenotype_ids = request.json.get('phenotype_ids')
-        if not phenotype_ids:
-           return create_json_response(jsonify("Phenotype IDs are required"), 400)
-        
-        print(f"Received phenotype IDs: {phenotype_ids}")
-        # Transform the phenotype IDs to include the full URI
-        full_phenotype_ids = [f"http://purl.obolibrary.org/obo/{pid}" for pid in phenotype_ids]
-        print(f"Transformed phenotype IDs: {full_phenotype_ids}")
 
-        diseases = services.get_diseases_by_phenotypes(full_phenotype_ids)
-        diseases = utils.convert_objectid_to_str(diseases)
-        print(f"Found diseases: {diseases}")
-        return create_json_response(jsonify(diseases), 200)
-    
-    @app.route("/diseases/by_age_onsets", methods=["POST"])
-    def diseases_by_age_onsets():
-        age_onset_ids = request.json.get('age_onset_ids')
-        if not age_onset_ids:
-           return create_json_response(jsonify("Age onset IDs are required"), 400)
-        
-        print(f"Received age onset IDs: {age_onset_ids}")
-        # Transform the age onset IDs to include the full URI
-        full_age_onset_ids = [f"http://purl.obolibrary.org/obo/{aid}" for aid in age_onset_ids]
-        print(f"Transformed age onset IDs: {full_age_onset_ids}")
-
-        diseases = services.get_diseases_by_age_onsets(full_age_onset_ids)
-        diseases = utils.convert_objectid_to_str(diseases)
-        print(f"Found diseases: {diseases}")
-        return create_json_response(jsonify(diseases), 200)
-
-    @app.route("/diseases/by_anatomical_structures", methods=["POST"])
-    def diseases_by_anatomical_structures():
-        anatomical_ids = request.json.get('anatomical_ids')
-        if not anatomical_ids:
-            return create_json_response(jsonify("Anatomical structure IDs are required"), 400)
-        
-        print(f"Received anatomical structure IDs: {anatomical_ids}")
-        # Transform the anatomical structure IDs to include the full URI
-        full_anatomical_ids = [f"http://purl.obolibrary.org/obo/{aid}" for aid in anatomical_ids]
-        print(f"Transformed anatomical structure IDs: {full_anatomical_ids}")
-
-        diseases = services.get_diseases_by_anatomical_structures(full_anatomical_ids)
-        diseases = utils.convert_objectid_to_str(diseases)
-        print(f"Found diseases: {diseases}")
-        return create_json_response(jsonify(diseases), 200)
-    
-    @app.route("/diseases/by_exposures", methods=["POST"])
-    def diseases_by_exposures():
-        exposure_ids = request.json.get('exposure_ids')
-        if not exposure_ids:
-            return create_json_response(jsonify("exposure structure IDs are required"), 400)
-        
-        print(f"Received exposure structure IDs: {exposure_ids}")
-        # Transform the exposure structure IDs to include the full URI
-        full_exposure_ids = [f"http://purl.obolibrary.org/obo/{aid}" for aid in exposure_ids]
-        print(f"Transformed exposure structure IDs: {full_exposure_ids}")
-
-        diseases = services.get_diseases_by_exposures(full_exposure_ids)
-        diseases = utils.convert_objectid_to_str(diseases)
-        print(f"Found diseases: {diseases}")
-        return create_json_response(jsonify(diseases), 200)
-    
-    @app.route("/diseases/by_treatment", methods=["POST"])
-    def diseases_by_treatment():
-        treatment_ids = request.json.get('treatment_ids')
-        if not treatment_ids:
-            return create_json_response(jsonify("treatment structure IDs are required"), 400)
-        
-        print(f"Received treatment structure IDs: {treatment_ids}")
-        # Transform the treatment structure IDs to include the full URI
-        full_treatment_ids = [f"http://purl.obolibrary.org/obo/{tid}" for tid in treatment_ids]
-        print(f"Transformed treatment structure IDs: {full_treatment_ids}")
-
-        diseases = services.get_diseases_by_treatments(full_treatment_ids)
-        diseases = utils.convert_objectid_to_str(diseases)
-        print(f"Found diseases: {diseases}")
-        return create_json_response(jsonify(diseases), 200)
-    
-    @app.route("/diseases/by_chemicals", methods=["POST"])
-    def diseases_by_chemicals():
-        chemical_ids = request.json.get('chemical_ids')
-        if not chemical_ids:
-            return create_json_response(jsonify("chemical structure IDs are required"), 400)
-        
-        print(f"Received chemical structure IDs: {chemical_ids}")
-        # Transform the chemical structure IDs to include the full URI
-        full_chemical_ids = [f"http://purl.obolibrary.org/obo/{cid}" for cid in chemical_ids]
-        print(f"Transformed chemical structure IDs: {full_chemical_ids}")
-
-        diseases = services.get_diseases_by_chemicals(full_chemical_ids)
-        diseases = utils.convert_objectid_to_str(diseases)
-        print(f"Found diseases: {diseases}")
-        return create_json_response(jsonify(diseases), 200)
-    
-    # TODO don't exclude the filters from the structures.
-    @app.route("/diseases/by_filters", methods=["POST"])
-    def diseases_by_filters():
+    @app.route("/v1/diseases/filter", methods=["POST"])
+    def get_diseases_by_filters():
         body = request.json
         phenotype_ids = body.get('phenotype_ids', [])
         anatomical_ids = body.get('anatomical_ids', [])
@@ -154,36 +57,36 @@ def init_routes(app):
         diseases = utils.convert_objectid_to_str(diseases)
         return create_json_response(jsonify(diseases), 200)
 
-    @app.route("/phenotypes", methods=["GET"])
+    @app.route("/v1/phenotypes", methods=["GET"])
     def get_phenotypes():
         return create_json_response(jsonify(services.get_phenotypes()), 200)
     
-    @app.route("/anatomical_structures", methods=["GET"])
+    @app.route("/v1/anatomical_structures", methods=["GET"])
     def get_anatomical_structures():
         return create_json_response(jsonify(services.get_anatomical_structures()), 200)
 
-    @app.route("/age_onsets", methods=["GET"])
+    @app.route("/v1/age_onsets", methods=["GET"])
     def get_age_onsets():
         return create_json_response(jsonify(services.get_age_onsets()), 200)
     
-    @app.route("/exposures", methods=["GET"])
+    @app.route("/v1/exposures", methods=["GET"])
     def get_exposures():
         return create_json_response(jsonify(services.get_exposures()), 200)
     
-    @app.route("/treatments", methods=["GET"])
+    @app.route("/v1/treatments", methods=["GET"])
     def get_etreatments():
         return create_json_response(jsonify(services.get_treatments()), 200)
     
-    @app.route("/chemicals", methods=["GET"])
+    @app.route("/v1/chemicals", methods=["GET"])
     def get_chemicals():
         return create_json_response(jsonify(services.get_chemicals()), 200)
     
-    @app.route("/relationship_types", methods=["GET"])
+    @app.route("/v1/relationship_types", methods=["GET"])
     def get_relationship_types():
         return create_json_response(jsonify(services.get_relationship_types()), 200)
     
-    @app.route("/diseases/predict_relationship", methods=["POST"])
-    def predict_relationship():
+    @app.route("/v1/diseases/predict", methods=["POST"])
+    def get_disease_prediction():
 
         # new_disease_id = "MONDO_0006781"
         # new_relationship_type = "has_relationship"
