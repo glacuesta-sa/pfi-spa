@@ -70,7 +70,7 @@ export async function getRelationshipTypesFilter(){
 
 export async function getChartsData(diseaseId: string) {
     try {
-        const response = await fetch(`${url}/filter_hierarchy/${diseaseId}`,{
+        const response = await fetch(`${url}/diseases/${diseaseId}/hierarchy`,{
             method: 'GET',
             mode: "cors",
             headers:{   
@@ -86,7 +86,7 @@ export async function getChartsData(diseaseId: string) {
 
 export async function getDiseaseById(diseaseId: string) {
     try {
-        const response = await fetch(`${url}/disease/${diseaseId}`,{
+        const response = await fetch(`${url}/diseases/${diseaseId}`,{
             method: 'GET',
             mode: "cors",
             headers:{   
@@ -102,7 +102,7 @@ export async function getDiseaseById(diseaseId: string) {
 
 export async function getDiseasesByFilters(phenotype_ids: Array<string>, anatomical_ids: Array<string>, age_onset_ids: Array<string>) {
     try {
-        const response = await fetch(`${url}/diseases/by_filters`, {
+        const response = await fetch(`${url}/diseases/filter`, {
             method: 'POST',
             mode: "cors",
             headers:{   
