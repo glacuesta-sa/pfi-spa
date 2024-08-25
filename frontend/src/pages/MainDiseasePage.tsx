@@ -18,12 +18,13 @@ export default function MainDiseasePage(){
     const [heatMapData, setHeatMapData] = useState()
 
     function getTreeDataItem(item, data){
+      
       if(item[0] !== 'id'){
         const disease = item[1]
-        const auxParent = data.find((e)=>e[1]===disease)
+        const auxParent = item[2] === -1 ? [null,null] : data.find((e)=>e[0]===item[2])
         const size = item[3]
         const color = item[4]
-        return [disease, auxParent[1], size, color]
+        return [disease, auxParent[1], size, size]
       }else{
         return [
               "Disease",
@@ -39,7 +40,7 @@ export default function MainDiseasePage(){
           const response = await getChartsData(diseaseId)
           const auxDendogram = []
           const auxHeatMap = []
-          response.extended_hierarchy[0].map((item)=>{
+          response.extended_hierarchy[0].map((item, index)=>{
             const auxItem = getTreeDataItem(item, response.extended_hierarchy[0])
             auxDendogram.push(item.slice(0,5))
             auxHeatMap.push(auxItem)

@@ -112,7 +112,10 @@ export async function getDiseasesByFilters(phenotype_ids: Array<string>, anatomi
             body: JSON.stringify({
                 phenotype_ids: phenotype_ids,
                 anatomical_ids: anatomical_ids,
-                age_onset_ids: age_onset_ids
+                age_onset_ids: age_onset_ids,
+                chemical_ids:[],
+                treatment_ids:[],
+                exposure_ids:[]
             })
         })
         return await response.json()

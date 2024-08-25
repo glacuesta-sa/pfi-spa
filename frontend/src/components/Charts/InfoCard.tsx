@@ -55,7 +55,7 @@ export default function InfoCard() {
             }}
           >
               <Typography variant="h5" gutterBottom>
-                {title}
+                {title[0].toUpperCase() + title.slice(1)}
               <Divider />
               </Typography>
               <Typography paragraph align='justify'>
@@ -66,8 +66,8 @@ export default function InfoCard() {
               </Typography>
               <List sx={{ listStyleType: 'disc' }}>
                 {
-                  causes.map((item)=>(
-                <ListItem sx={{ display: 'list-item', ml:4 }}>
+                  causes.map((item, index)=>(
+                <ListItem key={index} sx={{ display: 'list-item', ml:4 }}>
                   <Typography>
                     {item}
                   </Typography>
@@ -76,10 +76,10 @@ export default function InfoCard() {
                 }
               </List>
               <Box sx={{display:'flex', justifyContent: 'center'}}>
-              <Link to="/treatment">
-              <Button variant='contained' endIcon={<ArrowForwardIcon />}>
-                Tratmiento Sugerido
-              </Button>
+                <Link to="/treatment">
+                <Button variant='contained' endIcon={<ArrowForwardIcon />}>
+                  Tratmiento Sugerido
+                </Button>
               </Link>
               </Box>
           </Grid>

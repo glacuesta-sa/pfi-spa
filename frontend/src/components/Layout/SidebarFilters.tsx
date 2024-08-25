@@ -10,7 +10,7 @@ import { Divider, Typography } from '@mui/material';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import AnatomyFilter from '../Filters/AnatomyFilter';
 import AgeFilter from '../Filters/AgeFilter';
-import { getPhenotypes } from '../../services/webService';
+import { getAnatomicalStructures, getPhenotypes } from '../../services/webService';
 
 const drawerWidth = 350;
 
@@ -30,6 +30,7 @@ export default function SidebarFilters({children, updatePhenotypeFilterArray, up
 
   const [symptoms, setSymptoms] = React.useState<string[]>([])
   const [symptomsItems, setSymptomsItems] = React.useState<Item[]>([])
+  const [anatomyItems, setanatomyItems] = React.useState<Item[]>([])
   const [anatomySelection, setAnatomySelection] = React.useState<string[]>([])
 
   function updateSymptom(value: string){
@@ -56,12 +57,16 @@ export default function SidebarFilters({children, updatePhenotypeFilterArray, up
     const index = aux.indexOf(value)
     aux.splice(index,1)
     setAnatomySelection(aux)
+    const auxItem = anatomyItems.find((item)=>item.label === value)
+    updatePhenotypeFilterArray(auxItem?.value, true)
   }
 
   React.useEffect(()=>{
     async function setFilters(){
       const response = await getPhenotypes()
       setSymptomsItems(response)
+      const res = await getAnatomicalStructures()
+      setanatomyItems(res)
     } 
     setFilters()
   },[])

@@ -12,7 +12,6 @@ import { useEffect, useState } from 'react';
 import { getDiseasesByFilters } from '../../services/webService';
 
 
-
 function getIdFromUrl(url: string){
   const auxString = url.split('/')
   return auxString[auxString.length -1]
@@ -45,14 +44,14 @@ export default function BasicTable({phenotype_ids, anatomical_ids, age_onset_ids
       </Box>
       <Box sx={{border:1, borderColor: '#1d8bf8', borderRadius:2, padding:2}}>
         {
-          rows.length === 0 || rows.length > 12
+          rows.length === 0
           ? 
           <Box sx= {{ display: 'flex', justifyContent: 'center', height: '500', alignItems: 'center', flexDirection: 'column'}}>
             <Typography color={'#bcbcbc'} variant='h5' sx={{marginBottom: 4}}>
-              Demasiadas enfermedades corresponden a los sintomas seleccionados.
+              Ninguna enfermedad corresponde a los sintomas seleccionados.
             </Typography>
             <Typography color={'#bcbcbc'} variant='h5' sx={{marginBottom: 4}}>
-              Por favor agrega más filtros.
+              Por favor modifique los filtros.
             </Typography>
             <img src={TiredPc} alt="Tired Pc" height={200}/>
           </Box>

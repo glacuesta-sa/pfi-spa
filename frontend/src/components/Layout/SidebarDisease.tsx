@@ -45,10 +45,7 @@ export default function SidebarDisease({children}: Props) {
           </Typography>
         </Box>
         <Divider/>
-        <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-          <Typography variant='h6' sx={{marginY: 2}} >
-            Sintomas
-          </Typography>
+        <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent:'center'}}>
           <RelationshipTypeFilter />
         </Box>
         <Box sx={{display: 'flex', justifyContent: 'flex-start'}}>

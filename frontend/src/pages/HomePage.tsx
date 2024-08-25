@@ -23,7 +23,10 @@ export default function HomePage(){
 
     function updateAnatomicFilterArray(value: string, remove?: boolean){
         if(remove){
-
+            const aux = [...anatomicalIds]
+            const index = aux.indexOf(value)
+            aux.splice(index,1)
+            setAnatomical(aux)
         }else {
             const aux = [...anatomicalIds, value]
             setAnatomical(aux)
