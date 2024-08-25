@@ -1,13 +1,20 @@
 
 import Chip from '@mui/material/Chip';
 
-export default function CustomChip({text}:{text: string}) {
+interface Props {
+  text: string,
+  removeFunction: (value: string)=>void
+}
+
+
+export default function CustomChip({text, removeFunction} : Props) {
   const handleClick = () => {
     console.info('You clicked the Chip.');
   };
 
   const handleDelete = () => {
-    console.info('You clicked the delete icon.');
+    console.info('You clicked the Chip.');
+    removeFunction(text)
   };
 
   return (
