@@ -1,0 +1,27 @@
+{
+    "age_onsets": [],
+    "anatomical_structures": [],
+    "causes": [
+        "Causa de la enfermedad #1",
+        "Causa de la enfermedad #2",
+        "Causa de la enfermedad #3"
+    ],
+    "chemicals": [],
+    "children": [],
+    "description": "A combination of rheumatoid arthritis (RA) and pneumoconiosis that manifests as intrapulmonary nodules, which appear homogenous and well-defined on chest X-ray.",
+    "exposures": [],
+    "id": "http://purl.obolibrary.org/obo/MONDO_0005690",
+    "name": "Caplan syndrome",
+    "parent": "http://purl.obolibrary.org/obo/MONDO_0015926",
+    "phenotypes": [
+        {
+            "label": "Rheumatoid arthritis",
+            "predicted": false,
+            "property": "http://purl.obolibrary.org/obo/RO_0004029",
+            "target": "http://purl.obolibrary.org/obo/HP_0001370",
+            "type": "has_relationship"
+        }
+    ],
+    "title": "Titulo de la enfermedad",
+    "treatments": []
+}

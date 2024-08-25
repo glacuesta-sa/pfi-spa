@@ -1,0 +1,305 @@
+openapi: 3.0.0
+info:
+  title: pfi-spa
+  version: 1.0.0
+  description: API para interactuar con modelos de datos basados en ontologías médicas.
+
+servers:
+  - url: http://127.0.0.1:5000
+# TODO: add examples, code responses, structure stubs
+tags:
+  - name: Diseases
+    description: Endpoints relacionados con enfermedades.
+  - name: Filters
+    description: Endpoints para filtrado de datos.
+
+paths:
+  /v1/diseases/{disease_id}:
+    get:
+      tags:
+        - Diseases
+      summary: Obtener detalles de una enfermedad
+      description: Devuelve información detallada sobre una enfermedad específica basada en su ID.
+      parameters:
+        - name: disease_id
+          in: path
+          required: true
+          schema:
+            type: string
+            example: MONDO_0005690
+          description: ID de la enfermedad en formato MONDO.
+      responses:
+        '200':
+          description: Datos de la enfermedad
+          content:
+            application/json:
+              schema:
+                type: object
+              examples:
+                diseaseExample:
+                  summary: Ejemplo 
+                  #externalValue: './examples/v1-get-disease-by-id-MONDO_0005690.json'
+                  value:
+                    age_onsets: []
+                    anatomical_structures: []
+                    causes:
+                      - "Causa de la enfermedad #1"
+                      - "Causa de la enfermedad #2"
+                      - "Causa de la enfermedad #3"
+                    chemicals: []
+                    children: []
+                    description: "Descripcion de la enfermedad."
+                    exposures: []
+                    id: "http://purl.obolibrary.org/obo/MONDO_0005690"
+                    name: "Caplan syndrome"
+                    parent: "http://purl.obolibrary.org/obo/MONDO_0015926"
+                    phenotypes:
+                      - label: "Rheumatoid arthritis"
+                        predicted: false
+                        property: "http://purl.obolibrary.org/obo/RO_0004029"
+                        target: "http://purl.obolibrary.org/obo/HP_0001370"
+                        type: "has_relationship"
+                    title: "Titulo de la enfermedad"
+                    treatments: []
+        '404':
+          description: Enfermedad no encontrada
+          content:
+            application/json:
+              schema:
+                type: object
+        '500':
+          description: Error en el servidor
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /v1/diseases/{disease_id}/hierarchy:
+    get:
+      tags:
+        - Diseases
+      summary: Obtener estructuras de exploración visual para la jerarquía de una enfermedad
+      description: Devuelve la estructura de jerarquía y jerarquía extendida de una enfermedad específica.
+      parameters:
+        - name: disease_id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID de la enfermedad en formato MONDO.
+      responses:
+        '200':
+          description: Estructuras de exploración visual conteniendo las jerarquías de la enfermedad
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: Enfermedad no encontrada
+          content:
+            application/json:
+              schema:
+                type: object
+        '500':
+          description: Error en el servidor
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /v1/diseases/filter:
+    post:
+      tags:
+        - Diseases
+      summary: Filtrar enfermedades por varios filtros de relación
+      description: Devuelve enfermedades que coinciden con los filtros proporcionados.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                phenotype_ids:
+                  type: array
+                  items:
+                    type: string
+                anatomical_ids:
+                  type: array
+                  items:
+                    type: string
+                age_onset_ids:
+                  type: array
+                  items:
+                    type: string
+                exposure_ids:
+                  type: array
+                  items:
+                    type: string
+                treatment_ids:
+                  type: array
+                  items:
+                    type: string
+                chemical_ids:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        '200':
+          description: Enfermedades encontradas
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Error de párametros
+          content:
+            application/json:
+              schema:
+                type: object
+        '500':
+          description: Error en el servidor
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /v1/phenotypes:
+    get:
+      tags:
+        - Filters
+      summary: Obtener todos los fenotipos
+      description: Devuelve una lista de todos los fenotipos.
+      responses:
+        '200':
+          description: Lista de fenotipos
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /v1/anatomical_structures:
+    get:
+      tags:
+        - Filters
+      summary: Obtener todas las estructuras anatómicas
+      description: Devuelve una lista de todas las estructuras anatómicas.
+      responses:
+        '200':
+          description: Lista de estructuras anatómicas
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /v1/age_onsets:
+    get:
+      tags:
+        - Filters
+      summary: Obtener todos los age onsets
+      description: Devuelve una lista de todos los age onsets.
+      responses:
+        '200':
+          description: Lista de age onsets
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /v1/exposures:
+    get:
+      tags:
+        - Filters
+      summary: Obtener todas las exposiciones
+      description: Devuelve una lista de todas las exposiciones.
+      responses:
+        '200':
+          description: Lista de exposiciones
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /v1/treatments:
+    get:
+      tags:
+        - Filters
+      summary: Obtener todos los tratamientos
+      description: Devuelve una lista de todos los tratamientos.
+      responses:
+        '200':
+          description: Lista de tratamientos
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /v1/chemicals:
+    get:
+      tags:
+        - Filters
+      summary: Obtener todas las sustancias químicas
+      description: Devuelve una lista de todas las sustancias químicas.
+      responses:
+        '200':
+          description: Lista de sustancias químicas
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /v1/relationship_types:
+    get:
+      tags:
+        - Filters
+      summary: Obtener todos los tipos de relaciones
+      description: Devuelve una lista de todos los tipos de relaciones.
+      responses:
+        '200':
+          description: Lista de tipos de relaciones
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /v1/diseases/predict:
+    post:
+      tags:
+        - Diseases
+      summary: Predecir nuevas relaciones para una enfermedad
+      description: Predice nuevas relaciones para una enfermedad específica.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                disease_id:
+                  type: string
+                  description: ID de la enfermedad en formato MONDO.
+                new_relationship_type:
+                  type: string
+                  description: Tipo de relación a predecir.
+                new_relationship_property:
+                  type: string
+                  description: Propiedad de la relación a predecir.
+      responses:
+        '200':
+          description: Relación predicha
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Parámetros faltantes
+          content:
+            application/json:
+              schema:
+                type: object
+        '500':
+          description: Error en el servidor
+          content:
+            application/json:
+              schema:
+                type: object

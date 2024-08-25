@@ -13,7 +13,7 @@ import joblib
 from pymongo import UpdateOne
 
 
-def set_llm_fields(disease):
+def set_verbose_fields(disease):
     """
     Set on-the-fly generated fields by querying an LLM (Language Model). 
     Title, description, and causes fields for a given disease dictionary.
