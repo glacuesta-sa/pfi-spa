@@ -20,9 +20,29 @@ export default function TreeMap(props) {
         ()=>setLoading(false),
         2000
     )
+    
+    try{
+      const aux = props.data.map(element => element[0]);
+      let uniqueArray = [...new Set(aux)];
+      const auxData = []
+      props.data.forEach(element => {
+        const auxIndex = uniqueArray.indexOf(element[0])
+        if (auxIndex !== -1) {
+          auxData.push(element)
+          uniqueArray.splice(auxIndex, 1);
+        }
+      });
+      setChartData(auxData)
+    }catch(error){
+      console.log('Error TREE: ', error)
+    }
   },[])
 
   const [loading, setLoading] = useState(true)
+  const [chartData, setChartData] = useState()
+
+  console.log("Chart data filtered", chartData)
+  console.log("Chart data", props.data)
 
   return (
     <Paper sx={{margin: 2, padding:2, borderRadius: 2, width: '50%'}}>
@@ -42,7 +62,7 @@ export default function TreeMap(props) {
                 chartType="TreeMap"
                 width="100%"
                 height="400px"
-                data={props.data}
+                data={chartData}
                 options={options}
               />
         }
