@@ -3,9 +3,6 @@ import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import { getPhenotypes } from '../../services/webService';
 
-
-
-
 export default function SymptomsFilter({updateSymptom, updateFilterArray}:{updateSymptom:(value: string)=>void, updateFilterArray:(value: string)=>void}) {
   const [value, setValue] = React.useState<string | null>();
   const [inputValue, setInputValue] = React.useState('');

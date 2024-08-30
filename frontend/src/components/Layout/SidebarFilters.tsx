@@ -53,6 +53,7 @@ export default function SidebarFilters({children, updatePhenotypeFilterArray, up
   }
 
   function removeSelection(value: string){
+    console.log('Entering Anatomy Filter, value to remove: ',value)
     const aux = [...anatomySelection]
     const index = aux.indexOf(value)
     aux.splice(index,1)

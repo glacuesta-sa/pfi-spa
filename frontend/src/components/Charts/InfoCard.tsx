@@ -20,7 +20,7 @@ export default function InfoCard() {
       async function getDisease(id:string){
         const response = await getDiseaseById(id)
 
-        setTitle(response.name)
+        setTitle(response.title)
         setDescription(response.description)
         setCauses(response.causes)
 
@@ -30,7 +30,6 @@ export default function InfoCard() {
           ()=>setLoading(false),
           2000
       )
-
   },[])
 
   const [loading, setLoading] = React.useState(true)
@@ -43,7 +42,6 @@ export default function InfoCard() {
             <PulseLoader size={20} color="#1d8bf8" />
         </Box>
         :
-        
           <Grid
             item
             xs={12}
@@ -55,7 +53,7 @@ export default function InfoCard() {
             }}
           >
               <Typography variant="h5" gutterBottom>
-                {title[0].toUpperCase() + title.slice(1)}
+                {title}
               <Divider />
               </Typography>
               <Typography paragraph align='justify'>

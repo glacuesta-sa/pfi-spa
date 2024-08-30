@@ -53,15 +53,14 @@ export async function getAgesFilter(){
 
 export async function getRelationshipTypesFilter(){
     try {
-        // const response = await fetch(`${url}/age_onsets`,{
-        //     method: 'GET',
-        //     mode: "cors",
-        //     headers:{   
-        //         'Accept':'*/*'
-        //     }
-        // })
-        // return await response.json()
-        return[{label:'Relationship 1', value: '1'}, {label:'Relationship 2', value: '2'}]
+        const response = await fetch(`${url}/relationship_types`,{
+            method: 'GET',
+            mode: "cors",
+            headers:{   
+                'Accept':'*/*'
+            }
+        })
+        return await response.json()
     } catch (error){
         console.log("error", error)
         return []
@@ -129,3 +128,5 @@ export async function getDiseasesByFilters(phenotype_ids: Array<string>, anatomi
         return []
     }
 }
+
+
