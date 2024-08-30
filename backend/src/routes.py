@@ -68,8 +68,8 @@ def init_routes(app):
         # include_predictions = body.get('include_predictions', "true")
 
         # validate inputs
-        if not (phenotype_ids or anatomical_ids or age_onset_ids or exposure_ids or treatment_ids or chemical_ids):
-            return create_json_response(jsonify({"error": "no filters received"}), 400) # TODO: generate stub with responses for errors and data structures.
+        #if not (phenotype_ids or anatomical_ids or age_onset_ids or exposure_ids or treatment_ids or chemical_ids):
+        #    return create_json_response(jsonify({"error": "no filters received"}), 400) # TODO: generate stub with responses for errors and data structures.
         
         # Transform the IDs to include the full URI
         full_phenotype_ids = [f"http://purl.obolibrary.org/obo/{pid}" for pid in phenotype_ids]

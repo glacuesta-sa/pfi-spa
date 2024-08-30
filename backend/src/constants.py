@@ -19,6 +19,9 @@ IS_A_RELATIONSHIP = 'is_a'
 TRACK_ITEM_REL_TYPE = 'http://purl.obolibrary.org/obo/IAO_0000233'
 AGE_ONSET_PARENT_REL_TYPE = 'http://purl.obolibrary.org/obo/HP_0003674'
 
+# HAS CHARACTERISTIC
+HAS_CHARACTERISTIC_REL_TYPE = 'http://purl.obolibrary.org/obo/RO_0000053'
+
 # SPECIFIC PROPERTIES
 SUB_OF_PROPERTIES = ['http://www.w3.org/2000/01/rdf-schema#subClassOf', 'subPropertyOf']
 

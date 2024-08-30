@@ -307,43 +307,8 @@ def process_edges(mondo_data, age_onset_hierarchy, disease_dict, data_model, ro_
     
     data_model["relationships_types"] = relationships_types
 
-def main():
-    mondo_data = utils.load_json('datasets/mondo/mondo.json')
 
-    age_onset_hierarchy = {
-        constants.AGE_ONSET_PARENT_REL_TYPE: "Onset"
-    }
-
-    data_model = {
-        "phenotypes": {},
-        "age_onsets": {},
-        "anatomical_structures": {},
-        "treatments": {},
-        "exposures": {},
-        "chemicals": {},
-        "relationships_types": {}
-    }
-
-    disease_dict = {}
-    phenotypes_dict = {}
-    anatomical_dict = {}
-    ro_dict = {}
-    ecto_dict = {}
-    maxo_dict = {}
-    chebi_dict = {}
-
-    # TODO refactor hierarchy generated data
-    # Build hierarchies
-    is_a_hierarchy = build_is_a_hierarchy(mondo_data)
-    onset_descendants = get_all_descendants(constants.AGE_ONSET_PARENT_REL_TYPE, is_a_hierarchy)
-    for desc in onset_descendants:
-        age_onset_hierarchy[desc] = "Onset"
-
-    # Process data
-    process_nodes(mondo_data, disease_dict, phenotypes_dict, anatomical_dict, ro_dict, ecto_dict, maxo_dict, chebi_dict) # TODO exclude obsolete terms from disease_dict
-    process_edges(mondo_data, age_onset_hierarchy, disease_dict, data_model, ro_dict, ecto_dict, maxo_dict, chebi_dict)
-
-    # data augmentation
+def data_augmentation(data_model, disease_dict, phenotypes_dict, anatomical_dict, ecto_dict, maxo_dict, chebi_dict, age_onset_hierarchy): 
     triples_to_add = [
         {
             "disease": "http://purl.obolibrary.org/obo/MONDO_0000986", # pleurisy
@@ -462,12 +427,367 @@ def main():
             "property": "http://purl.obolibrary.org/obo/RO_0000053", # has characteristic
             "target": "http://purl.obolibrary.org/obo/HP_0002017", # Nausea and vomitting
         },    
+
         # PLEUROPNEUMONIA
         {
             "disease": "http://purl.obolibrary.org/obo/MONDO_0001940", # pleuropneumonia
             "property": "http://purl.obolibrary.org/obo/RO_0000053", # has characteristic
             "target": "http://purl.obolibrary.org/obo/HP_0002102", # pleuritis
-        },           
+        },
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0001940", # pleuropneumonia
+            "property": "http://purl.obolibrary.org/obo/RO_0000053", # has characteristic
+            "target": "http://purl.obolibrary.org/obo/HP_0012531", # pain
+        },
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0001940",  # pleuropneumonia
+            "property": "http://purl.obolibrary.org/obo/RO_0001025", # has location in
+            "target": "http://purl.obolibrary.org/obo/UBERON_0001443", # chest
+        },
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0001940", # pleuropneumonia
+            "property": "http://purl.obolibrary.org/obo/RO_0001025", # has location in
+            "target": "http://purl.obolibrary.org/obo/UBERON_0002048", #lung
+        },
+
+
+
+
+        ## Clostridium difficile colitis
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0000705", # Clostridium difficile colitis
+            "property": "http://purl.obolibrary.org/obo/RO_0000053", # has characteristic
+            "target": "http://purl.obolibrary.org/obo/HP_0012531", # pain
+        },
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0000705", # Clostridium difficile colitis
+            "property": "http://purl.obolibrary.org/obo/RO_0000053", # has characteristic
+            "target": "http://purl.obolibrary.org/obo/HP_0002027", # abdominal pain
+        },
+         {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0000705", # Clostridium difficile colitis
+            "property": "http://purl.obolibrary.org/obo/RO_0000053", # has characteristic
+            "target": "http://purl.obolibrary.org/obo/HP_0003549", # increases connective tissue
+        },
+
+
+        # eosinophilia-myalgia syndrome
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0004941", # eosinophilia-myalgia syndrome
+            "property": "http://purl.obolibrary.org/obo/RO_0000053", # has characteristic
+            "target": "http://purl.obolibrary.org/obo/HP_0012531", # pain
+        },
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0004941", # eosinophilia-myalgia syndrome
+            "property": "http://purl.obolibrary.org/obo/RO_0000053", # has characteristic
+            "target": "http://purl.obolibrary.org/obo/HP_0020064", # Abnormal eosinophil count
+        },
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0004941", # eosinophilia-myalgia syndrome
+            "property": "http://purl.obolibrary.org/obo/RO_0001025", # has location in
+            "target": "http://purl.obolibrary.org/obo/UBERON_0002048", #lung
+        },
+        {
+            "disease": "http://purl.obolibrary.org/obo/MMONDO_0004941", # eosinophilia-myalgia syndrome
+            "property": "http://purl.obolibrary.org/obo/RO_0001025", # has location in
+            "target": "http://purl.obolibrary.org/obo/UBERON_0001443", # chest
+        },
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0004941", # eosinophilia-myalgia syndrome
+            "property": "http://purl.obolibrary.org/obo/RO_0001025", # has location in
+            "target": "http://purl.obolibrary.org/obo/UBERON_0000948", #heart
+        },
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0004941", # eosinophilia-myalgia syndrome
+            "property": "http://purl.obolibrary.org/obo/RO_0001025", # has location in
+            "target": "http://purl.obolibrary.org/obo/UBERON_0001981", # blood vessels
+        },
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0004941", # eosinophilia-myalgia syndrome
+            "property": "http://purl.obolibrary.org/obo/RO_0001025", # has location in
+            "target": "http://purl.obolibrary.org/obo/UBERON_0001572", # hyoglossus muscle
+        },
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0004941", # eosinophilia-myalgia syndrome
+            "property": "http://purl.obolibrary.org/obo/RO_0001025", # has location in
+            "target": "http://purl.obolibrary.org/obo/UBERON_0000014", # skin
+        },
+
+        
+
+        # stage I endometrioid carcinoma
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0004961", # stage I endometrioid carcinoma
+            "property": "http://purl.obolibrary.org/obo/RO_0000053", # has characteristic
+            "target": "http://purl.obolibrary.org/obo/HP_0012531", # pain
+        },
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0004961", # stage I endometrioid carcinoma
+            "property": "http://purl.obolibrary.org/obo/RO_0001025", # has location in
+            "target": "http://purl.obolibrary.org/obo/UBERON_0003444", # pelvis nerve
+        },
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0004961", # stage I endometrioid carcinoma
+            "property": "http://purl.obolibrary.org/obo/RO_0001025", # has location in
+            "target": "http://purl.obolibrary.org/obo/UBERON_0001255", # urine bladder
+        },
+        {
+           "disease": "http://purl.obolibrary.org/obo/MONDO_0004961", # stage I endometrioid carcinoma
+            "property": "http://purl.obolibrary.org/obo/RO_0001025", # has location in
+            "target": "http://purl.obolibrary.org/obo/UBERON_0001295", # endometrium
+        },
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0004961", # stage I endometrioid carcinoma
+            "property": "http://purl.obolibrary.org/obo/RO_0000053", # has characteristic
+            "target": "http://purl.obolibrary.org/obo/HP_6000315", # post menopausal onset
+        },
+
+        # stage II endometrioid carcinoma
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0004962", # stage II endometrioid carcinoma
+            "property": "http://purl.obolibrary.org/obo/RO_0000053", # has characteristic
+            "target": "http://purl.obolibrary.org/obo/HP_0012531", # pain
+        },
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0004962", # stage II endometrioid carcinoma
+            "property": "http://purl.obolibrary.org/obo/RO_0001025", # has location in
+            "target": "http://purl.obolibrary.org/obo/UBERON_0003444", # pelvis nerve
+        },
+        {
+           "disease": "http://purl.obolibrary.org/obo/MONDO_0004962", # stage II endometrioid carcinoma
+            "property": "http://purl.obolibrary.org/obo/RO_0001025", # has location in
+            "target": "http://purl.obolibrary.org/obo/UBERON_0001255", # urine bladder
+        },
+        {
+           "disease": "http://purl.obolibrary.org/obo/MONDO_0004962", # stage II endometrioid carcinoma
+            "property": "http://purl.obolibrary.org/obo/RO_0001025", # has location in
+            "target": "http://purl.obolibrary.org/obo/UBERON_0000996", # vagina
+        },
+        {
+           "disease": "http://purl.obolibrary.org/obo/MONDO_0004962", # stage II endometrioid carcinoma
+            "property": "http://purl.obolibrary.org/obo/RO_0001025", # has location in
+            "target": "http://purl.obolibrary.org/obo/UBERON_0001295", # endometrium
+        },
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0004962", # stage II endometrioid carcinoma
+            "property": "http://purl.obolibrary.org/obo/RO_0000053", # has characteristic
+            "target": "http://purl.obolibrary.org/obo/HP_6000315", # post menopausal onset
+        },
+
+
+         # adenoid cystic carcinoma
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0004971", #  adenoid cystic carcinoma
+            "property": "http://purl.obolibrary.org/obo/RO_0000053", # has characteristic
+            "target": "http://purl.obolibrary.org/obo/HP_0012531", # pain
+        },
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0004971", # adenoid cystic carcinoma
+            "property": "http://purl.obolibrary.org/obo/RO_0000053", # has characteristic
+            "target": "http://purl.obolibrary.org/obo/HP_0012532", # chronic pain
+        },
+        {
+           "disease": "http://purl.obolibrary.org/obo/MONDO_0004971", # adenoid cystic carcinoma
+            "property": "http://purl.obolibrary.org/obo/RO_0001025", # has location in
+            "target": "http://purl.obolibrary.org/obo/UBERON_0003914", # ephitelial tube
+        },
+
+
+         # adrenal gland pheochromocytoma
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0004971", # adrenal gland pheochromocytoma
+            "property": "http://purl.obolibrary.org/obo/RO_0000053", # has characteristic
+            "target": "http://purl.obolibrary.org/obo/HP_0012531", # pain
+        },
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0004971", # adrenal gland pheochromocytoma
+            "property": "http://purl.obolibrary.org/obo/RO_0000053", # has characteristic
+            "target": "http://purl.obolibrary.org/obo/HP_0012532", # chronic pain
+        },
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0004971", # adrenal gland pheochromocytoma
+            "property": "http://purl.obolibrary.org/obo/RO_0000053", # has characteristic
+            "target": "http://purl.obolibrary.org/obo/HP_0002027", # abdominal pain
+        },
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0004971", # adrenal gland pheochromocytoma
+            "property": "http://purl.obolibrary.org/obo/RO_0000053", # has characteristic
+            "target": "http://purl.obolibrary.org/obo/HP_0002315", # headaches
+        },
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0004971", # adrenal gland pheochromocytoma
+            "property": "http://purl.obolibrary.org/obo/RO_0000053", # has characteristic
+            "target": "http://purl.obolibrary.org/obo/HP_0001962", # palpitations
+        },
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0004971",  # adrenal gland pheochromocytoma
+            "property": "http://purl.obolibrary.org/obo/RO_0001025", # has location in
+            "target": "http://purl.obolibrary.org/obo/UBERON_0001443", # chest
+        },
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0004971",  # adrenal gland pheochromocytoma
+            "property": "http://purl.obolibrary.org/obo/RO_0000053", # has characteristic
+            "target": "http://purl.obolibrary.org/obo/HP_0001945", # Fever
+        },
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0004971",  # adrenal gland pheochromocytoma
+            "property": "http://purl.obolibrary.org/obo/RO_0000053", # has characteristic
+            "target": "http://purl.obolibrary.org/obo/HP_0001337", # Tremor
+        },
+
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0004971",  # adrenal gland pheochromocytoma
+            "property": "http://purl.obolibrary.org/obo/RO_0000053", # has characteristic
+            "target": "http://purl.obolibrary.org/obo/HP_0000822", # Hypertension
+        },
+
+
+         # chronic pancreatitis
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0005003", # chronic pancreatitis
+            "property": "http://purl.obolibrary.org/obo/RO_0000053", # has characteristic
+            "target": "http://purl.obolibrary.org/obo/HP_0012531", # pain
+        },
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0005003", # chronic pancreatitis
+            "property": "http://purl.obolibrary.org/obo/RO_0000053", # has characteristic
+            "target": "http://purl.obolibrary.org/obo/HP_0012532", # chronic pain
+        },
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0005003", # chronic pancreatitis
+            "property": "http://purl.obolibrary.org/obo/RO_0000053", # has characteristic
+            "target": "http://purl.obolibrary.org/obo/HP_0002027", # abdominal pain
+        },
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0005003", # chronic pancreatitis
+            "property": "http://purl.obolibrary.org/obo/RO_0000053", # has characteristic
+            "target": "http://purl.obolibrary.org/obo/HP_0002024", # malabsorbtion
+        },
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0005003", # chronic pancreatitis
+            "property": "http://purl.obolibrary.org/obo/RO_0000053", # has characteristic
+            "target": "http://purl.obolibrary.org/obo/HP_0000819", # diabetes mellitus
+        },
+
+
+
+         # irritable bowel syndrome
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0005052", # irritable bowel syndrome
+            "property": "http://purl.obolibrary.org/obo/RO_0000053", # has characteristic
+            "target": "http://purl.obolibrary.org/obo/HP_0012531", # pain
+        },
+
+        # lung adenocarcinoma
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0005061", # lung adenocarcinoma
+            "property": "http://purl.obolibrary.org/obo/RO_0000053", # has characteristic
+            "target": "http://purl.obolibrary.org/obo/HP_0012531", # pain
+        },
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0005061", # lung adenocarcinoma
+            "property": "http://purl.obolibrary.org/obo/RO_0001025", # has location in
+            "target": "http://purl.obolibrary.org/obo/UBERON_0002048", #lung
+        },
+
+
+        # malignant pleural mesothelioma
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0005112", # malignant pleural mesothelioma
+            "property": "http://purl.obolibrary.org/obo/RO_0000053", # has characteristic
+            "target": "http://purl.obolibrary.org/obo/HP_0012531", # pain
+        },
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0005112", # malignant pleural mesothelioma
+            "property": "http://purl.obolibrary.org/obo/RO_0001025", # has location in
+            "target": "http://purl.obolibrary.org/obo/UBERON_0002048", #lung
+        },
+
+
+        # anthrax infection
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0005119", # anthrax infection
+            "property": "http://purl.obolibrary.org/obo/RO_0000053", # has characteristic
+            "target": "http://purl.obolibrary.org/obo/HP_0012531", # pain
+        },
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0005119", # anthrax infection
+            "property": "http://purl.obolibrary.org/obo/RO_0001025", # has location in
+            "target": "http://purl.obolibrary.org/obo/UBERON_0002048", #lung
+        },
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0005119", # anthrax infection
+            "property": "http://purl.obolibrary.org/obo/RO_0000053", # has characteristic
+            "target": "http://purl.obolibrary.org/obo/HP_0001945", # Fever
+        },
+                {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0005119", # anthrax infection
+            "property": "http://purl.obolibrary.org/obo/RO_0000053", # has characteristic
+            "target": "http://purl.obolibrary.org/obo/HP_0002315", # headaches
+        },
+                {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0005119", # anthrax infection
+            "property": "http://purl.obolibrary.org/obo/RO_0001025", # has location in
+            "target": "http://purl.obolibrary.org/obo/UBERON_0001443", # chest
+        },
+
+        # lung carcinoma
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0005138", # lung carcinoma
+            "property": "http://purl.obolibrary.org/obo/RO_0001025", # has location in
+            "target": "http://purl.obolibrary.org/obo/UBERON_0002048", #lung
+        },
+
+
+        # pulmonary hypertension
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0005149",
+            "property": "http://purl.obolibrary.org/obo/RO_0001025", # has location in
+            "target": "http://purl.obolibrary.org/obo/UBERON_0002048", #lung
+        },
+
+
+        # choriocarcinoma
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0005207",
+            "property": "http://purl.obolibrary.org/obo/RO_0001025", # has location in
+            "target": "http://purl.obolibrary.org/obo/UBERON_0002048", #lung
+        },
+
+
+        # lung disorder
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0005275",
+            "property": "http://purl.obolibrary.org/obo/RO_0001025", # has location in
+            "target": "http://purl.obolibrary.org/obo/UBERON_0002048", #lung
+        },
+
+
+        # pulmonary embolism
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0005279",
+            "property": "http://purl.obolibrary.org/obo/RO_0001025", # has location in
+            "target": "http://purl.obolibrary.org/obo/UBERON_0002048", #lung
+        },
+
+         # lung neuroendocrine neoplasm
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0005454",
+            "property": "http://purl.obolibrary.org/obo/RO_0001025", # has location in
+            "target": "http://purl.obolibrary.org/obo/UBERON_0002048", #lung
+        },
+
+
+         # chronic bronchitis
+        {
+            "disease": "http://purl.obolibrary.org/obo/MONDO_0005607",
+            "property": "http://purl.obolibrary.org/obo/RO_0001025", # has location in
+            "target": "http://purl.obolibrary.org/obo/UBERON_0002048", #lung
+        },
+
+        
+
+        
     ]
 
     for triple in triples_to_add:
@@ -482,6 +802,99 @@ def main():
             label=lbl,
             relationship_type=rtype
         )
+
+
+    # default onsets
+    default_age_onsets = [
+        {
+            "id": "http://purl.obolibrary.org/obo/HP_0003581",
+            "label": "Adult Onset"
+        },
+         {
+            "id": "http://purl.obolibrary.org/obo/HP_0011462",
+            "label": "Neonatal Onset"
+        },
+         {
+            "id": "http://purl.obolibrary.org/obo/HP_0011463",
+            "label": "Congenital Onset"
+        },
+         {
+            "id": "http://purl.obolibrary.org/obo/HP_0003593",
+            "label": "Adolescent Onset"
+        },
+         {
+            "id": "http://purl.obolibrary.org/obo/HP_0003584",
+            "label": "Childhood Onset"
+        },
+        {
+            "id": "http://purl.obolibrary.org/obo/HP_0003596",
+            "label": "Middleage Onset"
+        },
+    ]
+
+   
+    # for disease_id, disease_entry in data_model.items():
+    #     if not disease_entry["age_onsets"]:
+    #         for onset in default_age_onsets:
+    #             onset_id = onset["id"]
+    #             relationship_entry = {
+    #                 "type": "has_relationship",
+    #                 "property": constants.HAS_CHARACTERISTIC_REL_TYPE,
+    #                 "target": onset_id,
+    #                 "label": onset["label"],
+    #                 "predicted": False 
+    #             }
+    #             disease_entry["age_onsets"].append(relationship_entry)
+
+    #             # Actualiza el data model
+    #             if onset_id not in data_model["age_onsets"]:
+    #                 data_model["age_onsets"][onset_id] = []
+    #             if disease_id not in data_model["age_onsets"][onset_id]:
+    #                 data_model["age_onsets"][onset_id].append(disease_id)
+
+    #             print("added ageonset for " + disease_id)
+
+
+
+
+def main():
+    mondo_data = utils.load_json('datasets/mondo/mondo.json')
+
+    age_onset_hierarchy = {
+        constants.AGE_ONSET_PARENT_REL_TYPE: "Onset"
+    }
+
+    data_model = {
+        "phenotypes": {},
+        "age_onsets": {},
+        "anatomical_structures": {},
+        "treatments": {},
+        "exposures": {},
+        "chemicals": {},
+        "relationships_types": {}
+    }
+
+    disease_dict = {}
+    phenotypes_dict = {}
+    anatomical_dict = {}
+    ro_dict = {}
+    ecto_dict = {}
+    maxo_dict = {}
+    chebi_dict = {}
+
+    # TODO refactor hierarchy generated data
+    # Build hierarchies
+    is_a_hierarchy = build_is_a_hierarchy(mondo_data)
+    onset_descendants = get_all_descendants(constants.AGE_ONSET_PARENT_REL_TYPE, is_a_hierarchy)
+    for desc in onset_descendants:
+        age_onset_hierarchy[desc] = "Onset"
+
+    # Process data
+    process_nodes(mondo_data, disease_dict, phenotypes_dict, anatomical_dict, ro_dict, ecto_dict, maxo_dict, chebi_dict) # TODO exclude obsolete terms from disease_dict
+    process_edges(mondo_data, age_onset_hierarchy, disease_dict, data_model, ro_dict, ecto_dict, maxo_dict, chebi_dict)
+
+    # data augmentation
+    data_augmentation(data_model, disease_dict, phenotypes_dict, anatomical_dict, ecto_dict, maxo_dict, chebi_dict, age_onset_hierarchy)
 
     # Save to MongoDB
     repository.save(data_model, disease_dict, phenotypes_dict, anatomical_dict, ro_dict, ecto_dict, maxo_dict, chebi_dict)
