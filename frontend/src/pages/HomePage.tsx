@@ -33,9 +33,16 @@ export default function HomePage(){
         }
     }
 
-    function updateAgeFilterArray(value: string){
-        const aux = [...ageIds, value]
-        setAge(aux)
+    function updateAgeFilterArray(value: string, remove?: boolean){
+        if(remove){
+            const aux = [...ageIds]
+            const index = aux.indexOf(value)
+            aux.splice(index,1)
+            setAge(aux)
+        }else {
+            const aux = [...ageIds, value]
+            setAge(aux)
+        }
     }    
 
     return(

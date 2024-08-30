@@ -53,12 +53,13 @@ export default function SidebarFilters({children, updatePhenotypeFilterArray, up
   }
 
   function removeSelection(value: string){
+    console.log('Entering Anatomy Filter, value to remove: ',value)
     const aux = [...anatomySelection]
     const index = aux.indexOf(value)
     aux.splice(index,1)
     setAnatomySelection(aux)
     const auxItem = anatomyItems.find((item)=>item.label === value)
-    updatePhenotypeFilterArray(auxItem?.value, true)
+    updateAnatomicFilterArray(auxItem?.value, true)
   }
 
   React.useEffect(()=>{

@@ -13,7 +13,7 @@ interface Item {
 }
 
 interface Props {
-  updateAgeFilterArray: (value: string)=>void
+  updateAgeFilterArray: (value: string, remove?: boolean)=>void
 }
 
 export default function AgeFilter({updateAgeFilterArray}: Props) {
@@ -26,11 +26,12 @@ export default function AgeFilter({updateAgeFilterArray}: Props) {
 
     if (currentIndex === -1) {
       newChecked.push(item.label);
+      updateAgeFilterArray(item.value, false)
     } else {
       newChecked.splice(currentIndex, 1);
+      updateAgeFilterArray(item.value, true)
     }
     setChecked(newChecked);
-    updateAgeFilterArray(item.value)
   };
 
   React.useEffect(()=>{

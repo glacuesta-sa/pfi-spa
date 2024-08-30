@@ -15,22 +15,22 @@ export default function InfoCard() {
   const [title, setTitle] = React.useState('')
   const [description, setDescription] = React.useState('')
   const [causes, setCauses] = React.useState([])
+  const [treatments, setTreatments] = React.useState([])
 
   React.useEffect(()=>{
       async function getDisease(id:string){
         const response = await getDiseaseById(id)
 
-        setTitle(response.name)
+        setTitle(response.title)
         setDescription(response.description)
         setCauses(response.causes)
-
+        setTreatments(response.treatments)
       }
       getDisease(diseaseId)
       setTimeout(
-          ()=>setLoading(false),
-          2000
+        ()=>setLoading(false),
+        2000
       )
-
   },[])
 
   const [loading, setLoading] = React.useState(true)
@@ -43,7 +43,6 @@ export default function InfoCard() {
             <PulseLoader size={20} color="#1d8bf8" />
         </Box>
         :
-        
           <Grid
             item
             xs={12}
@@ -55,7 +54,7 @@ export default function InfoCard() {
             }}
           >
               <Typography variant="h5" gutterBottom>
-                {title[0].toUpperCase() + title.slice(1)}
+                {title}
               <Divider />
               </Typography>
               <Typography paragraph align='justify'>
@@ -75,12 +74,18 @@ export default function InfoCard() {
                   ))
                 }
               </List>
-              <Box sx={{display:'flex', justifyContent: 'center'}}>
-                <Link to="/treatment">
-                <Button variant='contained' endIcon={<ArrowForwardIcon />}>
-                  Tratmiento Sugerido
-                </Button>
-              </Link>
+              <Box sx={{display:'flex', justifyContent: 'center', marginTop: 6}}>
+                {
+                  treatments.length > 1
+                  ? 
+                    <Link to={treatments[0].target}>
+                      <Button variant='contained' endIcon={<ArrowForwardIcon />}>
+                        Tratmiento Sugerido
+                      </Button>
+                    </Link>
+                  :
+                  <></>
+                }
               </Box>
           </Grid>
         }

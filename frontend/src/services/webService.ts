@@ -1,4 +1,4 @@
-const url = 'http://127.0.0.1:5000'
+const url = 'http://127.0.0.1:5000/v1'
 
 export async function getPhenotypes(): Promise<any>{
     try {
@@ -53,15 +53,14 @@ export async function getAgesFilter(){
 
 export async function getRelationshipTypesFilter(){
     try {
-        // const response = await fetch(`${url}/age_onsets`,{
-        //     method: 'GET',
-        //     mode: "cors",
-        //     headers:{   
-        //         'Accept':'*/*'
-        //     }
-        // })
-        // return await response.json()
-        return[{label:'Relationship 1', value: '1'}, {label:'Relationship 2', value: '2'}]
+        const response = await fetch(`${url}/relationship_types`,{
+            method: 'GET',
+            mode: "cors",
+            headers:{   
+                'Accept':'*/*'
+            }
+        })
+        return await response.json()
     } catch (error){
         console.log("error", error)
         return []
@@ -118,10 +117,16 @@ export async function getDiseasesByFilters(phenotype_ids: Array<string>, anatomi
                 exposure_ids:[]
             })
         })
-        return await response.json()
+        const aux = await response.json()
+        if(aux.error){
+            return []
+        }
+        return aux
 
     } catch (error){
         console.log("error", error)
         return []
     }
 }
+
+
