@@ -15,6 +15,7 @@ export default function InfoCard() {
   const [title, setTitle] = React.useState('')
   const [description, setDescription] = React.useState('')
   const [causes, setCauses] = React.useState([])
+  const [treatments, setTreatments] = React.useState([])
 
   React.useEffect(()=>{
       async function getDisease(id:string){
@@ -23,12 +24,12 @@ export default function InfoCard() {
         setTitle(response.title)
         setDescription(response.description)
         setCauses(response.causes)
-
+        setTreatments(response.treatments)
       }
       getDisease(diseaseId)
       setTimeout(
-          ()=>setLoading(false),
-          2000
+        ()=>setLoading(false),
+        2000
       )
   },[])
 
@@ -73,12 +74,18 @@ export default function InfoCard() {
                   ))
                 }
               </List>
-              <Box sx={{display:'flex', justifyContent: 'center'}}>
-                <Link to="/treatment">
-                <Button variant='contained' endIcon={<ArrowForwardIcon />}>
-                  Tratmiento Sugerido
-                </Button>
-              </Link>
+              <Box sx={{display:'flex', justifyContent: 'center', marginTop: 6}}>
+                {
+                  treatments.length > 1
+                  ? 
+                    <Link to={treatments[0].target}>
+                      <Button variant='contained' endIcon={<ArrowForwardIcon />}>
+                        Tratmiento Sugerido
+                      </Button>
+                    </Link>
+                  :
+                  <></>
+                }
               </Box>
           </Grid>
         }
