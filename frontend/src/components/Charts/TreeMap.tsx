@@ -15,12 +15,7 @@ export const options = {
 
 export default function TreeMap(props) {
   
-  useEffect(()=>{
-    setTimeout(
-        ()=>setLoading(false),
-        2000
-    )
-    
+  useEffect(()=>{    
     try{
       const aux = props.data.map(element => element[0]);
       let uniqueArray = [...new Set(aux)];
@@ -36,10 +31,10 @@ export default function TreeMap(props) {
     }catch(error){
       console.log('Error TREE: ', error)
     }
-  },[])
+  },[props])
 
   const [loading, setLoading] = useState(true)
-  const [chartData, setChartData] = useState()
+  const [chartData, setChartData] = useState([])
 
   console.log("Chart data filtered", chartData)
   console.log("Chart data", props.data)
@@ -53,7 +48,7 @@ export default function TreeMap(props) {
       </Box>
       <Box sx={{margin: 2, padding:2, borderRadius: 2, border:1, borderColor:'#1d8bf8'}}>
         {
-              loading
+              chartData.length === 0
               ? <Box sx={{height:"400px", display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
                   <PulseLoader size={20} color="#1d8bf8" />
               </Box>
