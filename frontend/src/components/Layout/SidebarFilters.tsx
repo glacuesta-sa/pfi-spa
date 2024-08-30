@@ -59,7 +59,7 @@ export default function SidebarFilters({children, updatePhenotypeFilterArray, up
     aux.splice(index,1)
     setAnatomySelection(aux)
     const auxItem = anatomyItems.find((item)=>item.label === value)
-    updatePhenotypeFilterArray(auxItem?.value, true)
+    updateAnatomicFilterArray(auxItem?.value, true)
   }
 
   React.useEffect(()=>{
