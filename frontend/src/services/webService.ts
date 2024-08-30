@@ -1,4 +1,4 @@
-const url = 'http://127.0.0.1:5000'
+const url = 'http://127.0.0.1:5000/v1'
 
 export async function getPhenotypes(): Promise<any>{
     try {
@@ -118,7 +118,11 @@ export async function getDiseasesByFilters(phenotype_ids: Array<string>, anatomi
                 exposure_ids:[]
             })
         })
-        return await response.json()
+        const aux = await response.json()
+        if(aux.error){
+            return []
+        }
+        return aux
 
     } catch (error){
         console.log("error", error)
