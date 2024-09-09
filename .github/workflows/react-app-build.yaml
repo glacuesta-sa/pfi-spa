@@ -26,6 +26,7 @@ jobs:
         with:
           name: run
           template: deployment/react-app.yaml
+          capabilities: CAPABILITY_AUTO_EXPAND
 
   build:
     name: Build and upload react app to s3
