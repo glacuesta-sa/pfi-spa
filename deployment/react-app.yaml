@@ -1,0 +1,85 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  SAM Template for React app hosted with S3 and CloudFront
+
+Resources:
+
+
+# Bucket that holds the react app "pfi-spa-lacuesta-rondan"
+PfiSpaLacuestaRondanBucket:
+  Type: AWS::S3::Bucket
+  Properties:
+    BucketName: !Sub "pfi-spa-lacuesta-rondan"
+    PublicAccessBlockConfiguration:
+      BlockPublicAcls: true
+      BlockPublicPolicy: true
+      IgnorePublicAcls: true
+      RestrictPublicBuckets: true
+
+# Bucket policy that allows cloudfront to access the bucket.
+PfiSpaLacuestaRondanBucketPolicy:
+  Type: AWS::S3::BucketPolicy
+  Properties:
+    Bucket: !Ref PfiSpaLacuestaRondanBucket
+    PolicyDocument:
+      Id: PolicyForCloudFrontPrivateContent
+      Version: "2012-10-17"
+      Statement:
+        - Sid: AllowCloudFrontServicePrincipal
+          Effect: Allow
+          Principal:
+            Service: cloudfront.amazonaws.com
+          Action: s3:GetObject
+          Resource: !Sub "arn:aws:s3:::pfi-spa-lacuesta-rondan/*"
+          Condition:
+            StringEquals:
+              AWS:SourceArn: !Sub arn:aws:cloudfront::${AWS::AccountId}:distribution/${CloudFrontDistribution}
+
+# Cloudfront distribution
+CloudFrontDistribution:
+  Type: AWS::CloudFront::Distribution
+  Properties:
+    DistributionConfig:
+      Origins:
+        - DomainName: !GetAtt PfiSpaLacuestaRondanBucket.RegionalDomainName
+          Id: !Sub "${AWS::StackName}-web-app-s3-origin"
+          OriginAccessControlId: !GetAtt WebAppOriginAccessControl.Id
+          S3OriginConfig: {}
+      Enabled: "true"
+      DefaultRootObject: index.html
+      DefaultCacheBehavior:
+        AllowedMethods:
+          - GET
+          - HEAD
+          - OPTIONS
+        TargetOriginId: !Sub "${AWS::StackName}-web-app-s3-origin"
+        CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6 # CachingOptimized
+        OriginRequestPolicyId: 88a5eaf4-2fd4-4709-b370-b4c650ea3fcf # CORS-S3Origin
+        ViewerProtocolPolicy: redirect-to-https
+      PriceClass: PriceClass_All
+      CustomErrorResponses:
+        - ErrorCode: 404
+          ResponseCode: 200
+          ResponsePagePath: /index.html
+        - ErrorCode: 403
+          ResponseCode: 200
+          ResponsePagePath: /index.html
+
+#Origin Access Control
+WebAppOriginAccessControl:
+  Type: AWS::CloudFront::OriginAccessControl
+  Properties:
+    OriginAccessControlConfig:
+      Name: !Sub "${AWS::StackName}-web-app-origin-access-control"
+      OriginAccessControlOriginType: s3
+      SigningBehavior: always
+      SigningProtocol: sigv4
+
+Outputs:
+  WebAppDomain:
+    Value: !GetAtt CloudFrontDistribution.DomainName
+  CloudFrontDistributionId:
+    Value: !GetAtt CloudFrontDistribution.Id
+  PfiSpaLacuestaRondanBucketName:
+    Value: !Ref PfiSpaLacuestaRondanBucket
