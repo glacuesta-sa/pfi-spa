@@ -7,7 +7,7 @@ import DendogramLegend from "../IsolatedComponents/DendogramLegend";
 
 
 
-export const options = {
+const options = {
   colors: ["#1d8bf8", "#1d8bf8", "#1d8bf8"],
   wordtree: {
     format: "explicit",
@@ -15,9 +15,11 @@ export const options = {
   },
 };
 
+interface Props {
+  data: [] | undefined
+}
 
-
-export default function Dendogram(props) {
+export default function Dendogram({data}: Props) {
 
     useEffect(()=>{
         setTimeout(
@@ -47,7 +49,7 @@ export default function Dendogram(props) {
                 chartType="WordTree"
                 width="100%"
                 height="400px"
-                data={props.data}
+                data={data}
                 options={options}
             />
         }

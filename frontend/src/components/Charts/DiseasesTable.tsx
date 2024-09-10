@@ -23,8 +23,13 @@ interface Props {
   age_onset_ids: Array<string>;
 }
 
+interface IRow {
+  name: string,
+  id: string
+}
+
 export default function BasicTable({phenotype_ids, anatomical_ids, age_onset_ids}: Props) {
-  const [rows, setRows] = useState([])
+  const [rows, setRows] = useState<IRow[]>([])
   
   useEffect(()=>{
     async function updateTable(){

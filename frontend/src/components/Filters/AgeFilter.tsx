@@ -44,7 +44,7 @@ export default function AgeFilter({updateAgeFilterArray}: Props) {
 
   return (
     <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-      {options.map((item, index) => {
+      {options.map((item) => {
         const labelId = `checkbox-list-label-${item.label}`;
 
         return (
@@ -56,7 +56,6 @@ export default function AgeFilter({updateAgeFilterArray}: Props) {
               <ListItemIcon>
                 <Checkbox
                   edge="start"
-                  // @ts-ignore
                   checked={checked.indexOf(item.label) !== -1}
                   tabIndex={-1}
                   disableRipple

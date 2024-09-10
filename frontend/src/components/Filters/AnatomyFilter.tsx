@@ -4,15 +4,20 @@ import Autocomplete from '@mui/material/Autocomplete';
 import { getAnatomicalStructures } from '../../services/webService';
 
 
+interface Item {
+  value: string,
+  label: string
+}
+
 export default function AnatomyFilter({updateSelection, updateAnatomicFilterArray}:{updateSelection:(value: string)=>void, updateAnatomicFilterArray:(value: string)=>void}) {
   const [value, setValue] = React.useState<string | null>();
   const [inputValue, setInputValue] = React.useState('');
-  const [optionsLabel, setOptionsLabel] = React.useState([])
-  const [options, setOptions] = React.useState([])
+  const [optionsLabel, setOptionsLabel] = React.useState<string[]>([])
+  const [options, setOptions] = React.useState<Item[]>([])
 
   React.useEffect(()=>{
     async function setAnatomy(){
-      const filters = await getAnatomicalStructures()
+      const filters: Item[] = await getAnatomicalStructures()
       const aux = filters.map((item)=> item.label)
       const aux2 = filters.map((item)=> item)
       setOptionsLabel(aux)
@@ -24,16 +29,17 @@ export default function AnatomyFilter({updateSelection, updateAnatomicFilterArra
   return (
       <Autocomplete
         value={value}
-        // @ts-ignore
-        onChange={(event: any, newValue: string | null) => {
+        // @ts-expect-error event is needed but not used
+        onChange={(event: React.FormEvent<HTMLInputElement>, newValue: string | null) => {
           setValue(newValue);
           if(newValue){
             updateSelection(newValue)
             const aux = options.find((item)=> item.label === newValue)
+            // @ts-expect-error no logical empty value
             updateAnatomicFilterArray(aux.value)
           }
         }}
-        // @ts-ignore
+        // @ts-expect-error Event is needed but not used
         onInputChange={(event, newInputValue) => {
           setInputValue(newInputValue);
         }}

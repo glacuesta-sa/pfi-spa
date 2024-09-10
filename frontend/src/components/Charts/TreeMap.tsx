@@ -4,7 +4,7 @@ import { Chart } from "react-google-charts";
 import { PulseLoader } from "react-spinners";
 
 
-export const options = {
+const options = {
   minColor: "red",
   midColor: "#ddd",
   maxColor: "#1976d2",
@@ -13,14 +13,20 @@ export const options = {
   showScale: false,
 };
 
-export default function TreeMap(props) {
+interface Props {
+  data: any[] | undefined
+}
+
+export default function TreeMap({data}: Props) {
   
   useEffect(()=>{    
     try{
-      const aux = props.data.map(element => element[0]);
-      let uniqueArray = [...new Set(aux)];
-      const auxData = []
-      props.data.forEach(element => {
+      // @ts-expect-error unable to type array of arrays
+      const aux = data.map(element => element[0]);
+      const uniqueArray = [...new Set(aux)];
+      const auxData: string[] = []
+      // @ts-expect-error unable to type array of arrays
+      data.forEach(element => {
         const auxIndex = uniqueArray.indexOf(element[0])
         if (auxIndex !== -1) {
           auxData.push(element)
@@ -31,13 +37,10 @@ export default function TreeMap(props) {
     }catch(error){
       console.log('Error TREE: ', error)
     }
-  },[props])
+  },[data])
 
-  const [loading, setLoading] = useState(true)
-  const [chartData, setChartData] = useState([])
+  const [chartData, setChartData] = useState<string[]>([])
 
-  console.log("Chart data filtered", chartData)
-  console.log("Chart data", props.data)
 
   return (
     <Paper sx={{margin: 2, padding:2, borderRadius: 2, width: '50%'}}>
