@@ -35,7 +35,7 @@ export default function InfoCard() {
         ()=>setLoading(false),
         2000
       )
-  },)
+  },[diseaseId])
 
   const [loading, setLoading] = React.useState(true)
 

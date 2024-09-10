@@ -57,7 +57,7 @@ export default function MainDiseasePage(){
           setHeatMapData(auxHeatMap)
         }
         setDiseaseData()
-      },)
+      },[diseaseId])
 
     return(
         <>
