@@ -24,7 +24,7 @@ jobs:
         id: cloudformation-stack
         uses: aws-actions/aws-cloudformation-github-deploy@v1
         with:
-          name: Deploy React App Infra
+          name: deploy-react-app-infra
           template: deployment/react-app.yaml
           capabilities: CAPABILITY_AUTO_EXPAND
 
