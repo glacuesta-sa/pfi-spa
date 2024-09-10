@@ -10,14 +10,16 @@ Resources:
     Properties:
       BucketName: !Sub "pfi-spa-lacuesta-rondan"
       PublicAccessBlockConfiguration:
-        BlockPublicAcls: true
-        BlockPublicPolicy: true
-        IgnorePublicAcls: true
-        RestrictPublicBuckets: true
+           BlockPublicAcls: false
+           BlockPublicPolicy: false
+           IgnorePublicAcls: false
+           RestrictPublicBuckets: false
       OwnershipControls:
-        Rules:
-        - ObjectOwnership: BucketOwnerPreferred
-      AccessControl: AwsExecRead   
+           Rules:
+                - ObjectOwnership: ObjectWriter
+      WebsiteConfiguration:
+        IndexDocument: index.html
+        ErrorDocument: error.html
 
   # Bucket policy that allows cloudfront to access the bucket.
   PfiSpaLacuestaRondanBucketPolicy:
