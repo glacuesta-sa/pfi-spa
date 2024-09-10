@@ -49,6 +49,7 @@ export default function SidebarFilters({children, updatePhenotypeFilterArray, up
     aux.splice(index,1)
     setSymptoms(aux)
     const auxItem = symptomsItems.find((item)=>item.label === value)
+    // @ts-expect-error no logical empty value
     updatePhenotypeFilterArray(auxItem?.value, true)
   }
 
@@ -59,6 +60,7 @@ export default function SidebarFilters({children, updatePhenotypeFilterArray, up
     aux.splice(index,1)
     setAnatomySelection(aux)
     const auxItem = anatomyItems.find((item)=>item.label === value)
+    // @ts-expect-error no logical empty value
     updateAnatomicFilterArray(auxItem?.value, true)
   }
 

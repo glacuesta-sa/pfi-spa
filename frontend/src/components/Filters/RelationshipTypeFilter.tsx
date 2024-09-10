@@ -1,5 +1,5 @@
 import { Checkbox, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
-import React from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import { getRelationshipTypesFilter } from "../../services/webService";
 
 interface Item {
@@ -7,13 +7,20 @@ interface Item {
     label: string
   }
 
-export default function RelationshipTypeFilter(){
+interface Props {
+  setTypes: Dispatch<SetStateAction<string[]>>
+}
+
+export default function RelationshipTypeFilter({setTypes}: Props){
     const [checked, setChecked] = React.useState<Array<string>>([]);
     const [options, setOptions] = React.useState<Array<Item>>([])
   
     const handleToggle = (item: {value: string, label:string}) => () => {
       const currentIndex = checked.indexOf(item.label);
       const newChecked = [...checked];
+      
+      
+      setTypes([])
   
       if (currentIndex === -1) {
         newChecked.push(item.label);
@@ -46,7 +53,6 @@ export default function RelationshipTypeFilter(){
                 <ListItemIcon>
                   <Checkbox
                     edge="start"
-                    // @ts-ignore
                     checked={checked.indexOf(item.label) !== -1}
                     tabIndex={-1}
                     disableRipple

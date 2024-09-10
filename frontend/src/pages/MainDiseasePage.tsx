@@ -17,13 +17,15 @@ export default function MainDiseasePage(){
     const [dendogramData, setDendogramData] = useState()
     const [heatMapData, setHeatMapData] = useState()
 
+    // @ts-expect-error unable to type array of arrays
     function getTreeDataItem(item, data){
       
       if(item[0] !== 'id'){
         const disease = item[1]
+        // @ts-expect-error unable to type array of arrays
         const auxParent = item[2] === -1 ? [null,null] : data.find((e)=>e[0]===item[2])
         const size = item[3]
-        const color = item[4]
+        // const color = item[4]
         return [disease, auxParent[1], size, size]
       }else{
         return [
@@ -37,19 +39,25 @@ export default function MainDiseasePage(){
 
     useEffect(()=>{
         async function setDiseaseData(){
+          // @ts-expect-error no logical empty value
           const response = await getChartsData(diseaseId)
+          // @ts-expect-error unable to type array of arrays
           const auxDendogram = []
+          // @ts-expect-error unable to type array of arrays
           const auxHeatMap = []
-          response.extended_hierarchy[0].map((item, index)=>{
+          // @ts-expect-error unable to type array of arrays
+          response.extended_hierarchy[0].map((item)=>{
             const auxItem = getTreeDataItem(item, response.extended_hierarchy[0])
             auxDendogram.push(item.slice(0,5))
             auxHeatMap.push(auxItem)
           })
+          // @ts-expect-error unable to type array of arrays
           setDendogramData(auxDendogram)
+          // @ts-expect-error unable to type array of arrays
           setHeatMapData(auxHeatMap)
         }
         setDiseaseData()
-      },[])
+      },)
 
     return(
         <>

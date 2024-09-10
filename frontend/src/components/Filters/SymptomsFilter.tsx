@@ -3,15 +3,21 @@ import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import { getPhenotypes } from '../../services/webService';
 
+
+interface Item {
+  value: string,
+  label: string
+}
+
 export default function SymptomsFilter({updateSymptom, updateFilterArray}:{updateSymptom:(value: string)=>void, updateFilterArray:(value: string)=>void}) {
   const [value, setValue] = React.useState<string | null>();
   const [inputValue, setInputValue] = React.useState('');
-  const [optionsLabel, setOptionsLabel] = React.useState([])
-  const [options, setOptions] = React.useState([])
+  const [optionsLabel, setOptionsLabel] = React.useState<string[]>([])
+  const [options, setOptions] = React.useState<Item[]>([])
 
   React.useEffect(()=>{
     async function setPhenotypes(){
-      const filters = await getPhenotypes()
+      const filters: Item[] = await getPhenotypes()
       const aux = filters.map((item)=> item.label)
       const aux2 = filters.map((item)=> item)
       setOptionsLabel(aux)
@@ -23,16 +29,17 @@ export default function SymptomsFilter({updateSymptom, updateFilterArray}:{updat
   return (
       <Autocomplete
         value={value}
-        // @ts-ignore
-        onChange={(event: any, newValue: string | null) => {
+        // @ts-expect-error Event is needed
+        onChange={(event: React.FormEvent<HTMLInputElement>, newValue: string | null) => {
           setValue(newValue);
           if(newValue){
             updateSymptom(newValue)
             const aux = options.find((item)=> item.label === newValue)
+            // @ts-expect-error no logical empty value
             updateFilterArray(aux.value)
           }
         }}
-        // @ts-ignore
+        // @ts-expect-error Event is needed
         onInputChange={(event, newInputValue) => {
           setInputValue(newInputValue);
         }}

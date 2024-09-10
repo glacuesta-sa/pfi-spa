@@ -46,12 +46,12 @@ export default function SidebarDisease({children}: Props) {
         </Box>
         <Divider/>
         <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent:'center'}}>
-          <RelationshipTypeFilter />
+          <RelationshipTypeFilter setTypes={setTypes} />
         </Box>
         <Box sx={{display: 'flex', justifyContent: 'flex-start'}}>
         <List>
           {types.map((text, index) => (
-            <CustomChip text={text} key={index}/>
+            <CustomChip text={text} key={index} removeFunction={()=>{}}/>
           ))}
         </List>
         </Box>

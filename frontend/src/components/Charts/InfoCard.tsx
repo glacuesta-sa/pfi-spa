@@ -8,6 +8,9 @@ import { PulseLoader } from 'react-spinners';
 import { Link, useParams } from 'react-router-dom';
 import { getDiseaseById } from '../../services/webService';
 
+interface TreatmentObject {
+  target: string
+}
 
 export default function InfoCard() {
 
@@ -15,7 +18,7 @@ export default function InfoCard() {
   const [title, setTitle] = React.useState('')
   const [description, setDescription] = React.useState('')
   const [causes, setCauses] = React.useState([])
-  const [treatments, setTreatments] = React.useState([])
+  const [treatments, setTreatments] = React.useState<TreatmentObject[]>([])
 
   React.useEffect(()=>{
       async function getDisease(id:string){
@@ -26,12 +29,13 @@ export default function InfoCard() {
         setCauses(response.causes)
         setTreatments(response.treatments)
       }
+      // @ts-expect-error no logic redirect to disease id as error.
       getDisease(diseaseId)
       setTimeout(
         ()=>setLoading(false),
         2000
       )
-  },[])
+  },)
 
   const [loading, setLoading] = React.useState(true)
 

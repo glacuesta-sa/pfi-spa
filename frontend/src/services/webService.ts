@@ -1,6 +1,6 @@
 const url = 'http://127.0.0.1:5000/v1'
 
-export async function getPhenotypes(): Promise<any>{
+export async function getPhenotypes(){
     try {
         const response = await fetch(`${url}/phenotypes`,{
             method: 'GET',
