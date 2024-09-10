@@ -27,6 +27,7 @@ jobs:
           name: deploy-react-app-infra
           template: deployment/react-app.yaml
           capabilities: CAPABILITY_AUTO_EXPAND
+          no-fail-on-empty-changeset: "1"
 
   build:
     name: Build and upload react app to s3
