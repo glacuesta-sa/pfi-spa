@@ -62,7 +62,7 @@ export default function MainDiseasePage(){
     return(
         <>
             <CustomAppBar/>
-            <SidebarDisease>
+            <SidebarDisease diseaseId={diseaseId}>
                 <Dendogram data={dendogramData} />
                 <Box sx={{display: 'flex'}}>
                     <TreeMap data={heatMapData} />
