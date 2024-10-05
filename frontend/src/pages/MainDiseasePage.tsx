@@ -13,6 +13,7 @@ import { useParams } from "react-router-dom";
 export default function MainDiseasePage(){
 
     const {diseaseId} = useParams()
+    const [loadingTrigger, setLoadingTrigger] = useState<boolean>(false)
 
     const [dendogramData, setDendogramData] = useState()
     const [heatMapData, setHeatMapData] = useState()
@@ -57,13 +58,13 @@ export default function MainDiseasePage(){
           setHeatMapData(auxHeatMap)
         }
         setDiseaseData()
-      },)
+      },[diseaseId, loadingTrigger])
 
     return(
         <>
             <CustomAppBar/>
-            <SidebarDisease>
-                <Dendogram data={dendogramData} />
+            <SidebarDisease setLoadingTrigger={setLoadingTrigger} diseaseId={diseaseId ? diseaseId :'' }>
+                <Dendogram data={dendogramData} loadingUpdate={loadingTrigger}/>
                 <Box sx={{display: 'flex'}}>
                     <TreeMap data={heatMapData} />
                     <InfoCard />

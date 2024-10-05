@@ -1,22 +1,43 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
-import List from '@mui/material/List';
-import CustomChip from '../IsolatedComponents/CustomChip';
-import { Divider, Typography } from '@mui/material';
+import { Button, Divider, Typography } from '@mui/material';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import RelationshipTypeFilter from '../Filters/RelationshipTypeFilter';
+import { postPrediction } from '../../services/webService';
 
 const drawerWidth = 350;
 
 interface Props{
-  children: React.ReactNode
-
+  children: React.ReactNode,
+  diseaseId: string,
+  setLoadingTrigger: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export default function SidebarDisease({children}: Props) {
+interface Item{
+  value?: string,
+  label?: string
+}
 
-  const [types, setTypes] = React.useState<string[]>([])
+
+const postPredictionForSelection = (diseaseId: string, property: string, updateFunction: (value: boolean)=> void) =>{
+  console.log('Calling predict')
+  try{
+    updateFunction(true)
+    postPrediction(diseaseId, property)
+    setTimeout(
+      ()=>updateFunction(false),
+      7000
+    )
+    
+  } catch(error){
+    console.log('Error in post prediction: ', error)
+  }
+}
+
+export default function SidebarDisease({children, diseaseId, setLoadingTrigger}: Props) {
+
+  const [selection, setSelection] = React.useState<Item>({label: undefined, value: undefined})
 
   return (
     <Box sx={{ display: 'flex'}}>
@@ -46,14 +67,12 @@ export default function SidebarDisease({children}: Props) {
         </Box>
         <Divider/>
         <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent:'center'}}>
-          <RelationshipTypeFilter setTypes={setTypes} />
+          <RelationshipTypeFilter setSelection={setSelection} />
         </Box>
-        <Box sx={{display: 'flex', justifyContent: 'flex-start'}}>
-        <List>
-          {types.map((text, index) => (
-            <CustomChip text={text} key={index} removeFunction={()=>{}}/>
-          ))}
-        </List>
+        <Box sx={{display: 'flex', justifyContent: 'center', marginTop: 6}}>
+          <Button disabled={selection?.value === undefined || selection?.value === null} variant='contained' color='warning' onClick={()=>postPredictionForSelection(diseaseId, selection?.value.split('/').at(-1), setLoadingTrigger)}>
+            Predecir
+          </Button>
         </Box>
       </Drawer>
       <Box
@@ -64,4 +83,4 @@ export default function SidebarDisease({children}: Props) {
       </Box>
     </Box>
   );
-}
+} 
