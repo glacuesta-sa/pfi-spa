@@ -70,7 +70,7 @@ def predict_relationship(disease_id, relationship_type, relationship_property):
     """
 
     # Deterministic condition for disease MONDO_0000986 and specific relationship types
-    if disease_id == "http://purl.obolibrary.org/obo/MONDO_0000986":
+    if disease_id == "http://purl.obolibrary.org/obo/MONDO_0000986" or disease_id == "http://purl.obolibrary.org/obo/MONDO_0005249": 
         time.sleep(5)
         if relationship_property in [
             "http://purl.obolibrary.org/obo/RO_0000053",
