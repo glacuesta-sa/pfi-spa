@@ -3,31 +3,26 @@ import React, { Dispatch, SetStateAction } from "react";
 import { getRelationshipTypesFilter } from "../../services/webService";
 
 interface Item {
-    value: string,
-    label: string
-  }
-
-interface Props {
-  setTypes: Dispatch<SetStateAction<string[]>>
+  value?: string,
+  label?: string
 }
 
-export default function RelationshipTypeFilter({setTypes}: Props){
-    const [checked, setChecked] = React.useState<Array<string>>([]);
+interface Props {
+  setSelection: Dispatch<SetStateAction<Item>>
+}
+
+export default function RelationshipTypeFilter({setSelection}: Props){
     const [options, setOptions] = React.useState<Array<Item>>([])
+    const [selected, setSelected] = React.useState<string>()
   
     const handleToggle = (item: {value: string, label:string}) => () => {
-      const currentIndex = checked.indexOf(item.label);
-      const newChecked = [...checked];
-      
-      
-      setTypes([])
-  
-      if (currentIndex === -1) {
-        newChecked.push(item.label);
-      } else {
-        newChecked.splice(currentIndex, 1);
+      if(item.label === selected){
+        setSelected(undefined)
+        setSelection({label: undefined, value: undefined})
+      }else{
+        setSelection(item)  
+        setSelected(item.label)
       }
-      setChecked(newChecked);
     };
   
 
@@ -53,7 +48,7 @@ export default function RelationshipTypeFilter({setTypes}: Props){
                 <ListItemIcon>
                   <Checkbox
                     edge="start"
-                    checked={checked.indexOf(item.label) !== -1}
+                    checked={(item.label) === selected}
                     tabIndex={-1}
                     disableRipple
                     inputProps={{ 'aria-labelledby': labelId }}

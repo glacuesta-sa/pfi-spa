@@ -129,4 +129,27 @@ export async function getDiseasesByFilters(phenotype_ids: Array<string>, anatomi
     }
 }
 
+export async function postPrediction(disease_id: string, new_relationship_property: string) {
+    try {
+        const response = await fetch(`${url}/diseases/predict`, {
+            method: 'POST',
+            mode: "cors",
+            headers:{   
+                'Accept':'*/*',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                disease_id: disease_id,
+                new_relationship_property: new_relationship_property
+            })
+        })
+        const aux = await response.json()
+        return aux
+
+    } catch (error){
+        console.log("error", error)
+        return []
+    }
+}
+
 
