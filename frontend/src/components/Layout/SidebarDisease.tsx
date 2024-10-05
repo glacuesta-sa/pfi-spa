@@ -10,7 +10,8 @@ const drawerWidth = 350;
 
 interface Props{
   children: React.ReactNode,
-  diseaseId: string
+  diseaseId: string,
+  setLoadingTrigger: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 interface Item{
@@ -19,20 +20,24 @@ interface Item{
 }
 
 
-const postPredictionForSelection = (diseaseId: string, property: string) =>{
+const postPredictionForSelection = (diseaseId: string, property: string, updateFunction: (value: boolean)=> void) =>{
   console.log('Calling predict')
   try{
+    updateFunction(true)
     postPrediction(diseaseId, property)
+    setTimeout(
+      ()=>updateFunction(false),
+      7000
+    )
+    
   } catch(error){
     console.log('Error in post prediction: ', error)
   }
 }
 
-export default function SidebarDisease({children, diseaseId}: Props) {
+export default function SidebarDisease({children, diseaseId, setLoadingTrigger}: Props) {
 
   const [selection, setSelection] = React.useState<Item>({label: undefined, value: undefined})
-
-  
 
   return (
     <Box sx={{ display: 'flex'}}>
@@ -65,7 +70,7 @@ export default function SidebarDisease({children, diseaseId}: Props) {
           <RelationshipTypeFilter setSelection={setSelection} />
         </Box>
         <Box sx={{display: 'flex', justifyContent: 'center', marginTop: 6}}>
-          <Button disabled={selection?.value === undefined || selection?.value === null} variant='contained' color='warning' onClick={()=>postPredictionForSelection(diseaseId, selection?.value.split('/').at(-1))}>
+          <Button disabled={selection?.value === undefined || selection?.value === null} variant='contained' color='warning' onClick={()=>postPredictionForSelection(diseaseId, selection?.value.split('/').at(-1), setLoadingTrigger)}>
             Predecir
           </Button>
         </Box>

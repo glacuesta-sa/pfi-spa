@@ -16,10 +16,11 @@ const options = {
 };
 
 interface Props {
-  data: [] | undefined
+  data: [] | undefined,
+  loadingUpdate: boolean
 }
 
-export default function Dendogram({data}: Props) {
+export default function Dendogram({data, loadingUpdate}: Props) {
 
     useEffect(()=>{
         setTimeout(
@@ -40,7 +41,7 @@ export default function Dendogram({data}: Props) {
       <DendogramLegend />
       <Box sx={{border:1, borderColor: '#1d8bf8', borderRadius:2, padding:2}}>
         {
-            loading
+            loading || loadingUpdate
             ? <Box sx={{height:"400px", display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
                 <PulseLoader size={20} color="#1d8bf8" />
             </Box>
