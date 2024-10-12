@@ -9,11 +9,12 @@ import constants
 import repository
 import openai
 import joblib
+import requests
 
 from pymongo import UpdateOne
 
 
-def set_verbose_fields(disease):
+def set_additional_fields(disease):
     """
     Set on-the-fly generated fields by querying an LLM (Language Model). 
     Title, description, and causes fields for a given disease dictionary.
@@ -34,7 +35,7 @@ def set_verbose_fields(disease):
     text = "This is the name of a disease in MONDO disease ontology: " + disease['name']
     text = text + ". Please traverse the ontology and get a title, description and causes of the disease. Do not include any additional text as the output, it has to have the following format, in JSON. Exclude json decorations, only keep json structure: title: title of the disease, description: brief description of the disease, causes: List of brief causes."
            
-     # Initialize the OpenAI client with your API key
+    # Initialize the OpenAI client
     client = None
     apiKey = os.getenv('OPENAI_API_KEY', '')
     if len(apiKey) > 0: 
@@ -54,6 +55,43 @@ def set_verbose_fields(disease):
         disease['description'] = result_json['description']
         disease['title'] = result_json['title']
         disease['causes'] = result_json['causes']
+
+    #multimedia
+    if len(disease["multimedia"]) == 0:
+        print("adding resource multimedia")
+        disease_name = disease["name"]
+        query = f"radiology and clinical analysis results for disease"
+        num_results = 1
+        apiKey = os.getenv('UNSPLASH_API_KEY', '')
+        image_urls = []
+        if len(apiKey) > 0: 
+            search_url = "https://api.unsplash.com/search/photos"
+            headers = {"Authorization": f"Client-ID {apiKey}"}
+            params = {
+                "query": query,
+                "per_page": num_results,
+                "order_by": "relevant",
+                "orientation": "squarish",
+                "page": random.randint(1, 50)
+            }
+            response = requests.get(search_url, headers=headers, params=params)
+            response.raise_for_status()
+            search_results = response.json()
+            image_urls = [item["urls"]["regular"] for item in search_results.get("results", [])]
+            disease['multimedia'] = image_urls
+
+            update_operations = []
+            update_fields = {}
+            update_fields["multimedia"] = image_urls
+            update_operations.append(
+                UpdateOne(
+                    {"id": disease["id"]},
+                    {"$set": update_fields}
+                )
+            )
+            repository.DISEASES_COLLECTION.bulk_write(update_operations)
+        else:
+            print("api key not set")
 
 def predict_relationship(disease_id, relationship_type, relationship_property):
     """
@@ -942,3 +980,17 @@ def add_da_relationship(data_model, disease_dict, subject_id, relationship_prope
         disease_entry[relationship_type].append(relationship_entry)
 
     print(f"relationship added between {subject_id} and {target_id} under {relationship_type}.")
+
+def add_multimedia_default(disease_dict, subject_id, link):
+    """
+    Add default multimedia
+    """    
+    # diseases collection
+    disease_entry = disease_dict.get(subject_id)
+    if not disease_entry:
+        print(f"{subject_id} not found in the disease dictionary.")
+        return
+
+    disease_entry["multimedia"] = [link]
+
+    print(f"added multimedia for disease {subject_id}: image link {link}.")
