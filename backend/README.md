@@ -4,14 +4,15 @@ Repositorio que contiene:
 - Backend API con endpoints para integración con frontend.
 
 ## Arquitectura 
-[](./static/arch.png)
- 
-# Requirimientos
+![image](./static/arch.png)
+
+# Ejecutar Laboratorio Offline
+## Requirimientos
 - MongoDB
 - Flask
 - Docker / Docker Compose
 
-# Run backend
+## Ejecutar backend
 docker compose up --build
 
 Levanta en:
