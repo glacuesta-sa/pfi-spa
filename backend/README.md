@@ -3,9 +3,6 @@ Repositorio que contiene:
 - Script para generación de modelo de datos
 - Backend API con endpoints para integración con frontend.
 
-## Arquitectura 
-![image](./static/arch.png)
-
 # Ejecutar Laboratorio Offline
 ## Requirimientos
 - MongoDB

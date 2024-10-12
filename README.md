@@ -1,5 +1,5 @@
 # APOLLOD
-![image](./static/apollod.png)
+![image](./static/apollod.png) \
 Prototipo para predicción y exploración visual de términos médicos utilizando fuentes Linked Open Data (LOD).
 
 ## ¿Qué es APOLLOD?
@@ -13,7 +13,10 @@ Este esta enmarcado en el proyecto de investigación “P24T02 – Tecnologías 
 Apolo: el dios griego de la medicina y el conocimiento. \
 LOD: Linked Open Data o Datos Abiertos Enlazados, el corazón del prototipo, su fuente de datos.
 
-# Ejecutar el el proyecto
+## Arquitectura 
+![image](./static/arch.png)
+
+# Ejecutar el proyecto
 Revisa el siguiente contenido para ejecutar el proyecto localmente.
 
 ## Backend
