@@ -61,6 +61,7 @@ paths:
                         type: "has_relationship"
                     title: "Titulo de la enfermedad"
                     treatments: []
+                    multimedia: []
         '404':
           description: Enfermedad no encontrada
           content:

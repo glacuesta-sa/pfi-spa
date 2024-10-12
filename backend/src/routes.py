@@ -37,7 +37,7 @@ def init_routes(app):
         disease = repository.get_disease_by_id(full_id)
         if disease:
             try:
-               services.set_verbose_fields(disease)
+               services.set_additional_fields(disease)
             except Exception as e:
                 return create_json_response(jsonify({"error": str(e)}), 500)
 
@@ -81,7 +81,9 @@ def init_routes(app):
 
         diseases = services.get_diseases_by_filters(full_phenotype_ids, full_anatomical_ids,
                                                      full_age_onset_ids, full_exposure_ids, full_treatment_ids, full_chemical_ids)
-        diseases = utils.convert_objectid_to_str(diseases)
+        #for disease in diseases:
+        #    services.set_additional_fields(disease)
+
         return create_json_response(jsonify(diseases), 200)
 
     @app.route("/v1/phenotypes", methods=["GET"])

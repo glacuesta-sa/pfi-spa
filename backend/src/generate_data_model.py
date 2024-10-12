@@ -22,6 +22,7 @@ def create_mondo_entry(id, name="Unknown", description="No description available
         "chemicals": [],
         "age_onsets": [],
         "children": [],
+        "multimedia": [],
         "parent": None
     }
     if tracker_item:
@@ -803,7 +804,78 @@ def data_augmentation(data_model, disease_dict, phenotypes_dict, anatomical_dict
             relationship_type=rtype
         )
 
+    # multimedia defaults
+    #pleurisy
+    services.add_multimedia_default(disease_dict, 
+    "http://purl.obolibrary.org/obo/MONDO_0000986",
+    "https://my.clevelandclinic.org/-/scassets/Images/org/health/articles/21172-pleuricy")
+    
+    #pleuropneumonia
+    services.add_multimedia_default(disease_dict, 
+    "http://purl.obolibrary.org/obo/MONDO_0001940",
+    "https://www.researchgate.net/publication/336740103/figure/fig1/AS:817152022036481@1571835632789/Computed-tomography-picture-of-pleuropneumonia-in-Case-2.png")
+    
+    #eosinophilia-myalgia syndrome
+    services.add_multimedia_default(disease_dict, 
+    "http://purl.obolibrary.org/obo/MONDO_0004941",
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTsYuEBpFkzqKfPBt7kfsV1jRCyWmFd-6xMqw&s")
+    
+    #lung adenocarcinoma
+    services.add_multimedia_default(disease_dict, 
+    "http://purl.obolibrary.org/obo/MONDO_0005061",
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpTPKiod6umFLYw1hat00kt1KovI7Oy0AHmQ&s")
+    
+    #malignant pleural mesothelioma
+    services.add_multimedia_default(disease_dict, 
+    "http://purl.obolibrary.org/obo/MONDO_0005112",
+    "https://www.mesothelioma.com/wp-content/uploads/MESO_pleural_featured-68.svg")
+    
+    #anthrax infection
+    services.add_multimedia_default(disease_dict, 
+    "http://purl.obolibrary.org/obo/MONDO_0005119",
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSccd6UMSitBM59MbVAs-S6woYf5-7YigFB2Q&s")
 
+    #pneumonia
+    services.add_multimedia_default(disease_dict, 
+    "http://purl.obolibrary.org/obo/MONDO_0005249",
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS54m28GvQ0HgZtTIzpSRMvHmssrk85Kcmr4A&s")
+
+    #Clostridium difficile colitis
+    services.add_multimedia_default(disease_dict, 
+    "http://purl.obolibrary.org/obo/MONDO_0000705",
+    "https://upload.wikimedia.org/wikipedia/commons/a/a1/Pseudomembranous_colitis.JPG")
+
+    #stage I endometrioid carcinoma
+    services.add_multimedia_default(disease_dict, 
+    "http://purl.obolibrary.org/obo/MONDO_0004961",
+    "https://www.researchgate.net/publication/258429939/figure/fig2/AS:297659274416129@1447978909584/Endometrioid-adenocarcinoma-grade-1-The-glandular-component-is-a-caricature-of.png")
+
+    #stage II endometrioid carcinoma
+    services.add_multimedia_default(disease_dict, 
+    "http://purl.obolibrary.org/obo/MONDO_0004962",
+    "https://www.researchgate.net/publication/258429939/figure/fig2/AS:297659274416129@1447978909584/Endometrioid-adenocarcinoma-grade-1-The-glandular-component-is-a-caricature-of.png")
+
+
+    #adenoid cystic carcinoma
+    services.add_multimedia_default(disease_dict, 
+    "http://purl.obolibrary.org/obo/MONDO_0004971",
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ6bdRXdjM5dUH0cODTLO0D6XU01_AOrVlhdA&s")
+
+    #"chronic pancreatitis"
+    services.add_multimedia_default(disease_dict, 
+    "http://purl.obolibrary.org/obo/MONDO_0005003",
+    "https://my.clevelandclinic.org/-/scassets/Images/org/health/articles/8103-pancreatitis-illustration")
+
+    #"irritable bowel syndrome"
+    services.add_multimedia_default(disease_dict, 
+    "http://purl.obolibrary.org/obo/MONDO_0005052",
+    "https://alpinesurgical.sg/wp-content/uploads/2023/10/ibs2-1.webp")
+
+    # "neurological pain disorder"
+    services.add_multimedia_default(disease_dict, 
+    "http://purl.obolibrary.org/obo/MONDO_0700057",
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR6qG-aPhxJLuqjDU_20tEim0tkZWg6VXaPrw&s")
+    
     # default onsets
     default_age_onsets = [
         {

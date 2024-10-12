@@ -30,6 +30,8 @@ services:
     environment:
       - MONGO_URI=mongodb://mongo:27018/
       - OPENAI_API_KEY=
+      - UNSPLASH_API_KEY=
+      - UNSPLASH_API_SECRET=
       - FLASK_APP=src/app.py
       - FLASK_ENV=development
       - FLASK_DEBUG=0

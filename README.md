@@ -1,19 +1,21 @@
-# PFI Mono-repo
+# APOLLOD
 
+Prototipo para predicción y exploración visual de términos médicos utilizando fuentes Linked Open Data (LOD).
 # Backend Readme
 ./backend/README.md
+
+# Frontend Readme
+./frontend/README.md
 
 # Run backend
 docker compose -f ./backend/docker-compose.yaml up --build
 
-Up in port:
-http://127.0.0.1:5000/
+Levanta en:
+http://127.0.0.1:5000
 
-Example get disease by Id
-http://127.0.0.1:5000/disease/MONDO_0021166
+# Run Frontend
+cd ./frontend
+npm run dev
 
-
-MONGODB access string
-mongodb://localhost:27018/
-
-# Run frontend
+Levanta en:
+http://127.0.0.1:5173/
