@@ -1,8 +1,7 @@
-import json
-import tempfile
 import time
+
+import utils
 import services
-import constants
 import psutil
 
 import repository
@@ -14,7 +13,6 @@ from sklearn.preprocessing import LabelEncoder, StandardScaler
 from sklearn.metrics import accuracy_score, classification_report
 from imblearn.over_sampling import RandomOverSampler
 from scipy.stats import randint
-import joblib
 
 
 def generate_model(df_with_clusters, include_cluster):
@@ -164,13 +162,11 @@ def generate_model(df_with_clusters, include_cluster):
         }
 
         for filename, model in model_files.items():
-            with tempfile.NamedTemporaryFile() as temp_file:
-                joblib.dump(model, temp_file.name)
-                with open(temp_file.name, 'rb') as file_data:
-                    repository.fs.put(file_data, filename=filename)
+            utils.upload_to_datalake(filename, model)
     
         # save seen labels to mongoDB FS
-        repository.fs.put(json.dumps(seen_labels).encode('utf-8'), filename='seen_labels.json')
+        #repository.fs.put(json.dumps(seen_labels).encode('utf-8'), filename='seen_labels.json')
+
 
 
 def get_data_frame(): 

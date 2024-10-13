@@ -17,6 +17,11 @@ services:
       - mongo
     volumes:
       - .:/app
+    environment:
+      - AWS_ACCESS_KEY_ID=
+      - AWS_SECRET_ACCESS_KEY=
+      - AWS_SECRET_ACCESS_TOKEN=
+      - S3_BUCKET_NAME=
 
   web:
     build: .
@@ -32,6 +37,10 @@ services:
       - OPENAI_API_KEY=
       - UNSPLASH_API_KEY=
       - UNSPLASH_API_SECRET=
+      - AWS_ACCESS_KEY_ID=
+      - AWS_SECRET_ACCESS_KEY=
+      - AWS_SECRET_ACCESS_TOKEN=
+      - S3_BUCKET_NAME=
       - FLASK_APP=src/app.py
       - FLASK_ENV=development
       - FLASK_DEBUG=0

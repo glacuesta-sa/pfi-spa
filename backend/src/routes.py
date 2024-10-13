@@ -146,9 +146,10 @@ def init_routes(app):
     ################## DEBUG
     @app.route('/diseases/seen_labels', methods=['GET'])
     def get_seen_labels():
-        with repository.fs.get_last_version('seen_labels.json') as file_data:
-            seen_labels = json.loads(file_data.read().decode('utf-8'))
-        return create_json_response(jsonify(seen_labels), 200)
+        #with repository.fs.get_last_version('seen_labels.json') as file_data:
+        #    seen_labels = json.loads(file_data.read().decode('utf-8'))
+        #return create_json_response(jsonify({seen_labels}), 200)
+         return create_json_response(jsonify({}), 200)
     
 
 def create_json_response(data, status_code=200):

@@ -8,11 +8,9 @@ import utils
 import constants
 import repository
 import openai
-import joblib
 import requests
 
 from pymongo import UpdateOne
-
 
 def set_additional_fields(disease):
     """
@@ -108,15 +106,15 @@ def predict_relationship(disease_id, relationship_type, relationship_property):
     """
 
     # wait if necessary
-    for filename in constants.RANDOM_FOREST_MODEL_FILES:
-        repository.wait_for_file_in_mongo(filename)
+    #for filename in constants.RANDOM_FOREST_MODEL_FILES:
+    #    repository.wait_for_file_in_mongo(filename)
 
-    best_rf = load_json_from_mongo('best_rf.pkl')
-    le_disease = load_json_from_mongo('le_disease.pkl')
-    le_relationship_type = load_json_from_mongo('le_relationship_type.pkl')
-    le_relationship_property = load_json_from_mongo('le_relationship_property.pkl')
-    le_target_id = load_json_from_mongo('le_target_id.pkl')
-    le_disease_rel_prop = load_json_from_mongo('le_disease_rel_prop.pkl')
+    best_rf = utils.load_json_from_datalake('best_rf.pkl', "./models/entrenamientos/best_rf.pkl")
+    le_disease = utils.load_json_from_datalake('le_disease.pkl', "./models/entrenamientos/le_disease.pkl")
+    le_relationship_type = utils.load_json_from_datalake('le_relationship_type.pkl', "./models/entrenamientos/le_relationship_type.pkl")
+    le_relationship_property = utils.load_json_from_datalake('le_relationship_property.pkl', "./models/entrenamientos/le_relationship_property.pkl")
+    le_target_id = utils.load_json_from_datalake('le_target_id.pkl', "./models/entrenamientos/le_target_id.pkl")
+    le_disease_rel_prop = utils.load_json_from_datalake('le_disease_rel_prop.pkl', "./models/entrenamientos/le_disease_rel_prop.pkl")
 
     # encode inputs
     disease_id_encoded = le_disease.transform([disease_id])[0]
@@ -633,14 +631,6 @@ def get_diseases_by_filters(phenotype_ids, anatomical_ids, age_onset_ids, exposu
     # retrieve the diseases that match all filtered disease ids
     return repository.get_diseases_by_ids(filtered_disease_ids)
 
-# load model files
-def load_json_from_mongo(filename):
-    with tempfile.NamedTemporaryFile() as temp_file:
-        with repository.fs.get_last_version(filename) as file_data:
-            temp_file.write(file_data.read())
-            temp_file.flush()
-            return joblib.load(temp_file.name)
-        
 def get_phenotypes():
     """
     Retrieve a list of unique phenotypes from the data model.
