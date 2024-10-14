@@ -12,7 +12,7 @@ export default function CustomAppBar() {
         <Toolbar variant="dense">
           <Box sx={{display:'flex', flex: 1, justifyContent:'center', alignItems: 'center'}}>
             <Typography variant="h4" color="inherit" component="div" sx={{marginRight:2}}>
-              Sintomatologia ORG
+              APOLLOD
             </Typography>
             <LocalHospitalIcon fontSize='large'/>
           </Box>

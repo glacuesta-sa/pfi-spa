@@ -3,6 +3,7 @@ import CustomAppBar from "../components/Layout/Appbar";
 import SidebarFilters from "../components/Layout/SidebarFilters";
 import DiseasesTable from '../components/Charts/DiseasesTable'
 import { useState } from "react";
+import DiseasesGrid from "../components/Layout/DiseasesGrid";
 export default function HomePage(){
 
     const [phenotypeIds, setPhenotypeIds] = useState<Array<string>>([])
@@ -54,7 +55,8 @@ export default function HomePage(){
                 updateAnatomicFilterArray={updateAnatomicFilterArray}
             >
                 <Box>
-                    <DiseasesTable age_onset_ids={ageIds} anatomical_ids={anatomicalIds} phenotype_ids={phenotypeIds} />
+                    {/* <DiseasesTable age_onset_ids={ageIds} anatomical_ids={anatomicalIds} phenotype_ids={phenotypeIds} /> */}
+                    <DiseasesGrid age_onset_ids={ageIds} anatomical_ids={anatomicalIds} phenotype_ids={phenotypeIds} />
                 </Box>
             </SidebarFilters>
         </>
