@@ -19,7 +19,7 @@ interface Phenotype{
 export default function DiseaseCard({diseaseTitle, phenotypes,description}: Props){
     console.log('Pheno',phenotypes)
     return(
-        <Card sx={{ maxWidth: 345, maxHeight: 600 }}>
+        <Card sx={{ maxWidth: 345, maxHeight: 600, color: '#1d8bf8', border: 1 }}>
             <CardActionArea>
             <CardMedia
                 component="img"
@@ -39,7 +39,7 @@ export default function DiseaseCard({diseaseTitle, phenotypes,description}: Prop
             <CardActions sx={{display: 'flex', justifyContent: 'flex-end'}}>
                 {
                     phenotypes.map((phenotype)=>(
-                        <Chip label={phenotype.label} />
+                        <Chip label={phenotype.label} color='primary' />
                     ))
                 }
             </CardActions>
