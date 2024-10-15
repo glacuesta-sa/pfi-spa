@@ -1,7 +1,6 @@
 import { Box } from "@mui/material";
 import CustomAppBar from "../components/Layout/Appbar";
 import SidebarFilters from "../components/Layout/SidebarFilters";
-import DiseasesTable from '../components/Charts/DiseasesTable'
 import { useState } from "react";
 import DiseasesGrid from "../components/Layout/DiseasesGrid";
 export default function HomePage(){
