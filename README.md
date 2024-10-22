@@ -27,7 +27,7 @@ Para más información sobre el backend: \
 1. docker compose -f ./backend/docker-compose.yaml up --build
 
 Levanta en:
-http://127.0.0.1:5000
+http://127.0.0.1:80
 
 ## Frontend
 Para más información sobre el frontend: \

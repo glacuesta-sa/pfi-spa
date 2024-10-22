@@ -8,6 +8,8 @@ import utils
 
 from flask_swagger_ui import get_swaggerui_blueprint
 def init_routes(app):
+    
+    print("Inicializando rutas 1. . . . .")
 
     # Swagger UI setup
     SWAGGER_URL = '/v1/docs'
@@ -22,17 +24,23 @@ def init_routes(app):
     )
 
     app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
+    
+    print("Inicializando rutas 2. . . . .")
 
     @app.route("/.well-known/swagger.yaml", methods=["GET"])
     def get_swagger_file():
+        print("Swagger. . . . .")
         swagger_file_path = os.path.join(os.path.dirname(__file__), 'doc', 'swagger.yaml')
         print(swagger_file_path)
         with open(swagger_file_path, 'r') as file:
             swagger_yaml = file.read()
         return make_response(swagger_yaml, 200, {'Content-Type': 'application/x-yaml'})
 
+  
+    
     @app.route("/v1/diseases/<disease_id>", methods=["GET"])
     def get_disease_by_id(disease_id):
+        print("/v1/diseases/<disease_id>. . . . .")
         full_id = f"http://purl.obolibrary.org/obo/{disease_id}"
         disease = repository.get_disease_by_id(full_id)
         if disease:
@@ -45,8 +53,11 @@ def init_routes(app):
         else:
             return create_json_response(jsonify({"error": "Disease not found"}), 404)
 
+   
     @app.route("/v1/diseases/<disease_id>/hierarchy", methods=["GET"])
     def get_hierarchy_by_id(disease_id):
+        print("/v1/diseases/<disease_id>/hierarchy. . . . .")
+        print(". . . . .")
         full_id = f"http://purl.obolibrary.org/obo/{disease_id}"
         if not repository.get_disease_by_id(full_id):
             return create_json_response(jsonify({"error": "Disease not found"}), 404)
@@ -56,8 +67,11 @@ def init_routes(app):
 
         return create_json_response(jsonify({"hierarchy": hierarchy, "extended_hierarchy": extended_hierarchy}), 200)
 
+
     @app.route("/v1/diseases/filter", methods=["POST"])
     def get_diseases_by_filters():
+        print("/v1/diseases/filter")
+        print(". . . . .")
         body = request.json
         phenotype_ids = body.get('phenotype_ids', [])
         anatomical_ids = body.get('anatomical_ids', [])
@@ -85,13 +99,17 @@ def init_routes(app):
         #    services.set_additional_fields(disease)
 
         return create_json_response(jsonify(diseases), 200)
-
+    
     @app.route("/v1/phenotypes", methods=["GET"])
     def get_phenotypes():
+        print("/v1/phenotypes")
+        print(". . . . .")
         return create_json_response(jsonify(services.get_phenotypes()), 200)
     
     @app.route("/v1/anatomical_structures", methods=["GET"])
     def get_anatomical_structures():
+        print("/v1/get_anatomical_structures")
+        print(". . . . .")
         return create_json_response(jsonify(services.get_anatomical_structures()), 200)
 
     @app.route("/v1/age_onsets", methods=["GET"])
@@ -116,7 +134,8 @@ def init_routes(app):
     
     @app.route("/v1/diseases/predict", methods=["POST"])
     def get_disease_prediction():
-
+        print("/v1//v1/diseases/predict")
+        print(". . . . .")
         # new_disease_id = "MONDO_0006781"
         # new_relationship_type = "has_relationship"
         # new_relationship_property = "RO_0004027"

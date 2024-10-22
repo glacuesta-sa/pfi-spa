@@ -27,7 +27,7 @@ ENV PYTHONUNBUFFERED 1
 #USER appuser
 
 # app and debug ports
-EXPOSE 5000 5768
+EXPOSE 80 80
 
 # Run app.py when the container launches
 CMD ["flask", "run", "--host=0.0.0.0"]
