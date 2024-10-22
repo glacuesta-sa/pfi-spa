@@ -20,7 +20,7 @@ interface Item{
 }
 
 
-const postPredictionForSelection = (diseaseId: string, property: string, updateFunction: (value: boolean)=> void) =>{
+const postPredictionForSelection = (diseaseId: string, property: string | undefined, updateFunction: (value: boolean)=> void) =>{
   console.log('Calling predict')
   try{
     updateFunction(true)
@@ -70,7 +70,7 @@ export default function SidebarDisease({children, diseaseId, setLoadingTrigger}:
           <RelationshipTypeFilter setSelection={setSelection} />
         </Box>
         <Box sx={{display: 'flex', justifyContent: 'center', marginTop: 6}}>
-          <Button disabled={selection?.value === undefined || selection?.value === null} variant='contained' color='warning' onClick={()=>postPredictionForSelection(diseaseId, selection?.value.split('/').at(-1), setLoadingTrigger)}>
+          <Button disabled={selection?.value === undefined || selection?.value === null} variant='contained' color='warning' onClick={()=>postPredictionForSelection(diseaseId, selection?.value?.split('/').at(-1), setLoadingTrigger)}>
             Predecir
           </Button>
         </Box>

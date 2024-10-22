@@ -129,7 +129,7 @@ export async function getDiseasesByFilters(phenotype_ids: Array<string>, anatomi
     }
 }
 
-export async function postPrediction(disease_id: string, new_relationship_property: string) {
+export async function postPrediction(disease_id: string, new_relationship_property: string | undefined) {
     try {
         const response = await fetch(`${url}/diseases/predict`, {
             method: 'POST',

@@ -2,7 +2,9 @@ import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
+import ApollodIcon from '../../assets/Apollod-no-title.jpg'
+import { Avatar } from '@mui/material';
+
 
 
 export default function CustomAppBar() {
@@ -12,9 +14,9 @@ export default function CustomAppBar() {
         <Toolbar variant="dense">
           <Box sx={{display:'flex', flex: 1, justifyContent:'center', alignItems: 'center'}}>
             <Typography variant="h4" color="inherit" component="div" sx={{marginRight:2}}>
-              Sintomatologia ORG
+              APOLLOD
             </Typography>
-            <LocalHospitalIcon fontSize='large'/>
+            <Avatar src={ApollodIcon} sx={{ width: 50, height: 50, marginY: 0.5 }} />
           </Box>
         </Toolbar>
       </AppBar>

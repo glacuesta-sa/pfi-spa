@@ -15,7 +15,7 @@ export default function RelationshipTypeFilter({setSelection}: Props){
     const [options, setOptions] = React.useState<Array<Item>>([])
     const [selected, setSelected] = React.useState<string>()
   
-    const handleToggle = (item: {value: string, label:string}) => () => {
+    const handleToggle = (item: Item) => () => {
       if(item.label === selected){
         setSelected(undefined)
         setSelection({label: undefined, value: undefined})
