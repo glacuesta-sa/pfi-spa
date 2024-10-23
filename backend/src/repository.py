@@ -7,6 +7,7 @@ import config
 
 ## MongoDB database conn
 client = MongoClient(config.MONGO_URI)
+print ("mongo URI: " + config.MONGO_URI)
 db = client[config.MONDO_DB]
 DISEASES_COLLECTION = db['diseases']
 DATA_MODEL_COLLECTION = db['data_model']
