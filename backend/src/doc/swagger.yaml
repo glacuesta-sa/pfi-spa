@@ -12,8 +12,36 @@ tags:
     description: Endpoints relacionados con enfermedades.
   - name: Filters
     description: Endpoints para filtrado de datos.
+  - name: Health
+    description: Endpoints para healthchecks.
 
 paths:
+
+  /v1/health:
+    get:
+      tags:
+        - Health
+      summary: Obtener estado de aplicacion
+      description: Devuelve 200 si la aplicacion se encuentra corriendo.
+      responses:
+        '200':
+          description: Datos de la enfermedad
+          content:
+            application/json:
+              schema:
+                type: object
+              examples:
+                diseaseExample:
+                  summary: Ejemplo 
+                  value:
+                    message: "Apliacion corriendo..."
+        '500':
+          description: Error en el servidor
+          content:
+            application/json:
+              schema:
+                type: object
+
   /v1/diseases/{disease_id}:
     get:
       tags:
