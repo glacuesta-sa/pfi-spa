@@ -151,6 +151,11 @@ def init_routes(app):
         #return create_json_response(jsonify({seen_labels}), 200)
          return create_json_response(jsonify({}), 200)
     
+    # Container Health Check
+    @app.route('/v1/health', methods=['GET'])
+    def get_health_check():
+        return create_json_response(jsonify({"message": "Flask app running..."}), 200)
+    
 
 def create_json_response(data, status_code=200):
     response = make_response(data, status_code)
