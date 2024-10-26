@@ -1,14 +1,12 @@
 
-<img src="./static/apollod.png" alt="APOLLOD Logo" width="200px" style="background: transparent;" /> \
 
-# APOLLOD
-[![GitHub Actions](https://github.com/UADE-PFI-Lacuesta-Rondan/pfi-spa/actions/workflows/react-app-build.yaml/badge.svg?branch=main)](https://github.com/UADE-PFI-Lacuesta-Rondan/pfi-spa/actions/workflows/react-app-build.yaml)
+<img src="./static/apollod.png" alt="APOLLOD Logo" width="200px" style="background: transparent;" />
+
+
+[![GitHub Actions](https://github.com/UADE-PFI-Lacuesta-Rondan/pfi-spa/actions/workflows/react-app-build.yaml/badge.svg?branch=main)](https://github.com/UADE-PFI-Lacuesta-Rondan/pfi-spa/actions/workflows/react-app-build.yaml) \
 Prototipo para predicción y exploración visual de términos médicos utilizando fuentes Linked Open Data (LOD).
 
-
-Este prototipo permite el diagnóstico de enfermedes a través de la sintomatología, que es la utilización de signos o síntomas visibles de una enfermedad para realizar un diagnósitico presuntivo utilizando fuentes de datos abiertos y vinculados. \
-
-Este esta enmarcado en el proyecto de investigación “P24T02 – Tecnologías de la Información facilitadoras para Linked Open Data (LOD)” del Instituto de Tecnología (INTEC) de la Universidad Argentina de la Empresa (UADE). \
+Este prototipo permite el diagnóstico de enfermedes a través de la sintomatología, que es la utilización de signos o síntomas visibles de una enfermedad para realizar un diagnósitico presuntivo utilizando fuentes de datos abiertos y vinculados. Este esta enmarcado en el proyecto de investigación “P24T02 – Tecnologías de la Información facilitadoras para Linked Open Data (LOD)” del Instituto de Tecnología (INTEC) de la Universidad Argentina de la Empresa (UADE).
 
 ### ¿Por qué APOLLOD?
 Apolo: el dios griego de la medicina y el conocimiento. \
@@ -26,7 +24,7 @@ Opción B: no implementada por generación de costos adicionales pero es una pot
 Servicios: ECS + Contenedores en Docker \
 Persistencia: MongoDB, S3 (Datalake) \
 Secretos: AWS KMS \
-Front: Route 53, cloudFront, S3, API Gateway \
+Front: Route 53, cloudFront, S3, API Gateway
 
 # Ejecutar el proyecto
 Revisa las siguientes secciones y su contenido para ejecutar el proyecto localmente.
