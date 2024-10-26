@@ -28,10 +28,12 @@ Front: Route 53, cloudFront, S3, API Gateway
 
 # Ejecutar el proyecto
 Revisa las siguientes secciones y su contenido para ejecutar el proyecto localmente.
+
 Para más información sobre el backend: \
-[README](./backend/README.md)
+[Backend README](./backend/README.md)
+
 Para más información sobre el frontend: \
-./frontend/README.md
+[Frontend README](./frontend/README.md)
 
 ### Backend
 Ejecutar Backend
