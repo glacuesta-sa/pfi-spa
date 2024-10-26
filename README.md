@@ -1,13 +1,14 @@
+
+<img src="./static/apollod.png" alt="APOLLOD Logo" width="200px" style="background: transparent;" /> \
+
 # APOLLOD
-<img src="./static/apollod.png" alt="APOLLOD Logo" width="200px" style="background: transparent;" />
+[![GitHub Actions](https://github.com/UADE-PFI-Lacuesta-Rondan/pfi-spa/actions/workflows/react-app-build.yaml/badge.svg?branch=main)](https://github.com/UADE-PFI-Lacuesta-Rondan/pfi-spa/actions/workflows/react-app-build.yaml)
 Prototipo para predicción y exploración visual de términos médicos utilizando fuentes Linked Open Data (LOD).
 
-## ¿Qué es APOLLOD?
-APOLLOD es el resultado obtenido de un proyecto final de ingeniería realizado en el año 2024, que busca eliminar la curva de aprendizaje de las tecnologías subyacentes a LOD utilizando técnicas de exploración visual y aprendizaje automático. 
 
-Este prototipo permite el diagnóstico de enfermedes a través de la sintomatología, que es la utilización de signos o síntomas visibles de una enfermedad para realizar un diagnósitico presuntivo. Todo esto utilizando fuentes de datos LOD, como son las ontologías de MONDO, HPO, UBERON, etc.
+Este prototipo permite el diagnóstico de enfermedes a través de la sintomatología, que es la utilización de signos o síntomas visibles de una enfermedad para realizar un diagnósitico presuntivo utilizando fuentes de datos abiertos y vinculados. \
 
-Este esta enmarcado en el proyecto de investigación “P24T02 – Tecnologías de la Información facilitadoras para Linked Open Data (LOD)” del Instituto de Tecnología (INTEC) de la Universidad Argentina de la Empresa (UADE).
+Este esta enmarcado en el proyecto de investigación “P24T02 – Tecnologías de la Información facilitadoras para Linked Open Data (LOD)” del Instituto de Tecnología (INTEC) de la Universidad Argentina de la Empresa (UADE). \
 
 ### ¿Por qué APOLLOD?
 Apolo: el dios griego de la medicina y el conocimiento. \
@@ -16,16 +17,16 @@ LOD: Linked Open Data o Datos Abiertos Enlazados, el corazón del prototipo, su 
 # Arquitectura
 ![image](./static/arquitectura.png)
 
-## Extracción Automática de ontologías
-Se investigaron dos alternativas para realizar la extracción automática de ontologías.
-Opción A: solución implementada, un contenedor que contiene el Pipeline de ETL del laboratorio offline. 
+### Extracción Automática de ontologías
+Se investigaron dos alternativas para realizar la extracción automática de ontologías. \
+Opción A: solución implementada, un contenedor que contiene el Pipeline de ETL del laboratorio offline. \
 Opción B: no implementada por generación de costos adicionales pero es una potencial solución alternativa.
 
-## Servicios Utilizados
-Servicios: ECS + Contenedores en Docker
-Persistencia: MongoDB, S3 (Datalake)
-Secretos: AWS KMS
-Front: Route 53, cloudFront, S3, API Gateway
+### Servicios Utilizados
+Servicios: ECS + Contenedores en Docker \
+Persistencia: MongoDB, S3 (Datalake) \
+Secretos: AWS KMS \
+Front: Route 53, cloudFront, S3, API Gateway \
 
 # Ejecutar el proyecto
 Revisa las siguientes secciones y su contenido para ejecutar el proyecto localmente.
@@ -34,16 +35,16 @@ Para más información sobre el backend: \
 Para más información sobre el frontend: \
 ./frontend/README.md
 
-## Backend
+### Backend
 Ejecutar Backend
 ```bash
 1. docker compose -f ./backend/docker-compose.yaml up --build
 ```
 
 Levanta en:
-http://127.0.0.1:5000
+http://127.0.0.1:80
 
-## Frontend
+### Frontend
 Ejecutar FrontEnd
 ```bash
 1. cd ./frontend
