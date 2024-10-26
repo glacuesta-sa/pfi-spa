@@ -1,5 +1,5 @@
 # APOLLOD
-![image](./static/apollod.png) \
+<img src="./static/apollod.png" alt="APOLLOD Logo" width="200px" style="background: transparent;" />
 Prototipo para predicción y exploración visual de términos médicos utilizando fuentes Linked Open Data (LOD).
 
 ## ¿Qué es APOLLOD?
