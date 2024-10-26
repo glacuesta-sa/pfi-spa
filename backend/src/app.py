@@ -1,14 +1,11 @@
-import os
-import services
 from flask import Flask
 import route
-from flask_cors import CORS
-import debugpy
-import config
+from flask_cors import CORS # type: ignore
+import debugpy # type: ignore
 import debugger
 
 # init debugger if needed
-#debugger.init()
+debugger.init()
 
 print("Starting app.. . . .")
 

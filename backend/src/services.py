@@ -172,46 +172,6 @@ def is_valid_relationship(property_id, target_id):
         return False
     return True
 
-def get_details(target_id, diseases_dict, phenotypes_dict, anatomical_dict, ecto_dict, maxo_dict, chebi_dict, age_onset_hierarchy):
-    """
-    returns relationship type and label from dict
-    """
-    rtype = "invalid"
-
-    if constants.UBERON_STR in target_id:
-        rtype = "anatomical_structures"
-    elif constants.HP_STR in target_id:
-        rtype =  "phenotypes"
-        if target_id in age_onset_hierarchy:
-            rtype= "age_onsets"
-    elif constants.ECTO_STR in target_id:
-        rtype =  "exposures"
-    elif constants.MAXO_STR in target_id:
-        rtype =  "treatments"
-    elif constants.CHEBI_STR in target_id:
-        rtype = "chemicals"
-    elif constants.MONDO_STR in target_id:
-        rtype = "diseases"
-
-    label = "dummy"
-    if "anatomical" in rtype:
-        dict = anatomical_dict
-    elif "phenotype"  in rtype or "age_onset" in rtype:
-        dict = phenotypes_dict
-    elif "treatment"  in rtype:
-        dict = maxo_dict
-    elif "chemical"  in rtype:
-        dict = chebi_dict
-    elif "exposure" in rtype:
-        dict = ecto_dict
-    elif "diseases" in rtype:
-        dict = diseases_dict
-
-    entity = get_entity_by_dict_and_id(dict, target_id)
-    if entity != None: 
-        label = entity["name"]
-    return rtype, label
-
 def get_hierarchy_by_disease_id(disease_id):
 
     """
@@ -781,17 +741,6 @@ def get_treatment_by_id(full_id):
 def get_chemical_by_id(full_id):
     return repository.get_chemical_by_id(full_id)
 
-
-# get generic entity by its dict and its id
-def get_entity_by_dict_and_id(dict, full_id):
-
-    entry = dict.get(full_id)
-    if not entry:
-        print(f"{full_id} not found in the dictionary.")
-        return None
-    return entry
-
-
 def get_relationship_types():
     relationship_types = []
     for key, _ in repository.get_data_model()['relationships_types'].items():
@@ -928,59 +877,3 @@ def get_relationship_by_id_sparql(ro_id):
     for row in results:
         result_list.append({str(var): str(row[var]) for var in row.labels})
     return result_list
-
-from pymongo import UpdateOne
-
-def add_da_relationship(data_model, disease_dict, subject_id, relationship_property, target_id, label, relationship_type):
-    """
-    Add a data augmentation relationship to the specified disease in both the data model and diseases collection.
-
-    
-    """
-    # data model    
-    data_key = f"{relationship_type}"
-    relationships = data_model.get(data_key, {})
-    
-    if target_id not in relationships:
-        relationships[target_id] = []
-    
-    if subject_id not in relationships[target_id]:
-        relationships[target_id].append(subject_id)
-    
-    data_model[data_key] = relationships
-    
-    # diseases collection
-    disease_entry = disease_dict.get(subject_id)
-    if not disease_entry:
-        print(f"{subject_id} not found in the disease dictionary.")
-        return
-    
-    relationship_entry = {
-        "type": "has_relationship",
-        "property": relationship_property,
-        "target": target_id,
-        "label": label,
-        "predicted": False
-    }
-    
-    if relationship_type not in disease_entry:
-        disease_entry[relationship_type] = []
-    
-    if relationship_entry not in disease_entry[relationship_type]:
-        disease_entry[relationship_type].append(relationship_entry)
-
-    print(f"relationship added between {subject_id} and {target_id} under {relationship_type}.")
-
-def add_multimedia_default(disease_dict, subject_id, link):
-    """
-    Add default multimedia
-    """    
-    # diseases collection
-    disease_entry = disease_dict.get(subject_id)
-    if not disease_entry:
-        print(f"{subject_id} not found in the disease dictionary.")
-        return
-
-    disease_entry["multimedia"] = [link]
-
-    print(f"added multimedia for disease {subject_id}: image link {link}.")

@@ -13,29 +13,42 @@ Este esta enmarcado en el proyecto de investigación “P24T02 – Tecnologías 
 Apolo: el dios griego de la medicina y el conocimiento. \
 LOD: Linked Open Data o Datos Abiertos Enlazados, el corazón del prototipo, su fuente de datos.
 
-## Arquitectura 
-![image](./static/arch.png)
+# Arquitectura
+![image](./static/arquitectura.png)
+
+## Extracción Automática de ontologías
+Se investigaron dos alternativas para realizar la extracción automática de ontologías.
+Opción A: solución implementada, un contenedor que contiene el Pipeline de ETL del laboratorio offline. 
+Opción B: no implementada por generación de costos adicionales pero es una potencial solución alternativa.
+
+## Servicios Utilizados
+Servicios: ECS + Contenedores en Docker
+Persistencia: MongoDB, S3 (Datalake)
+Secretos: AWS KMS
+Front: Route 53, cloudFront, S3, API Gateway
 
 # Ejecutar el proyecto
-Revisa el siguiente contenido para ejecutar el proyecto localmente.
-
-## Backend
+Revisa las siguientes secciones y su contenido para ejecutar el proyecto localmente.
 Para más información sobre el backend: \
-./backend/README.md
-
-### Ejecutar backend
-1. docker compose -f ./backend/docker-compose.yaml up --build
-
-Levanta en:
-http://127.0.0.1:80
-
-## Frontend
+[README](./backend/README.md)
 Para más información sobre el frontend: \
 ./frontend/README.md
 
-### Ejecutar Frontend
+## Backend
+Ejecutar Backend
+```bash
+1. docker compose -f ./backend/docker-compose.yaml up --build
+```
+
+Levanta en:
+http://127.0.0.1:5000
+
+## Frontend
+Ejecutar FrontEnd
+```bash
 1. cd ./frontend
 2. npm run dev
+```
 
 Levanta en:
 http://127.0.0.1:5173/

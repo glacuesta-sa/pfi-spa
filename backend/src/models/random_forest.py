@@ -26,7 +26,7 @@ def generate_model(df_with_clusters, include_cluster):
     - min_samples_split: Minimum number of samples required to split an internal node. Randomly chosen between 2 and 4.
     - min_samples_leaf: Minimum number of samples required to be at a leaf node. Randomly chosen between 1 and 2.
     """
-
+    print(f"random forest")
     df = get_data_frame()
 
     # encode to string
@@ -46,7 +46,8 @@ def generate_model(df_with_clusters, include_cluster):
 
         # Drop unnecessary columns after merge
         df.drop(columns=['Disease ID', 'Property', 'Target'], inplace=True)
-
+        
+    print(f"random forest 2")
     # categorical features (disease_id, relationship_property, target_id) are encoded using LabelEncoder.
     le_disease = LabelEncoder()
     le_relationship_type = LabelEncoder()
@@ -57,12 +58,14 @@ def generate_model(df_with_clusters, include_cluster):
     df['relationship_type'] = le_relationship_type.fit_transform(df['relationship_type'])
     df['relationship_property'] = le_relationship_property.fit_transform(df['relationship_property'])
     df['target_id'] = le_target_id.fit_transform(df['target_id'])
-
+    
+    print(f"random forest 3")
     # Ingeniería de características: crear características de interacción
     df['disease_rel_prop'] = df['disease_id'].astype(str) + '_' + df['relationship_property'].astype(str)
     le_disease_rel_prop = LabelEncoder()
     df['disease_rel_prop'] = le_disease_rel_prop.fit_transform(df['disease_rel_prop'])
-
+    
+    print(f"random forest 4")
     # TODO disease_age_onset
 
     X = df[['disease_id', 'relationship_type', 'relationship_property', 'disease_rel_prop']]
@@ -83,7 +86,9 @@ def generate_model(df_with_clusters, include_cluster):
     #X_sample, _, y_sample, _ = train_test_split(X, y, train_size=0.1, random_state=42)
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
-
+    
+    print(f"random forest 5")
+    
     # data augmentation
     ros = RandomOverSampler(random_state=42)
     X_train_res, y_train_res = ros.fit_resample(X_train, y_train)
@@ -101,7 +106,7 @@ def generate_model(df_with_clusters, include_cluster):
 
     # cross validation sets
     cv = 10
-
+    print(f"random forest 6")
     # pefromance tracking
     start_time = time.time()
     process = psutil.Process()
@@ -109,13 +114,16 @@ def generate_model(df_with_clusters, include_cluster):
     # RandomizedSearchCV parameters, less iterators single worker
     random_search = RandomizedSearchCV(estimator=rf, param_distributions=param_dist, n_iter=10, cv=cv, n_jobs=1, verbose=0, random_state=42)
     random_search.fit(X_train_res, y_train_res)
-
+    print(f"random forest 7")
+    
     # get RandomForest best indicator
     best_rf = random_search.best_estimator_
 
     # predict in X test subset
     y_pred = best_rf.predict(X_test)
-
+    
+    print(f"random forest 8")
+    
     # unique labels in test subset
     unique_labels = np.unique(y_test)
 
@@ -129,12 +137,13 @@ def generate_model(df_with_clusters, include_cluster):
     # evaluate model TODO needs improvement
     accuracy = accuracy_score(y_test, y_pred)
     print(f'Accuracy: {accuracy}')
-
+    print(f"random forest 9")
+    
     # cross validation
     cross_val_scores = cross_val_score(best_rf, X_train_res, y_train_res, cv=cv, scoring='accuracy', error_score='raise')
     print(f"Cross-Validation Score (mean): {cross_val_scores.mean():.4f}")
     print(f"Cross-Validation Score (std): {cross_val_scores.std():.4f}")
-
+    print(f"random forest 10")
 
     #print('Classification Report:')
     #print(classification_report(y_test, y_pred, labels=unique_labels, target_names=le_target_id.inverse_transform(unique_labels)))
@@ -160,7 +169,7 @@ def generate_model(df_with_clusters, include_cluster):
         'le_target_id': le_target_id.classes_.tolist(),
         'le_disease_rel_prop': le_disease_rel_prop.classes_.tolist()
         }
-
+        print(f"random forest 11")
         for filename, model in model_files.items():
             utils.upload_to_datalake(filename, model)
     
@@ -170,7 +179,7 @@ def generate_model(df_with_clusters, include_cluster):
 
 
 def get_data_frame(): 
-
+    print(f"get dataframe")
     # get data structures previously generated collections
     diseases = repository.get_diseases()
 
@@ -282,4 +291,5 @@ def get_data_frame():
             })
 
     df = pd.DataFrame(records)
+    print(f"reached end of get dataframe")
     return df

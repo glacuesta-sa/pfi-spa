@@ -1,0 +1,407 @@
+[
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0000986",
+        "property": "http://purl.obolibrary.org/obo/RO_0001025",
+        "target": "http://purl.obolibrary.org/obo/UBERON_0002048"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0000986",
+        "property": "http://purl.obolibrary.org/obo/RO_0001025",
+        "target": "http://purl.obolibrary.org/obo/UBERON_0001443"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0000986",
+        "property": "http://purl.obolibrary.org/obo/RO_0000053",
+        "target": "http://purl.obolibrary.org/obo/HP_0003621"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0000986",
+        "property": "http://purl.obolibrary.org/obo/RO_0000053",
+        "target": "http://purl.obolibrary.org/obo/HP_0003581"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0000986",
+        "property": "http://purl.obolibrary.org/obo/RO_0000053",
+        "target": "http://purl.obolibrary.org/obo/HP_0012531"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0000986",
+        "property": "http://purl.obolibrary.org/obo/RO_0000053",
+        "target": "http://purl.obolibrary.org/obo/HP_0002098"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0000986",
+        "property": "http://purl.obolibrary.org/obo/RO_0000053",
+        "target": "http://purl.obolibrary.org/obo/HP_0012735"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0000986",
+        "property": "http://purl.obolibrary.org/obo/RO_0000053",
+        "target": "http://purl.obolibrary.org/obo/HP_0001945"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0000986",
+        "property": "http://purl.obolibrary.org/obo/mondo#disease_responds_to",
+        "target": "http://purl.obolibrary.org/obo/MAXO_0000221"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0000986",
+        "property": "http://purl.obolibrary.org/obo/mondo#disease_responds_to",
+        "target": "http://purl.obolibrary.org/obo/MAXO_0000169"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0000986",
+        "property": "http://purl.obolibrary.org/obo/mondo#predisposes_towards",
+        "target": "http://purl.obolibrary.org/obo/MONDO_0005242"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0005249",
+        "property": "http://purl.obolibrary.org/obo/mondo#predisposes_towards",
+        "target": "http://purl.obolibrary.org/obo/MONDO_0005242"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0005249",
+        "property": "http://purl.obolibrary.org/obo/mondo#disease_responds_to",
+        "target": "http://purl.obolibrary.org/obo/MAXO_0000061"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0005249",
+        "property": "http://purl.obolibrary.org/obo/RO_0000053",
+        "target": "http://purl.obolibrary.org/obo/HP_0012531"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0005249",
+        "property": "http://purl.obolibrary.org/obo/RO_0000053",
+        "target": "http://purl.obolibrary.org/obo/HP_0002098"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0005249",
+        "property": "http://purl.obolibrary.org/obo/RO_0001025",
+        "target": "http://purl.obolibrary.org/obo/UBERON_0002048"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0005249",
+        "property": "http://purl.obolibrary.org/obo/RO_0001025",
+        "target": "http://purl.obolibrary.org/obo/UBERON_0001443"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0005249",
+        "property": "http://purl.obolibrary.org/obo/RO_0000053",
+        "target": "http://purl.obolibrary.org/obo/HP_0001945"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0005249",
+        "property": "http://purl.obolibrary.org/obo/RO_0000053",
+        "target": "http://purl.obolibrary.org/obo/HP_0001944"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0005249",
+        "property": "http://purl.obolibrary.org/obo/RO_0000053",
+        "target": "http://purl.obolibrary.org/obo/HP_0030829"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0005249",
+        "property": "http://purl.obolibrary.org/obo/RO_0000053",
+        "target": "http://purl.obolibrary.org/obo/HP_0030828"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0005249",
+        "property": "http://purl.obolibrary.org/obo/RO_0000053",
+        "target": "http://purl.obolibrary.org/obo/HP_0001649"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0005249",
+        "property": "http://purl.obolibrary.org/obo/RO_0000053",
+        "target": "http://purl.obolibrary.org/obo/HP_0002017"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0001940",
+        "property": "http://purl.obolibrary.org/obo/RO_0000053",
+        "target": "http://purl.obolibrary.org/obo/HP_0002102"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0001940",
+        "property": "http://purl.obolibrary.org/obo/RO_0000053",
+        "target": "http://purl.obolibrary.org/obo/HP_0012531"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0001940",
+        "property": "http://purl.obolibrary.org/obo/RO_0001025",
+        "target": "http://purl.obolibrary.org/obo/UBERON_0001443"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0001940",
+        "property": "http://purl.obolibrary.org/obo/RO_0001025",
+        "target": "http://purl.obolibrary.org/obo/UBERON_0002048"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0000705",
+        "property": "http://purl.obolibrary.org/obo/RO_0000053",
+        "target": "http://purl.obolibrary.org/obo/HP_0012531"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0000705",
+        "property": "http://purl.obolibrary.org/obo/RO_0000053",
+        "target": "http://purl.obolibrary.org/obo/HP_0002027"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0000705",
+        "property": "http://purl.obolibrary.org/obo/RO_0000053",
+        "target": "http://purl.obolibrary.org/obo/HP_0003549"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0004941",
+        "property": "http://purl.obolibrary.org/obo/RO_0000053",
+        "target": "http://purl.obolibrary.org/obo/HP_0012531"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0004941",
+        "property": "http://purl.obolibrary.org/obo/RO_0000053",
+        "target": "http://purl.obolibrary.org/obo/HP_0020064"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0004941",
+        "property": "http://purl.obolibrary.org/obo/RO_0001025",
+        "target": "http://purl.obolibrary.org/obo/UBERON_0002048"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MMONDO_0004941",
+        "property": "http://purl.obolibrary.org/obo/RO_0001025",
+        "target": "http://purl.obolibrary.org/obo/UBERON_0001443"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0004941",
+        "property": "http://purl.obolibrary.org/obo/RO_0001025",
+        "target": "http://purl.obolibrary.org/obo/UBERON_0000948"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0004941",
+        "property": "http://purl.obolibrary.org/obo/RO_0001025",
+        "target": "http://purl.obolibrary.org/obo/UBERON_0001981"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0004941",
+        "property": "http://purl.obolibrary.org/obo/RO_0001025",
+        "target": "http://purl.obolibrary.org/obo/UBERON_0001572"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0004941",
+        "property": "http://purl.obolibrary.org/obo/RO_0001025",
+        "target": "http://purl.obolibrary.org/obo/UBERON_0000014"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0004961",
+        "property": "http://purl.obolibrary.org/obo/RO_0000053",
+        "target": "http://purl.obolibrary.org/obo/HP_0012531"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0004961",
+        "property": "http://purl.obolibrary.org/obo/RO_0001025",
+        "target": "http://purl.obolibrary.org/obo/UBERON_0003444"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0004961",
+        "property": "http://purl.obolibrary.org/obo/RO_0001025",
+        "target": "http://purl.obolibrary.org/obo/UBERON_0001255"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0004961",
+        "property": "http://purl.obolibrary.org/obo/RO_0001025",
+        "target": "http://purl.obolibrary.org/obo/UBERON_0001295"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0004961",
+        "property": "http://purl.obolibrary.org/obo/RO_0000053",
+        "target": "http://purl.obolibrary.org/obo/HP_6000315"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0004962",
+        "property": "http://purl.obolibrary.org/obo/RO_0000053",
+        "target": "http://purl.obolibrary.org/obo/HP_0012531"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0004962",
+        "property": "http://purl.obolibrary.org/obo/RO_0001025",
+        "target": "http://purl.obolibrary.org/obo/UBERON_0003444"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0004962",
+        "property": "http://purl.obolibrary.org/obo/RO_0001025",
+        "target": "http://purl.obolibrary.org/obo/UBERON_0001255"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0004962",
+        "property": "http://purl.obolibrary.org/obo/RO_0001025",
+        "target": "http://purl.obolibrary.org/obo/UBERON_0000996"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0004962",
+        "property": "http://purl.obolibrary.org/obo/RO_0001025",
+        "target": "http://purl.obolibrary.org/obo/UBERON_0001295"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0004962",
+        "property": "http://purl.obolibrary.org/obo/RO_0000053",
+        "target": "http://purl.obolibrary.org/obo/HP_6000315"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0004971",
+        "property": "http://purl.obolibrary.org/obo/RO_0000053",
+        "target": "http://purl.obolibrary.org/obo/HP_0012531"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0004971",
+        "property": "http://purl.obolibrary.org/obo/RO_0000053",
+        "target": "http://purl.obolibrary.org/obo/HP_0012532"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0004971",
+        "property": "http://purl.obolibrary.org/obo/RO_0001025",
+        "target": "http://purl.obolibrary.org/obo/UBERON_0003914"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0004971",
+        "property": "http://purl.obolibrary.org/obo/RO_0000053",
+        "target": "http://purl.obolibrary.org/obo/HP_0002027"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0004971",
+        "property": "http://purl.obolibrary.org/obo/RO_0000053",
+        "target": "http://purl.obolibrary.org/obo/HP_0002315"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0004971",
+        "property": "http://purl.obolibrary.org/obo/RO_0000053",
+        "target": "http://purl.obolibrary.org/obo/HP_0001962"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0004971",
+        "property": "http://purl.obolibrary.org/obo/RO_0001025",
+        "target": "http://purl.obolibrary.org/obo/UBERON_0001443"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0004971",
+        "property": "http://purl.obolibrary.org/obo/RO_0000053",
+        "target": "http://purl.obolibrary.org/obo/HP_0001945"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0004971",
+        "property": "http://purl.obolibrary.org/obo/RO_0000053",
+        "target": "http://purl.obolibrary.org/obo/HP_0001337"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0004971",
+        "property": "http://purl.obolibrary.org/obo/RO_0000053",
+        "target": "http://purl.obolibrary.org/obo/HP_0000822"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0005003",
+        "property": "http://purl.obolibrary.org/obo/RO_0000053",
+        "target": "http://purl.obolibrary.org/obo/HP_0012531"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0005003",
+        "property": "http://purl.obolibrary.org/obo/RO_0000053",
+        "target": "http://purl.obolibrary.org/obo/HP_0012532"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0005003",
+        "property": "http://purl.obolibrary.org/obo/RO_0000053",
+        "target": "http://purl.obolibrary.org/obo/HP_0002027"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0005003",
+        "property": "http://purl.obolibrary.org/obo/RO_0000053",
+        "target": "http://purl.obolibrary.org/obo/HP_0002024"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0005003",
+        "property": "http://purl.obolibrary.org/obo/RO_0000053",
+        "target": "http://purl.obolibrary.org/obo/HP_0000819"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0005052",
+        "property": "http://purl.obolibrary.org/obo/RO_0000053",
+        "target": "http://purl.obolibrary.org/obo/HP_0012531"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0005061",
+        "property": "http://purl.obolibrary.org/obo/RO_0000053",
+        "target": "http://purl.obolibrary.org/obo/HP_0012531"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0005061",
+        "property": "http://purl.obolibrary.org/obo/RO_0001025",
+        "target": "http://purl.obolibrary.org/obo/UBERON_0002048"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0005112",
+        "property": "http://purl.obolibrary.org/obo/RO_0000053",
+        "target": "http://purl.obolibrary.org/obo/HP_0012531"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0005112",
+        "property": "http://purl.obolibrary.org/obo/RO_0001025",
+        "target": "http://purl.obolibrary.org/obo/UBERON_0002048"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0005119",
+        "property": "http://purl.obolibrary.org/obo/RO_0000053",
+        "target": "http://purl.obolibrary.org/obo/HP_0012531"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0005119",
+        "property": "http://purl.obolibrary.org/obo/RO_0001025",
+        "target": "http://purl.obolibrary.org/obo/UBERON_0002048"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0005119",
+        "property": "http://purl.obolibrary.org/obo/RO_0000053",
+        "target": "http://purl.obolibrary.org/obo/HP_0001945"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0005119",
+        "property": "http://purl.obolibrary.org/obo/RO_0000053",
+        "target": "http://purl.obolibrary.org/obo/HP_0002315"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0005119",
+        "property": "http://purl.obolibrary.org/obo/RO_0001025",
+        "target": "http://purl.obolibrary.org/obo/UBERON_0001443"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0005138",
+        "property": "http://purl.obolibrary.org/obo/RO_0001025",
+        "target": "http://purl.obolibrary.org/obo/UBERON_0002048"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0005149",
+        "property": "http://purl.obolibrary.org/obo/RO_0001025",
+        "target": "http://purl.obolibrary.org/obo/UBERON_0002048"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0005207",
+        "property": "http://purl.obolibrary.org/obo/RO_0001025",
+        "target": "http://purl.obolibrary.org/obo/UBERON_0002048"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0005275",
+        "property": "http://purl.obolibrary.org/obo/RO_0001025",
+        "target": "http://purl.obolibrary.org/obo/UBERON_0002048"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0005279",
+        "property": "http://purl.obolibrary.org/obo/RO_0001025",
+        "target": "http://purl.obolibrary.org/obo/UBERON_0002048"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0005454",
+        "property": "http://purl.obolibrary.org/obo/RO_0001025",
+        "target": "http://purl.obolibrary.org/obo/UBERON_0002048"
+    },
+    {
+        "disease": "http://purl.obolibrary.org/obo/MONDO_0005607",
+        "property": "http://purl.obolibrary.org/obo/RO_0001025",
+        "target": "http://purl.obolibrary.org/obo/UBERON_0002048"
+    }
+]

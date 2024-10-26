@@ -7,7 +7,6 @@ import config
 
 ## MongoDB database conn
 client = MongoClient(config.MONGO_URI)
-print ("mongo URI: " + config.MONGO_URI)
 db = client[config.MONDO_DB]
 DISEASES_COLLECTION = db['diseases']
 DATA_MODEL_COLLECTION = db['data_model']
@@ -27,6 +26,7 @@ fs = gridfs.GridFS(db)
 # TODO move to repository, define interface
 # diseases collection desde MongoDB
 def get_diseases():
+    print(f"get diseases")
     diseases = DISEASES_COLLECTION.find({})
     return list(diseases)
 

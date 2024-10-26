@@ -10,14 +10,18 @@ services:
       - ./mongo_config/mongod.conf:/etc/mongo/mongod.conf:ro
     command: ["mongod", "--config", "/etc/mongo/mongod.conf"]
 
-  init-db:
+  pipeline-etl:
     build: .
-    command: python ./src/generate_data_model.py
+    command: python ./src/pipeline_etl.py
     depends_on:
       - mongo
     volumes:
       - .:/app
     environment:
+      - MONGO_URI=mongodb://mongo:27018/
+      - OPENAI_API_KEY=
+      - UNSPLASH_API_KEY=
+      - UNSPLASH_API_SECRET=
       - AWS_ACCESS_KEY_ID=
       - AWS_SECRET_ACCESS_KEY=
       - AWS_SECRET_ACCESS_TOKEN=
@@ -27,8 +31,9 @@ services:
     build: .
     ports:
       - "80:80"
+      - "5768:5768"
     depends_on:
-      - init-db
+      - pipeline-etl
     volumes:
       - .:/app
     environment:
