@@ -1,25 +1,31 @@
-## AWS Amplify React+Vite Starter Template
+# Getting Started with Apollod Frontend
 
-This repository provides a starter template for creating applications using React+Vite and AWS Amplify, emphasizing easy setup for authentication, API, and database capabilities.
+## Available Scripts
 
-## Overview
+In the project directory, you can run:
 
-This template equips you with a foundational React application integrated with AWS Amplify, streamlined for scalability and performance. It is ideal for developers looking to jumpstart their project with pre-configured AWS services like Cognito, AppSync, and DynamoDB.
+### `npm run dev`
 
-## Features
+Launches the app in dev mode to run it locally in port 5173.\
 
-- **Authentication**: Setup with Amazon Cognito for secure user authentication.
-- **API**: Ready-to-use GraphQL endpoint with AWS AppSync.
-- **Database**: Real-time database powered by Amazon DynamoDB.
+### `npm run build`
 
-## Deploying to AWS
+Builds the app for production to the `dist` folder.\
+It correctly bundles React in production mode and optimizes the build for the best performance.
 
-For detailed instructions on deploying your application, refer to the [deployment section](https://docs.amplify.aws/react/start/quickstart/#deploy-a-fullstack-app-to-aws) of our documentation.
+The build is minified and the filenames include the hashes.\
+Your app is ready to be deployed!
 
-## Security
+### `npm install`
 
-See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more information.
+**Note: this is a one-time process. Make sure to run in the same location as the package.json file.
 
-## License
+This command downloads a package and it's dependencies. 
 
-This library is licensed under the MIT-0 License. See the LICENSE file.
+When run without arguments, npm install downloads dependencies defined in a package.json file and generates a node_modules folder with the installed modules.
+
+When run with arguments, npm install downloads specific modules to the node_modules folder.
+
+### `npm run lint`
+
+This command analyzes code for inconsistencies and helps ensure quality and clean code.
