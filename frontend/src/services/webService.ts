@@ -1,4 +1,4 @@
-const url = 'http://54.160.107.7:80/v1'
+const url = 'http://http://appolod-bakend-alb-118998440.us-east-1.elb.amazonaws.com/v1'
 // const url = 'http://127.0.0.1:80/v1'
 
 export async function getPhenotypes(){
