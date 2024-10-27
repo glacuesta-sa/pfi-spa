@@ -62,7 +62,7 @@ export default function SidebarDisease({children, diseaseId, setLoadingTrigger}:
         <Box sx={{display: 'flex', justifyContent: 'center', alignItems:'center' ,marginBottom: 2}}>
           <FilterListIcon />
           <Typography variant='h5' sx={{marginX: 2}} >
-            Tipos de Relaciones
+            Relationships types
           </Typography>
         </Box>
         <Divider/>
@@ -71,7 +71,7 @@ export default function SidebarDisease({children, diseaseId, setLoadingTrigger}:
         </Box>
         <Box sx={{display: 'flex', justifyContent: 'center', marginTop: 6}}>
           <Button disabled={selection?.value === undefined || selection?.value === null} variant='contained' color='warning' onClick={()=>postPredictionForSelection(diseaseId, selection?.value?.split('/').at(-1), setLoadingTrigger)}>
-            Predecir
+          Predict
           </Button>
         </Box>
       </Drawer>

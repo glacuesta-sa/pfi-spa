@@ -47,7 +47,7 @@ export default function SymptomsFilter({updateSymptom, updateFilterArray}:{updat
         id="controllable-states-demo"
         options={optionsLabel}
         sx={{ width: 300 }}
-        renderInput={(params) => <TextField {...params} label="Seleccione los Sintomas" />}
+        renderInput={(params) => <TextField {...params} label="Select Symptoms" />}
       />
   );
 }

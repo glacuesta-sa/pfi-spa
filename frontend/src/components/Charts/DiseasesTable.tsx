@@ -52,10 +52,10 @@ export default function BasicTable({phenotype_ids, anatomical_ids, age_onset_ids
           ? 
           <Box sx= {{ display: 'flex', justifyContent: 'center', height: '500', alignItems: 'center', flexDirection: 'column'}}>
             <Typography color={'#bcbcbc'} variant='h5' sx={{marginBottom: 4}}>
-              Ninguna enfermedad corresponde a los sintomas seleccionados.
+              No disease corresponds to the selected symptoms.
             </Typography>
             <Typography color={'#bcbcbc'} variant='h5' sx={{marginBottom: 4}}>
-              Por favor modifique los filtros.
+              Please modify the filters selection.
             </Typography>
             <img src={TiredPc} alt="Tired Pc" height={200}/>
           </Box>

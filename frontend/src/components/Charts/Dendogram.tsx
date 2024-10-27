@@ -35,7 +35,7 @@ export default function Dendogram({data, loadingUpdate}: Props) {
     <Paper sx={{margin: 2, padding:2, borderRadius: 2,}}>
       <Box sx={{display: 'flex', justifyContent: 'center'}}>
         <Typography variant="h4" sx={{marginBottom: 2}}>
-          Diagnostico Estimativo
+          Estimated Diagnosis
         </Typography>
       </Box>
       <DendogramLegend />

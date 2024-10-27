@@ -47,7 +47,7 @@ export default function AnatomyFilter({updateSelection, updateAnatomicFilterArra
         id="controllable-states-demo"
         options={optionsLabel}
         sx={{ width: 300 }}
-        renderInput={(params) => <TextField {...params} label="Anatomia Involucrada" />}
+        renderInput={(params) => <TextField {...params} label="Anatomy Involved" />}
       />
   );
 }

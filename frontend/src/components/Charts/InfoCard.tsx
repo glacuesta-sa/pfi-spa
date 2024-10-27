@@ -59,7 +59,7 @@ export default function InfoCard({loadingUpdate}:{loadingUpdate:boolean}) {
               {description}
               </Typography>
               <Typography variant="h6" gutterBottom>
-                Causas
+                Causes
               </Typography>
               <List sx={{ listStyleType: 'disc' }}>
                 {
@@ -78,7 +78,7 @@ export default function InfoCard({loadingUpdate}:{loadingUpdate:boolean}) {
                   ? 
                     <Link to={treatments[0].target}>
                       <Button variant='contained' endIcon={<ArrowForwardIcon />}>
-                        Tratmiento Sugerido
+                      Suggested Treatment
                       </Button>
                     </Link>
                   :
