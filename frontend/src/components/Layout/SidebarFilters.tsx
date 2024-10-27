@@ -98,13 +98,13 @@ export default function SidebarFilters({children, updatePhenotypeFilterArray, up
         <Box sx={{display: 'flex', justifyContent: 'center', alignItems:'center' ,marginBottom: 2}}>
           <FilterListIcon />
           <Typography variant='h5' sx={{marginX: 2}} >
-            Filtros
+          Filters
           </Typography>
         </Box>
         <Divider/>
         <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
           <Typography variant='h6' sx={{marginY: 2}} >
-            Sintomas
+          Symptoms
           </Typography>
           <SymptomsFilter updateSymptom={updateSymptom} updateFilterArray={updatePhenotypeFilterArray}/>
         </Box>
@@ -118,7 +118,7 @@ export default function SidebarFilters({children, updatePhenotypeFilterArray, up
           <Divider sx={{mt: 4}}/>
         <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
           <Typography variant='h6' sx={{marginY: 2}} >
-            Anatomia
+          Anatomy
           </Typography>
           <AnatomyFilter updateSelection={updateSelection} updateAnatomicFilterArray={updateAnatomicFilterArray}/>
         </Box>
@@ -132,7 +132,7 @@ export default function SidebarFilters({children, updatePhenotypeFilterArray, up
         <Divider sx={{mt: 4}}/>
         <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
           <Typography variant='h6' sx={{marginTop: 2}} >
-            Rango Etario
+            Age Range
           </Typography>
           <AgeFilter updateAgeFilterArray={updateAgeFilterArray} />
         </Box>

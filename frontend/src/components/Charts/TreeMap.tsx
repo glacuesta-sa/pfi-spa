@@ -46,7 +46,7 @@ export default function TreeMap({data}: Props) {
     <Paper sx={{margin: 2, padding:2, borderRadius: 2, width: '50%'}}>
       <Box sx={{display: 'flex', justifyContent: 'center'}}>
         <Typography variant="h4" sx={{marginBottom: 2}}>
-          Mapa de Calor
+          Heat Map
         </Typography>
       </Box>
       <Box sx={{margin: 2, padding:2, borderRadius: 2, border:1, borderColor:'#1d8bf8'}}>
