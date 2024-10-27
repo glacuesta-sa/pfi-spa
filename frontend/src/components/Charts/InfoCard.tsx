@@ -12,7 +12,7 @@ interface TreatmentObject {
   target: string
 }
 
-export default function InfoCard() {
+export default function InfoCard({loadingUpdate}:{loadingUpdate:boolean}) {
 
   const {diseaseId} = useParams()
   const [title, setTitle] = React.useState('')
@@ -31,18 +31,12 @@ export default function InfoCard() {
       }
       // @ts-expect-error no logic redirect to disease id as error.
       getDisease(diseaseId)
-      setTimeout(
-        ()=>setLoading(false),
-        2000
-      )
   },[diseaseId])
-
-  const [loading, setLoading] = React.useState(true)
 
   return (
     <Paper sx={{margin: 2, padding:2, borderRadius: 2, width: '50%'}}>
        {
-        loading
+        loadingUpdate
         ? <Box sx={{height:"400px", display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
             <PulseLoader size={20} color="#1d8bf8" />
         </Box>

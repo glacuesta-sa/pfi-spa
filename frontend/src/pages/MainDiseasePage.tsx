@@ -13,7 +13,7 @@ import { useParams } from "react-router-dom";
 export default function MainDiseasePage(){
 
     const {diseaseId} = useParams()
-    const [loadingTrigger, setLoadingTrigger] = useState<boolean>(false)
+    const [loadingTrigger, setLoadingTrigger] = useState<boolean>(true)
 
     const [dendogramData, setDendogramData] = useState()
     const [heatMapData, setHeatMapData] = useState()
@@ -56,6 +56,7 @@ export default function MainDiseasePage(){
           setDendogramData(auxDendogram)
           // @ts-expect-error unable to type array of arrays
           setHeatMapData(auxHeatMap)
+          setLoadingTrigger(false)
         }
         setDiseaseData()
       },[diseaseId, loadingTrigger])
@@ -67,7 +68,7 @@ export default function MainDiseasePage(){
                 <Dendogram data={dendogramData} loadingUpdate={loadingTrigger}/>
                 <Box sx={{display: 'flex'}}>
                     <TreeMap data={heatMapData} />
-                    <InfoCard />
+                    <InfoCard loadingUpdate={loadingTrigger} />
                 </Box>
             </SidebarDisease>
         </>
