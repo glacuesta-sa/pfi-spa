@@ -1,12 +1,12 @@
 # Repositorio Backend
 Repositorio que contiene:
 - Contenedor para la generación de modelo de datos y entrenamiento de modelos. (Pipeline ETL)
-- Backend API con endpoints para integración con frontend.
+- Contenedor para la API backend con endpoints para integración con frontend.
 
-## Requerimientos
+## Requisitos
 - Docker / Docker Compose - Descargar e instalar Docker o Docker Desktop.
 
-## Requirimientos
+## Dependencias
 - MongoDB -> Persistencia de modelo de datos y fallback en caso de no proveer credenciales de AWS y S3.
 - Flask -> Framework para la API REST y servicios de exploración visual y predicciones
 
@@ -17,10 +17,10 @@ Levanta en:
 http://127.0.0.1:5000
 
 # API REST
-Acceder a toda la especificación de la API REST:\
+Acceder a toda la especificación de la API REST: \
 http://127.0.0.1:5000/v1/docs 
 
-Tambien está accesible a través del siguiente link público:
+Tambien está accesible a través del siguiente link público: \
 https://app.swaggerhub.com/apis/GAXELAC_1/apollod-pfi-spa-lacuesta-rondan/1.0.0#/
 
 Ejemplo para obtener la enfermedad "inflammatory disease" \
@@ -28,6 +28,8 @@ http://127.0.0.1:5000/v1/disease/MONDO_0021166
 
 # MONGO DB
 Connection String (default): mongodb://localhost:27018/
+
+Se puede utilizar Mongo DB Compass para acceder.
 
 ## Modelo de Datos
 ```mermaid
