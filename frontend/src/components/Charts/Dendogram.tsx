@@ -1,6 +1,5 @@
 
 import { Box, Paper, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
 import { Chart } from "react-google-charts";
 import { PulseLoader } from "react-spinners";
 import DendogramLegend from "../IsolatedComponents/DendogramLegend";
@@ -22,14 +21,6 @@ interface Props {
 
 export default function Dendogram({data, loadingUpdate}: Props) {
 
-    useEffect(()=>{
-        setTimeout(
-            ()=>setLoading(false),
-            2000
-        )
-    },[])
-
-    const [loading, setLoading] = useState(true)
 
   return (
     <Paper sx={{margin: 2, padding:2, borderRadius: 2,}}>
