@@ -1,4 +1,9 @@
-# Getting Started with Apollod Frontend
+# Repositorio Frontend
+Repositorio que contiene:
+- Frontend completo de Apollod.
+
+## Requerimientos
+- Node js (Version recomendada 20 o mayor).
 
 ## Available Scripts
 

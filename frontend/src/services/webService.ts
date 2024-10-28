@@ -1,4 +1,4 @@
-const url = 'https://appolod-bakend-alb-118998440.us-east-1.elb.amazonaws.com/v1'
+const url = 'https://api.apollod.org/v1'
 // const url = 'http://127.0.0.1:80/v1'
 
 export async function getPhenotypes(){
