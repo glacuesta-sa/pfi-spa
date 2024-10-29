@@ -38,17 +38,26 @@ Para más información sobre el frontend: \
 ### Backend
 Ejecutar Backend
 ```bash
-1. docker compose -f ./backend/docker-compose.yaml up --build
+docker compose -f ./backend/docker-compose.yaml up --build
+```
+Nota: levantar por primera vez puede tomar unos minutos ya que se entrenan los modelos durante el deployment del pipeline etl container, particularmente en el log: \
+```bash
+random forest 6 - training the model
 ```
 
 Levanta en:
 http://127.0.0.1:80
 
 ### Frontend
-Ejecutar FrontEnd
+Ejecutar FrontEnd \
+Antes de la ejecución, cambiar la URL del archivo /pfi-spa/frontend/src/services/webService.ts, cambiando la productiva por la local.
 ```bash
-1. cd ./frontend
-2. npm run dev
+const url = 'https://api.apollod.org/v1'
+// const url = 'http://127.0.0.1:80/v1'
+```
+
+```bash
+cd ./frontend && npm run dev
 ```
 
 Levanta en:
