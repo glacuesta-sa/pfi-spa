@@ -5,32 +5,51 @@ Repositorio que contiene:
 ## Requerimientos
 - Node js (Version recomendada 20 o mayor).
 
-## Available Scripts
+## Libreria de Componentes
+- Apollod se basa principalmente en la libreria de componentes y paleta de Material UI para los componentes base (no graficos de exploracion).
+- Para los graficos de exploracion, los componentes provienen de lalibreria Google Charts.
 
-In the project directory, you can run:
+## Scripts disponibles
+
+Dentro del directorio del proyecto se puede ejecutar:
 
 ### `npm run dev`
 
-Launches the app in dev mode to run it locally in port 5173.\
+Inicia la aplicación en modo de desarrollo para ejecutarla localmente en el puerto 5173.
 
 ### `npm run build`
 
-Builds the app for production to the `dist` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Crea la aplicación para producción en la carpeta `dist`.\
+Realiza el bundle de React en modo de producción y optimiza la compilación para obtener el mejor rendimiento.
 
 ### `npm install`
 
-**Note: this is a one-time process. Make sure to run in the same location as the package.json file.
+**Nota: este es un proceso único. Asegúrese de ejecutarlo en la misma ubicación que el archivo package.json.
 
-This command downloads a package and it's dependencies. 
+Este comando descarga un paquete y sus dependencias. 
 
-When run without arguments, npm install downloads dependencies defined in a package.json file and generates a node_modules folder with the installed modules.
+Cuando se ejecuta sin argumentos, npm install descarga las dependencias definidas en un archivo package.json y genera una carpeta node_modules con los módulos instalados.
 
-When run with arguments, npm install downloads specific modules to the node_modules folder.
+Cuando se ejecuta con argumentos, npm install descarga módulos específicos a la carpeta node_modules.
 
 ### `npm run lint`
 
-This command analyzes code for inconsistencies and helps ensure quality and clean code.
+Este comando analiza el código en busca de inconsistencias y ayuda a garantizar la calidad y el código limpio.
+
+# Flujo de Apollod
+
+Apollod cuenta con un flujo de dos pantallas, donde en principio se ingresa a la landing, donde se puede buscar enfermedades por filtros. Y una segunda pantalla, donde se puede explorar los datos vinculados de la enfermedad seleccionada. El flujo puede visualizarse en el siguiente diagrama: 
+![image](../static/frontend-design.png)
+
+## Landing
+![image](../static/landing.png)
+
+## Exploracion Visual
+![image](../static/exploration.png)
+
+
+# Manejo de Estados
+
+Considerando la baja complejidad de la interfaz de usuario, se optó por no integrar una librería de manejo de estados dado que agregaría complejidades en el código, sin agregar un aporte significativo a la velocidad de desarrollo, como figura en pantalla.
+![image](../static/state-management.png)
+
