@@ -36,6 +36,23 @@ Cuando se ejecuta con argumentos, npm install descarga módulos específicos a l
 
 Este comando analiza el código en busca de inconsistencias y ayuda a garantizar la calidad y el código limpio.
 
+# Pasos para ejecutar Apollod localmente
+- Levantar localmente el backend ([Backend README](./backend/README.md))
+
+- Editar el archivo de /frontend/src/services para apuntar a la ruta local y comentar la ruta productiva.
+
+- Ubicarse dentro del directorio del frontend e instalar dependencias
+
+```bash
+1. cd ./frontend
+2. npm install
+```
+- Una vez finalizada la instalacion ejecutar.
+```bash
+1. npm run dev
+```
+
+
 # Flujo de Apollod
 
 Apollod cuenta con un flujo de dos pantallas, donde en principio se ingresa a la landing, donde se puede buscar enfermedades por filtros. Y una segunda pantalla, donde se puede explorar los datos vinculados de la enfermedad seleccionada. El flujo puede visualizarse en el siguiente diagrama: 
