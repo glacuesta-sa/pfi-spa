@@ -5,8 +5,8 @@ info:
   description: API para interactuar con modelos de datos basados en ontologías médicas.
 
 servers:
+  - url: https://apollod.org
   - url: http://127.0.0.1:80
-# TODO: add examples, code responses, structure stubs
 tags:
   - name: Diseases
     description: Endpoints relacionados con enfermedades.
