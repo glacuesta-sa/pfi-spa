@@ -14,6 +14,7 @@ export default function MainDiseasePage(){
 
     const {diseaseId} = useParams()
     const [loadingTrigger, setLoadingTrigger] = useState<boolean>(true)
+    const [loadingTriggerPredict, setLoadingTriggerPredict] = useState<boolean>(false)
 
     const [dendogramData, setDendogramData] = useState()
     const [heatMapData, setHeatMapData] = useState()
@@ -40,6 +41,7 @@ export default function MainDiseasePage(){
 
     useEffect(()=>{
         async function setDiseaseData(){
+          setLoadingTrigger(true)
           // @ts-expect-error no logical empty value
           const response = await getChartsData(diseaseId)
           // @ts-expect-error unable to type array of arrays
@@ -59,13 +61,13 @@ export default function MainDiseasePage(){
           setLoadingTrigger(false)
         }
         setDiseaseData()
-      },[diseaseId, loadingTrigger])
+      },[diseaseId, loadingTriggerPredict])
 
     return(
         <>
             <CustomAppBar/>
-            <SidebarDisease setLoadingTrigger={setLoadingTrigger} diseaseId={diseaseId ? diseaseId :'' }>
-                <Dendogram data={dendogramData} loadingUpdate={loadingTrigger}/>
+            <SidebarDisease setLoadingTriggerPredict={setLoadingTriggerPredict} diseaseId={diseaseId ? diseaseId :'' }>
+                <Dendogram data={dendogramData} loadingUpdate={loadingTrigger} loadingTriggerPredict={loadingTriggerPredict}/>
                 <Box sx={{display: 'flex'}}>
                     <TreeMap data={heatMapData} />
                     <InfoCard loadingUpdate={loadingTrigger} />

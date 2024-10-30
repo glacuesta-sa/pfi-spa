@@ -16,10 +16,11 @@ const options = {
 
 interface Props {
   data: [] | undefined,
-  loadingUpdate: boolean
+  loadingUpdate: boolean,
+  loadingTriggerPredict: boolean
 }
 
-export default function Dendogram({data, loadingUpdate}: Props) {
+export default function Dendogram({data, loadingUpdate, loadingTriggerPredict}: Props) {
 
 
   return (
@@ -32,7 +33,7 @@ export default function Dendogram({data, loadingUpdate}: Props) {
       <DendogramLegend />
       <Box sx={{border:1, borderColor: '#1d8bf8', borderRadius:2, padding:2}}>
         {
-            loadingUpdate
+            loadingUpdate || loadingTriggerPredict
             ? <Box sx={{height:"400px", display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
                 <PulseLoader size={20} color="#1d8bf8" />
             </Box>
