@@ -309,6 +309,17 @@ def process_edges(mondo_data, age_onset_hierarchy, disease_dict, data_model, ro_
     data_model["relationships_types"] = relationships_types
 
 def main():
+    
+    print(f"GENERANDO MODELO DE DATOS")
+    print(f"GENERANDO MODELO DE DATOS")
+    print(f"GENERANDO MODELO DE DATOS")
+    print(f"GENERANDO MODELO DE DATOS")
+    print(f"GENERANDO MODELO DE DATOS")
+    print(f"GENERANDO MODELO DE DATOS")
+    print(f"GENERANDO MODELO DE DATOS")
+    print(f"GENERANDO MODELO DE DATOS")
+    print(f"GENERANDO MODELO DE DATOS")
+    
     mondo_data = utils.load_json('datasets/mondo/mondo.json')
 
     age_onset_hierarchy = {
@@ -354,7 +365,7 @@ def main():
     
     # train models
     # Random Forest alone
-    random_forest.generate_model(None, False)
+    #random_forest.generate_model(None, False)
     # Random Forest specialized
     #random_forest_specialized.generate_models()
     # Random Forest + DBSCAN
@@ -368,7 +379,7 @@ def main():
     # GradientBoost + DBSCAN
     #gradient_boost.generate_model(dbscan.get_clustering_data_frame(), True)
     # Random GradientBoost + HDBSCAN
-    ##gradient_boost.generate_model(hdbscan.get_clustering_data_frame(), True)
+    gradient_boost.generate_model(hdbscan.get_clustering_data_frame(), True)
 
     # K-Means no porque no es aplicable a los datos, no son esfericos y hay ruido.
 

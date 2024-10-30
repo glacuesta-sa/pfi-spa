@@ -37,6 +37,22 @@ def get_data_frame():
     return df
 
 def get_clustering_data_frame():
+    
+    print(f"ENTRENANDO MODELO, ESTO PUEDE TOMAR UNOS MINUTOS.")
+    print(f"ENTRENANDO MODELO, ESTO PUEDE TOMAR UNOS MINUTOS.")
+    print(f"ENTRENANDO MODELO, ESTO PUEDE TOMAR UNOS MINUTOS.")
+    print(f"ENTRENANDO MODELO, ESTO PUEDE TOMAR UNOS MINUTOS.")
+    print(f"ENTRENANDO MODELO, ESTO PUEDE TOMAR UNOS MINUTOS.")
+    print(f"ENTRENANDO MODELO, ESTO PUEDE TOMAR UNOS MINUTOS.")
+    print(f"ENTRENANDO MODELO, ESTO PUEDE TOMAR UNOS MINUTOS.")
+    print(f"ENTRENANDO MODELO, ESTO PUEDE TOMAR UNOS MINUTOS.")
+    print(f"ENTRENANDO MODELO, ESTO PUEDE TOMAR UNOS MINUTOS.")
+    print(f"ENTRENANDO MODELO, ESTO PUEDE TOMAR UNOS MINUTOS.")
+    print(f"ENTRENANDO MODELO, ESTO PUEDE TOMAR UNOS MINUTOS.")
+    print(f"ENTRENANDO MODELO, ESTO PUEDE TOMAR UNOS MINUTOS.")
+    print(f"ENTRENANDO MODELO, ESTO PUEDE TOMAR UNOS MINUTOS.")
+    print(f"ENTRENANDO MODELO, ESTO PUEDE TOMAR UNOS MINUTOS.")
+    
     df = get_data_frame()
 
     # Drop unnecessary columns
@@ -46,8 +62,8 @@ def get_clustering_data_frame():
     count_before = len(df)
     df = df.drop_duplicates()
     count_after = len(df)
-    print(f"Count before removing duplicates: {count_before}")
-    print(f"Count after removing duplicates: {count_after}")
+    #print(f"Count before removing duplicates: {count_before}")
+    #print(f"Count after removing duplicates: {count_after}")
 
     # Check for missing values
     missing_values = df.isnull().sum()

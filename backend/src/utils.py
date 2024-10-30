@@ -76,21 +76,25 @@ def upload_to_gridfs(filename, model):
     print(f"modelo {filename} subido a mongo gridfs")
 
 def load_json_from_datalake(s3_key, local_path):
-
-    if not (config.AWS_ACCESS_KEY_ID and config.AWS_SECRET_ACCESS_KEY and config.S3_BUCKET_NAME):
-        print("credenciales de aws invalidas. Falling back to MongoDB GridFS.")
-        return load_json_from_gridfs(s3_key, local_path)
-
-    # Crea el directorio si no existe
+    
+     # Crea el directorio si no existe
     directory = os.path.dirname(local_path)
     if directory and not os.path.exists(directory):
         os.makedirs(directory, exist_ok=True)
 
     try:
         if not os.path.exists(local_path):
+            
+            if not (config.AWS_ACCESS_KEY_ID and config.AWS_SECRET_ACCESS_KEY and config.S3_BUCKET_NAME):
+                print("credenciales de aws invalidas. Falling back to MongoDB GridFS.")
+                return load_json_from_gridfs(s3_key, local_path)
+            
             config.s3_client.download_file(config.S3_BUCKET_NAME, s3_key, local_path)
 
         if not os.path.exists(local_path):
+            if not (config.AWS_ACCESS_KEY_ID and config.AWS_SECRET_ACCESS_KEY and config.S3_BUCKET_NAME):
+                print("credenciales de aws invalidas. Falling back to MongoDB GridFS.")
+                return load_json_from_gridfs(s3_key, local_path)
             raise FileNotFoundError(f"Downloaded file {local_path} not found.")
         
         model = joblib.load(local_path)

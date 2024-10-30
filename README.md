@@ -44,6 +44,7 @@ Nota: levantar por primera vez puede tomar unos minutos ya que se entrenan los m
 ```bash
 random forest 6 - training the model
 ```
+Nota: levantar por primera vez puede tomar unos minutos ya que se entrenan los modelos durante el deployment del pipeline etl container, particularmente en los logs que dicen "entrenando modelo". Tiempo de ultima corrida: 902.53 seconds, aprox ~15 minutos.
 
 Levanta en:
 http://127.0.0.1:80

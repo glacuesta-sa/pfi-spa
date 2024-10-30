@@ -27,6 +27,20 @@ def generate_model(df_with_clusters, include_cluster):
     - min_samples_leaf: Minimum number of samples required to be at a leaf node. Randomly chosen between 1 and 2.
     """
     print(f"random forest")
+    print(f"ENTRENANDO MODELO, ESTO PUEDE TOMAR UNOS MINUTOS.")
+    print(f"ENTRENANDO MODELO, ESTO PUEDE TOMAR UNOS MINUTOS.")
+    print(f"ENTRENANDO MODELO, ESTO PUEDE TOMAR UNOS MINUTOS.")
+    print(f"ENTRENANDO MODELO, ESTO PUEDE TOMAR UNOS MINUTOS.")
+    print(f"ENTRENANDO MODELO, ESTO PUEDE TOMAR UNOS MINUTOS.")
+    print(f"ENTRENANDO MODELO, ESTO PUEDE TOMAR UNOS MINUTOS.")
+    print(f"ENTRENANDO MODELO, ESTO PUEDE TOMAR UNOS MINUTOS.")
+    print(f"ENTRENANDO MODELO, ESTO PUEDE TOMAR UNOS MINUTOS.")
+    print(f"ENTRENANDO MODELO, ESTO PUEDE TOMAR UNOS MINUTOS.")
+    print(f"ENTRENANDO MODELO, ESTO PUEDE TOMAR UNOS MINUTOS.")
+    print(f"ENTRENANDO MODELO, ESTO PUEDE TOMAR UNOS MINUTOS.")
+    print(f"ENTRENANDO MODELO, ESTO PUEDE TOMAR UNOS MINUTOS.")
+    print(f"ENTRENANDO MODELO, ESTO PUEDE TOMAR UNOS MINUTOS.")
+    print(f"ENTRENANDO MODELO, ESTO PUEDE TOMAR UNOS MINUTOS.")
     df = get_data_frame()
 
     # encode to string
@@ -106,7 +120,7 @@ def generate_model(df_with_clusters, include_cluster):
 
     # cross validation sets
     cv = 10
-    print(f"random forest 6")
+    print(f"random forest 6 - entrenando modelos, esto va a tomar unos minutos.")
     # pefromance tracking
     start_time = time.time()
     process = psutil.Process()
