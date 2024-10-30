@@ -1,1 +1,0 @@
-models/entrenamientos/ filter=lfs diff=lfs merge=lfs -text
