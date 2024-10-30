@@ -11,7 +11,7 @@ const drawerWidth = 350;
 interface Props{
   children: React.ReactNode,
   diseaseId: string,
-  setLoadingTrigger: React.Dispatch<React.SetStateAction<boolean>>
+  setLoadingTriggerPredict: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 interface Item{
@@ -20,22 +20,19 @@ interface Item{
 }
 
 
-const postPredictionForSelection = (diseaseId: string, property: string | undefined, updateFunction: (value: boolean)=> void) =>{
+const postPredictionForSelection = async (diseaseId: string, property: string | undefined, updateFunction: (value: boolean)=> void) =>{
   console.log('Calling predict')
   try{
     updateFunction(true)
-    postPrediction(diseaseId, property)
-    setTimeout(
-      ()=>updateFunction(false),
-      7000
-    )
-    
+    const response = await postPrediction(diseaseId, property)
+    console.log('Response predict: ', response)
+    updateFunction(false)
   } catch(error){
     console.log('Error in post prediction: ', error)
   }
 }
 
-export default function SidebarDisease({children, diseaseId, setLoadingTrigger}: Props) {
+export default function SidebarDisease({children, diseaseId, setLoadingTriggerPredict}: Props) {
 
   const [selection, setSelection] = React.useState<Item>({label: undefined, value: undefined})
 
@@ -70,7 +67,7 @@ export default function SidebarDisease({children, diseaseId, setLoadingTrigger}:
           <RelationshipTypeFilter setSelection={setSelection} />
         </Box>
         <Box sx={{display: 'flex', justifyContent: 'center', marginTop: 6}}>
-          <Button disabled={selection?.value === undefined || selection?.value === null} variant='contained' color='warning' onClick={()=>postPredictionForSelection(diseaseId, selection?.value?.split('/').at(-1), setLoadingTrigger)}>
+          <Button disabled={selection?.value === undefined || selection?.value === null} variant='contained' color='warning' onClick={()=>postPredictionForSelection(diseaseId, selection?.value?.split('/').at(-1), setLoadingTriggerPredict)}>
           Predict
           </Button>
         </Box>
