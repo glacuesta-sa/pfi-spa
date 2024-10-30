@@ -41,7 +41,7 @@ Este comando analiza el código en busca de inconsistencias y ayuda a garantizar
 
 - Editar el archivo de /frontend/src/services para apuntar a la ruta local y comentar la ruta productiva.
 
-- Ubicarse dentro del directorio del frontend e instalar dependencias
+- Ubicarse dentro del directorio del frontend e instalar dependencias.
 
 ```bash
 1. cd ./frontend
