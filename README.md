@@ -41,11 +41,11 @@ En esta misma carpeta ejecutar:
 ```bash
 docker compose -f ./backend/docker-compose.yaml up --build
 ```
-Nota: levantar por primera vez puede tomar unos minutos ya que se entrenan los modelos durante el deployment del pipeline etl container, particularmente en el log: \
+
+Nota: levantar por primera vez puede tomar unos minutos ya que se entrenan los modelos durante el deployment del pipeline etl container, particularmente en los logs que dicen "entrenando modelo". Tiempo de ultima corrida: 902.53 seconds, aprox ~15 minutos.
 ```bash
 random forest 6 - entrenando modelos
 ```
-Nota: levantar por primera vez puede tomar unos minutos ya que se entrenan los modelos durante el deployment del pipeline etl container, particularmente en los logs que dicen "entrenando modelo". Tiempo de ultima corrida: 902.53 seconds, aprox ~15 minutos.
 
 Levanta en:
 http://127.0.0.1:80
@@ -60,7 +60,7 @@ const url = 'https://api.apollod.org/v1'
 
 Ubicarse en la carpeta del frontend
 ```bash
-cd ./frontend &&
+cd ./frontend
 ```
 
 Instalar dependencias (unica vez)
