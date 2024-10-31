@@ -14,17 +14,17 @@ Repositorio que contiene:
 docker compose up --build web
 
 Levanta en:
-http://127.0.0.1:5000
+http://127.0.0.1:80
 
 # API REST
 Acceder a toda la especificación de la API REST: \
-http://127.0.0.1:5000/v1/docs 
+http://127.0.0.1:80/v1/docs 
 
 Tambien está accesible a través del siguiente link público: \
 https://app.swaggerhub.com/apis/GAXELAC_1/apollod-pfi-spa-lacuesta-rondan/1.0.0#/
 
 Ejemplo para obtener la enfermedad "inflammatory disease" \
-http://127.0.0.1:5000/v1/disease/MONDO_0021166
+http://127.0.0.1:80/v1/disease/MONDO_0021166
 
 # MONGO DB
 Connection String (default): mongodb://localhost:27018/
